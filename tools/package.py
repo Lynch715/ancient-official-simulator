@@ -7,6 +7,7 @@ subprocess.run(['node', 'tools/build.mjs'], cwd=root, check=True)
 subprocess.run(['node', 'tools/make-demo.mjs'], cwd=root, check=True)
 subprocess.run(['node', 'tools/make-tongzhi-demo.mjs'], cwd=root, check=True)
 subprocess.run(['node', 'tools/make-zhifu-demo.mjs'], cwd=root, check=True)
+subprocess.run(['node', 'tools/make-accountability-demo.mjs'], cwd=root, check=True)
 out = root / 'outputs/古代官员升职记_县府四任试玩包.zip'
 out.parent.mkdir(exist_ok=True)
 instructions = '''古代官员升职记 · 县府四任（周制）
@@ -35,13 +36,19 @@ python3 -m http.server 8765 --bind 127.0.0.1
 通判考满称职无待查责任，可接任同知，继续三年156周跨县水利赈济。
 同知考满称职，可接任知府，继续三年156周府政统筹。按察副使及更高任期尚未开放。
 
-包内“体验履历”含通判、同知与知府开局演示档。导入前请先导出自己的履历，体验后可恢复。
+考满不合格进入13周整改、26周复考；高阶职务复考失败可降调试用，再失败则罢官。
+主动违法单独查证、申辩与复核，可能罢官、下狱或流放；故意杀人重案可经额外核准判斩。
+
+包内“体验履历”含通判、同知、知府开局及整改、查案申辩演示档。导入前请先导出自己的履历，体验后可恢复。
 关闭服务所在终端即可停止本地服务。
 '''
 with ZipFile(out, 'w', ZIP_DEFLATED) as archive:
     for path in sorted((root / 'dist').rglob('*')):
         if path.is_file():
             archive.write(path, str(Path('古代官员升职记') / path.relative_to(root / 'dist')))
+    archive.write(root / '考课与处分说明_v0.7.md', '古代官员升职记/考课与处分说明_v0.7.md')
+    for name in ['考课_整改开局体验履历.json', '考课_查案申辩体验履历.json']:
+        archive.write(root / 'outputs' / name, '古代官员升职记/体验履历/' + name)
     archive.write(root / '玩法深化说明_v0.2.md', '古代官员升职记/玩法深化说明_v0.2.md')
     archive.write(root / '知府任职说明_v0.6.md', '古代官员升职记/知府任职说明_v0.6.md')
     archive.write(root / 'outputs/永平府_知府开局体验履历.json', '古代官员升职记/体验履历/永平府_知府开局体验履历.json')

@@ -1,3 +1,4 @@
+import{qualified}from'./accountability.js';
 import{COUNTIES,prefAssessment}from'./prefecture.js';
 import{TZ_TERM,TZ_PROJECTS,TZ_EVENTS}from'./tongzhi-data.js';
 export{TZ_TERM,TZ_PROJECTS,TZ_EVENTS};
@@ -15,7 +16,7 @@ export const nextFlood=q=>[26,78,130].find(t=>t>q.turn)??null;
 export function availableResettlers(q,id){return q.counties[id].displaced-q.pending.filter(x=>x.kind==='settle'&&x.county===id).reduce((n,x)=>n+x.amount,0);}
 function addPeople(q,id,amount,vulnerable){const c=q.counties[id];c.displaced+=amount;c.vulnerable+=vulnerable;q.affected+=amount;log(q,`${c.name}新增待安置${amount}人，其中病弱${vulnerable}人；均纳入后续口粮。`);}
 function open(q){q.ap=3;q.event=TZ_EVENTS.find(e=>e.week===q.turn)?.id||null;if(q.event==='D03')addPeople(q,'linhe',48,16);if(q.event==='D06')addPeople(q,'yongning',24,8);}
-export function appointTongzhi(s){const p=s.prefecture;if(s.tongzhi)throw Error('同知任命已办理。');if(!p?.finished||!prefAssessment(p).candidate||p.misconduct)throw Error('须通判考满称职且无待查责任，才可获授同知。');
+export function appointTongzhi(s){const p=s.prefecture;if(s.tongzhi)throw Error('同知任命已办理。');if(!p?.finished||(!prefAssessment(p).candidate&&!qualified(s,'prefecture'))||p.misconduct)throw Error('须通判考满称职且无待查责任，才可获授同知。');
  const q=s.tongzhi={turn:0,finished:false,ap:3,silver:0,grain:0,private:p.private,trust:p.trust,integrity:p.integrity,registry:60,misconduct:false,maintenance:true,workUntil:0,lastAid:-13,lastBuy:-4,affected:0,resettled:0,excluded:0,shortage:0,floods:[],event:null,pending:[],logs:[],ledger:[],lastLedger:[],nextLog:1,outcome:null,record:{silver:p.silver,grain:p.grain,private:p.private,score:prefAssessment(p).score,met:p.met,delivered:p.delivered},projects:Object.fromEntries(TZ_PROJECTS.map(d=>[d.id,{id:d.id,status:'planned',surveyed:false,inspected:false,progress:0,quality:d.quality,condition:0,due:null,acceptedAt:null,stalled:false}])),counties:Object.fromEntries(COUNTIES.map(d=>[d.id,{id:d.id,name:d.name,people:p.counties[d.id].people,cooperation:p.counties[d.id].cooperation,displaced:0,vulnerable:0,prepared:0,lastVisit:-4,baseDefence:d.id==='qinghe'?24+(s.projects.some(x=>x.id==='embankment'&&x.status==='complete'&&x.condition>0)?12:0):d.id==='linhe'?18:30}]))};
  money(q,'河工赈济专项正式核拨',{silver:900,grain:480});open(q);log(q,'获授永平府同知，正五品，分管跨县水利与赈济。通判公账冻结交接，专项另核拨900两、480石，私产承接。');
 }
@@ -62,7 +63,7 @@ export function tongzhiReceipt(before,after,c){const a=before.tongzhi,b=after.to
  return{id:c.id,chapter:'同知',turn:a?.turn||0,title:c.type==='tz_appoint'?'同知任命已生效':c.type==='tz_advance'?'同知本周结算':'河工赈济回执',changes,notes:b.logs.filter(x=>x.id>=(a?.nextLog||1)).reverse().map(x=>x.text),policies:[],ledger:b.lastLedger};
 }
 export function validateTongzhi(s){const q=s.tongzhi;if(q===null)return;const fail=()=>{throw Error('同知履历结构或时序异常。');};const num=(x,min=0,max=1e9)=>Number.isFinite(x)&&x>=min&&x<=max;const int=(x,min=0,max=1e9)=>Number.isInteger(x)&&num(x,min,max);
- if(!q||!s.prefecture?.finished||!prefAssessment(s.prefecture).candidate||!int(q.turn,0,156)||q.finished!==(q.turn===156))fail();
+ if(!q||!s.prefecture?.finished||(!prefAssessment(s.prefecture).candidate&&!qualified(s,'prefecture'))||!int(q.turn,0,156)||q.finished!==(q.turn===156))fail();
  for(const k of ['silver','grain','private','trust','integrity','registry','affected','resettled','excluded','shortage','workUntil','nextLog','ap'])if(!num(q[k]))fail();
  if(!int(q.ap,0,3)||!int(q.nextLog,1)||['trust','integrity','registry'].some(k=>q[k]>100)||!int(q.affected)||!int(q.resettled)||!int(q.excluded)||!int(q.shortage)||!int(q.lastAid,-13,q.turn)||!int(q.lastBuy,-4,q.turn)||typeof q.maintenance!=='boolean'||typeof q.misconduct!=='boolean')fail();
  for(const k of ['pending','logs','ledger','lastLedger','floods'])if(!Array.isArray(q[k])||q[k].length>2500)fail();
