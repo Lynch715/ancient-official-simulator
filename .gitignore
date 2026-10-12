@@ -1,0 +1,8 @@
+.DS_Store
+dist/
+outputs/
+*.tar.gz
+node_modules/
+art/source/
+art/previews/
+art/qa/*.png

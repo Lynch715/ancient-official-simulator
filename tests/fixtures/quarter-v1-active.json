@@ -1,0 +1,446 @@
+{
+  "version": 1,
+  "revision": 11,
+  "seed": 314159,
+  "name": "沈知行",
+  "familyId": "humble",
+  "appearance": "player_a",
+  "turn": 4,
+  "finished": false,
+  "ap": 1,
+  "silver": 917,
+  "grain": 770,
+  "private": 114,
+  "people": 72,
+  "economy": 52,
+  "order": 54,
+  "integrity": 80,
+  "trust": 52,
+  "education": 40,
+  "family": 65,
+  "fatigue": 0,
+  "population": 4800,
+  "displaced": 40,
+  "grainPrice": 1.1,
+  "projects": [
+    {
+      "id": "canal",
+      "status": "building",
+      "remaining": 2,
+      "condition": 0,
+      "started": 4
+    }
+  ],
+  "cases": {
+    "boundary": {
+      "id": "boundary",
+      "opened": 1,
+      "clues": [],
+      "status": "review",
+      "truth": "fixed-v1",
+      "judgment": "bad",
+      "due": 5,
+      "result": "已呈复核"
+    },
+    "granary": {
+      "id": "granary",
+      "opened": 3,
+      "clues": [],
+      "status": "open",
+      "truth": "fixed-v1",
+      "judgment": null,
+      "due": null,
+      "result": null
+    }
+  },
+  "events": [],
+  "doneEvents": [
+    "X01",
+    "X02",
+    "X05",
+    "X03",
+    "X04"
+  ],
+  "flags": {
+    "handover": "verified",
+    "waterAgreement": true,
+    "grainPrice": 1.1,
+    "warehouseAudit": true,
+    "relief": "request",
+    "reliefCamp": true,
+    "drought": true,
+    "reliefHouseholds": 300
+  },
+  "pending": [
+    {
+      "due": 5,
+      "kind": "case",
+      "payload": {
+        "id": "boundary"
+      }
+    },
+    {
+      "due": 5,
+      "kind": "aid",
+      "payload": {
+        "grain": 180
+      }
+    }
+  ],
+  "actions": [],
+  "staffAssignments": {},
+  "patrol": 0,
+  "actionsTotal": 5,
+  "projectsCompleted": 0,
+  "wellJudged": 0,
+  "badJudged": 0,
+  "avoidableLoss": 0,
+  "logs": [
+    {
+      "id": "l19",
+      "turn": 4,
+      "title": "青黄不接",
+      "text": "先救急，再申请协济。开仓360石、配送20两，追加督办整理核灾材料。 支渠尚未修成，春旱影响了接下来的收成。",
+      "kind": "decision"
+    },
+    {
+      "id": "l18",
+      "turn": 4,
+      "title": "田界与旧契",
+      "text": "你省下了查证时间，但原契的疑点没有解决，复核会重新审视此案。",
+      "kind": "case"
+    },
+    {
+      "id": "l17",
+      "turn": 4,
+      "title": "工程立项",
+      "text": "疏浚南渠支出120两，预计2季完工。",
+      "kind": "decision"
+    },
+    {
+      "id": "l16",
+      "turn": 4,
+      "title": "本季开衙",
+      "text": "入仕第2年 · 春。先看本季要事，再安排工程与调查。",
+      "kind": "normal"
+    },
+    {
+      "id": "l15",
+      "turn": 3,
+      "title": "暂未亲自处理",
+      "text": "家书报忧留入任职记录，不自动获得处置收益。",
+      "kind": "normal"
+    },
+    {
+      "id": "l14",
+      "turn": 3,
+      "title": "账上八百石",
+      "text": "保全账证，立案查核。进入“仓册里的缺口”案，追清不同任期责任。",
+      "kind": "decision"
+    },
+    {
+      "id": "l13",
+      "turn": 3,
+      "title": "本季开衙",
+      "text": "入仕第1年 · 冬。先看本季要事，再安排工程与调查。",
+      "kind": "normal"
+    },
+    {
+      "id": "l12",
+      "turn": 3,
+      "title": "新案入牍",
+      "text": "仓册里的缺口已立卷。可在案牍中逐项调查。",
+      "kind": "case"
+    },
+    {
+      "id": "l11",
+      "turn": 2,
+      "title": "秋收回报",
+      "text": "本季依法入仓330石。农户与市场的收成不全部计入官仓。",
+      "kind": "gain"
+    },
+    {
+      "id": "l10",
+      "turn": 2,
+      "title": "暂未亲自处理",
+      "text": "同年来信求荐留入任职记录，不自动获得处置收益。",
+      "kind": "normal"
+    },
+    {
+      "id": "l9",
+      "turn": 2,
+      "title": "米价先于粮船上涨",
+      "text": "查船期，疏通运粮。以核实消息稳定市场，并补贴临时转运。",
+      "kind": "decision"
+    },
+    {
+      "id": "l8",
+      "turn": 2,
+      "title": "本季开衙",
+      "text": "入仕第1年 · 秋。先看本季要事，再安排工程与调查。",
+      "kind": "normal"
+    },
+    {
+      "id": "l7",
+      "turn": 1,
+      "title": "暂未亲自处理",
+      "text": "徭役撞上农忙留入任职记录，不自动获得处置收益。",
+      "kind": "normal"
+    },
+    {
+      "id": "l6",
+      "turn": 1,
+      "title": "上游的私堤",
+      "text": "实勘后约定分时放水。核清水口，安排巡查防止反悔。",
+      "kind": "decision"
+    },
+    {
+      "id": "l5",
+      "turn": 1,
+      "title": "本季开衙",
+      "text": "入仕第1年 · 夏。先看本季要事，再安排工程与调查。",
+      "kind": "normal"
+    },
+    {
+      "id": "l4",
+      "turn": 1,
+      "title": "新案入牍",
+      "text": "田界与旧契已立卷。可在案牍中逐项调查。",
+      "kind": "case"
+    },
+    {
+      "id": "l3",
+      "turn": 0,
+      "title": "新官接印",
+      "text": "分项验收，留下待核记录。花些工夫，先把自己真正接手的东西写清。",
+      "kind": "decision"
+    },
+    {
+      "id": "l2",
+      "turn": 0,
+      "title": "履任清河",
+      "text": "沈知行，二十六岁，进士出身，外授清河县知县。可用官银九百两，实存粮八百石。",
+      "kind": "normal"
+    },
+    {
+      "id": "l1",
+      "turn": 0,
+      "title": "本季开衙",
+      "text": "入仕第1年 · 春。先看本季要事，再安排工程与调查。",
+      "kind": "normal"
+    }
+  ],
+  "ledger": [
+    {
+      "id": "b24",
+      "turn": 4,
+      "title": "青黄不接",
+      "grain": -360,
+      "silver": -20
+    },
+    {
+      "id": "b23",
+      "turn": 4,
+      "title": "疏浚南渠",
+      "silver": -120
+    },
+    {
+      "id": "b22",
+      "turn": 3,
+      "title": "家庭与幕友例行支出",
+      "private": -12
+    },
+    {
+      "id": "b21",
+      "turn": 3,
+      "title": "俸禄入私账",
+      "private": 18
+    },
+    {
+      "id": "b20",
+      "turn": 3,
+      "title": "例行公费与项目维护",
+      "silver": -75
+    },
+    {
+      "id": "b19",
+      "turn": 3,
+      "title": "本季合法可用收入",
+      "silver": 125
+    },
+    {
+      "id": "b18",
+      "turn": 3,
+      "title": "按额上解钱粮（过账）",
+      "silver": 0,
+      "grain": 0,
+      "note": "本季按额上解180两；未列入可支配收入，不重复扣除。"
+    },
+    {
+      "id": "b17",
+      "turn": 2,
+      "title": "秋收后依法入仓",
+      "grain": 330
+    },
+    {
+      "id": "b16",
+      "turn": 2,
+      "title": "家庭与幕友例行支出",
+      "private": -12
+    },
+    {
+      "id": "b15",
+      "turn": 2,
+      "title": "俸禄入私账",
+      "private": 18
+    },
+    {
+      "id": "b14",
+      "turn": 2,
+      "title": "例行公费与项目维护",
+      "silver": -75
+    },
+    {
+      "id": "b13",
+      "turn": 2,
+      "title": "本季合法可用收入",
+      "silver": 125
+    },
+    {
+      "id": "b12",
+      "turn": 2,
+      "title": "按额上解钱粮（过账）",
+      "silver": 0,
+      "grain": 0,
+      "note": "本季按额上解180两；未列入可支配收入，不重复扣除。"
+    },
+    {
+      "id": "b11",
+      "turn": 2,
+      "title": "米价先于粮船上涨",
+      "silver": -35
+    },
+    {
+      "id": "b10",
+      "turn": 1,
+      "title": "家庭与幕友例行支出",
+      "private": -12
+    },
+    {
+      "id": "b9",
+      "turn": 1,
+      "title": "俸禄入私账",
+      "private": 18
+    },
+    {
+      "id": "b8",
+      "turn": 1,
+      "title": "例行公费与项目维护",
+      "silver": -75
+    },
+    {
+      "id": "b7",
+      "turn": 1,
+      "title": "本季合法可用收入",
+      "silver": 122
+    },
+    {
+      "id": "b6",
+      "turn": 1,
+      "title": "按额上解钱粮（过账）",
+      "silver": 0,
+      "grain": 0,
+      "note": "本季按额上解180两；未列入可支配收入，不重复扣除。"
+    },
+    {
+      "id": "b5",
+      "turn": 0,
+      "title": "家庭与幕友例行支出",
+      "private": -12
+    },
+    {
+      "id": "b4",
+      "turn": 0,
+      "title": "俸禄入私账",
+      "private": 18
+    },
+    {
+      "id": "b3",
+      "turn": 0,
+      "title": "例行公费与项目维护",
+      "silver": -75
+    },
+    {
+      "id": "b2",
+      "turn": 0,
+      "title": "本季合法可用收入",
+      "silver": 120
+    },
+    {
+      "id": "b1",
+      "turn": 0,
+      "title": "按额上解钱粮（过账）",
+      "silver": 0,
+      "grain": 0,
+      "note": "本季按额上解180两；未列入可支配收入，不重复扣除。"
+    }
+  ],
+  "history": [
+    {
+      "turn": 0,
+      "silver": 945,
+      "grain": 800,
+      "people": 57,
+      "economy": 48,
+      "order": 54
+    },
+    {
+      "turn": 1,
+      "silver": 992,
+      "grain": 800,
+      "people": 62,
+      "economy": 51,
+      "order": 54
+    },
+    {
+      "turn": 2,
+      "silver": 1007,
+      "grain": 1130,
+      "people": 65,
+      "economy": 55,
+      "order": 54
+    },
+    {
+      "turn": 3,
+      "silver": 1057,
+      "grain": 1130,
+      "people": 65,
+      "economy": 55,
+      "order": 54
+    }
+  ],
+  "completedCommands": [
+    "legacy-0",
+    "legacy-1",
+    "legacy-2",
+    "legacy-3",
+    "legacy-4",
+    "legacy-5",
+    "legacy-6",
+    "legacy-7",
+    "legacy-8",
+    "legacy-9",
+    "legacy-10"
+  ],
+  "nextLog": 20,
+  "nextLedger": 25,
+  "outcome": null,
+  "base": {
+    "people": 57,
+    "economy": 48,
+    "order": 54,
+    "integrity": 72
+  },
+  "overworked": false,
+  "relievedThisTurn": false
+}

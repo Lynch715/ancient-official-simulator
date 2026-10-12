@@ -1,0 +1,2857 @@
+{
+  "schemaVersion": 1,
+  "version": "p0-20261011-1",
+  "assets": {
+    "scene_county_gate": {
+      "id": "scene_county_gate",
+      "type": "scene",
+      "phase": "P0",
+      "label": "县衙外景",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_county_gate.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_county_gate_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 316634,
+          "sha256": "6f081ec48d1eda30a338e36d098ef50f7174260ac3e1d8d0a47670e09e18cd54"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_county_gate_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 125168,
+          "sha256": "a61232a7c10fe4dfa21a6722607b1fe6ca60b9d66b213153fa3f22adfb8ab814"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_county_gate.png"
+    },
+    "scene_county_hall": {
+      "id": "scene_county_hall",
+      "type": "scene",
+      "phase": "P0",
+      "label": "县衙公堂",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_county_hall.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_county_hall_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 209768,
+          "sha256": "257d7bd0e1fdd05dda4ee9f109e78fbce61e760b861bd1ef604776ed91c441c4"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_county_hall_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 81904,
+          "sha256": "bcdeaa4e628a2af5b06bc5f38c354202ff12383920b251478e81a5b69816b102"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_county_hall.png"
+    },
+    "scene_study_day": {
+      "id": "scene_study_day",
+      "type": "scene",
+      "phase": "P0",
+      "label": "官署书房",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_study_day.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_study_day_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 206582,
+          "sha256": "ae536a504e51924ef9aafecb6fc3c9f622509e1fa533e7969ae2975aca4dcd78"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_study_day_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 80520,
+          "sha256": "8ad90f92602788c4f740959a02ca1ca64d6c9ab871cbaf1a97707407f5a813fc"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "day",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_study_day.png"
+    },
+    "scene_granary": {
+      "id": "scene_granary",
+      "type": "scene",
+      "phase": "P0",
+      "label": "县仓",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_granary.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_granary_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 286806,
+          "sha256": "ecb23a4fea5d45103abe603cd2684d74097bc00401459e80aedc98e9c04543aa"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_granary_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 117918,
+          "sha256": "2ccc5d37474522155f414f8e2840ac9286d84e6b6f5680f2fa5a609d0a5d5181"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_granary.png"
+    },
+    "scene_fields_canal": {
+      "id": "scene_fields_canal",
+      "type": "scene",
+      "phase": "P0",
+      "label": "田亩与支渠",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_fields_canal.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_fields_canal_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 363968,
+          "sha256": "42fa40d51a007fec5e1722ced165848fe4a38d0722f14a60a30001f66e8299bf"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_fields_canal_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 136694,
+          "sha256": "ee0fae528cfb939d51681bbb909969f8d4bee1a535b2a81f71e48afead3e7103"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_fields_canal.png"
+    },
+    "scene_market": {
+      "id": "scene_market",
+      "type": "scene",
+      "phase": "P0",
+      "label": "县城集市",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_market.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_market_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 328654,
+          "sha256": "56c517fd59cef67f8948d740116a29a9621e7b7e770e7e7879e9472cd9616d49"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_market_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 128938,
+          "sha256": "4e4840e875935e0e758b00b2fcf1093a6952f05532df5890ce576e16ab55d24f"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_market.png"
+    },
+    "scene_river_ferry": {
+      "id": "scene_river_ferry",
+      "type": "scene",
+      "phase": "P0",
+      "label": "河道渡口",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_river_ferry.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_river_ferry_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 333394,
+          "sha256": "28dfcdf93b640880b2b92ff28f214a1acbf3985058d27b3492a80e096415d55d"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_river_ferry_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 127160,
+          "sha256": "3525bb1197ea9e9646bf077b5a93be244ab12728af7d2af1e0499e1017ccfb17"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_river_ferry.png"
+    },
+    "scene_village_drought": {
+      "id": "scene_village_drought",
+      "type": "scene",
+      "phase": "P0",
+      "label": "旱情村落",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_village_drought.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_village_drought_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 383160,
+          "sha256": "e8d13473338cefa59519a73063dfea7a6461d7c7d0239a1b97f5d3be0b4cb7a7"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_village_drought_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 145294,
+          "sha256": "1b91c8acfe287828b5eeeb22b7c4bb33cff8bd41918f33aea3eafd1b6b4db14d"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "drought_confirmed",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_village_drought.png"
+    },
+    "scene_river_flood": {
+      "id": "scene_river_flood",
+      "type": "scene",
+      "phase": "P0",
+      "label": "汛期险堤",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_river_flood.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_river_flood_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 305996,
+          "sha256": "ec7ff3bc77e72e3ba9f14015d8998af0783020112ec65c25f664dadd032111dd"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_river_flood_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 115678,
+          "sha256": "71a911242b1dc9f2891d77d716d1d70a8eb7655827981b1d81a25beafa71b4be"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "flood_risk_night",
+      "notes": "雨夜险堤；仅在实际夜间险情时使用，不借用于白天；焦点制作后核验。",
+      "reference": "art/source/scenes/scene_river_flood.png"
+    },
+    "scene_relief_camp": {
+      "id": "scene_relief_camp",
+      "type": "scene",
+      "phase": "P0",
+      "label": "临时赈济处",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_relief_camp.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_relief_camp_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 286188,
+          "sha256": "f2c88ed7b4297d81a8a3103a68e812fe447666e816023fece1c90fe27d87da77"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_relief_camp_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 123760,
+          "sha256": "b59aa1d50f3fcb79d8a8db43ff28cd40f467878fb3e32d7c6ed8a4d4d46381d0"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "relief_site_established",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_relief_camp.png"
+    },
+    "scene_county_school": {
+      "id": "scene_county_school",
+      "type": "scene",
+      "phase": "P0",
+      "label": "县学",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_county_school.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_county_school_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 362230,
+          "sha256": "2f46b7ffb931dd2fbde4eae36cdaad0ee950cf720106161693a398a34cd2c4e3"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_county_school_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 140704,
+          "sha256": "130fa90aa34bfbe1d52bb72fd3d41bf50213b23787d7dc4d8081178a7eba209d"
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_county_school.png"
+    },
+    "scene_county_overview": {
+      "id": "scene_county_overview",
+      "type": "scene",
+      "phase": "P0",
+      "label": "县域鸟瞰",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/scenes/scene_county_overview.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_county_overview_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "targetMaxBytes": 460800,
+          "bytes": 388560,
+          "sha256": "fb26dec09d2055a1f9bff4d72eed6e6ddf73e1f59cc58e429636e315336e7f63"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_county_overview_sm.webp",
+          "width": 720,
+          "height": 480,
+          "targetMaxBytes": 204800,
+          "bytes": 148046,
+          "sha256": "d0577863a9d7d0cb4f5fd617cb2edc2b8cff90683188510e049fa15133986987"
+        }
+      ],
+      "slotIds": [
+        "map_underlay"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "焦点为计划初值，制作后按安全区校验；仅在符合实际状态时绑定。",
+      "reference": "art/source/scenes/scene_county_overview.png"
+    },
+    "portrait_player_a": {
+      "id": "portrait_player_a",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "青年玩家甲立绘",
+      "status": "reviewed",
+      "characterId": "player_a",
+      "sourcePath": "art/source/portraits/portrait_player_a.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_a_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 52302,
+          "sha256": "3b3e13b3dd28ff864b500727348ecaf0eace6515b9d361e4985ccd9a30d61999"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_player_a.png"
+    },
+    "portrait_player_b": {
+      "id": "portrait_player_b",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "青年玩家乙立绘",
+      "status": "reviewed",
+      "characterId": "player_b",
+      "sourcePath": "art/source/portraits/portrait_player_b.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_b_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 67354,
+          "sha256": "b87fff39dfbc44dd06c801767b3d1eda9315eff551b63593df14911334036516"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_player_b.png"
+    },
+    "portrait_player_c": {
+      "id": "portrait_player_c",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "青年玩家丙立绘",
+      "status": "reviewed",
+      "characterId": "player_c",
+      "sourcePath": "art/source/portraits/portrait_player_c.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_c_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 61232,
+          "sha256": "44e005141bb43642483489c0eee29574bb9ee32a87b6cda38121aa9b9744f8b1"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_player_c.png"
+    },
+    "portrait_deputy": {
+      "id": "portrait_deputy",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "县丞立绘",
+      "status": "reviewed",
+      "characterId": "deputy",
+      "sourcePath": "art/source/portraits/portrait_deputy.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_deputy_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 62578,
+          "sha256": "1c93ed640bf6c166f90d6deb66f69d6d207a2b5f9bfdc0405ebbcb900f3ba10e"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_deputy.png"
+    },
+    "portrait_dianshi": {
+      "id": "portrait_dianshi",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "典史立绘",
+      "status": "reviewed",
+      "characterId": "dianshi",
+      "sourcePath": "art/source/portraits/portrait_dianshi.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_dianshi_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 53332,
+          "sha256": "f34fe7285b7aa09fef3a0b118cfa8acc95dfe20d1bf210c475ac36a1fec1fccf"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_dianshi.png"
+    },
+    "portrait_clerk": {
+      "id": "portrait_clerk",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "户房经承立绘",
+      "status": "reviewed",
+      "characterId": "clerk",
+      "sourcePath": "art/source/portraits/portrait_clerk.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_clerk_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 64830,
+          "sha256": "ee32c98dcaa4857a787ee4a1e5ef3da9ab2fb6b27be1bad06d350584bc0badba"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_clerk.png"
+    },
+    "portrait_captain": {
+      "id": "portrait_captain",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "捕役头目立绘",
+      "status": "reviewed",
+      "characterId": "captain",
+      "sourcePath": "art/source/portraits/portrait_captain.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_captain_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 78652,
+          "sha256": "bb4ac59f53e7d9d43b2d142c566e15b15b012befda6020a9719b6a8e4a44670f"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_captain.png"
+    },
+    "portrait_advisor": {
+      "id": "portrait_advisor",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "幕友立绘",
+      "status": "reviewed",
+      "characterId": "advisor",
+      "sourcePath": "art/source/portraits/portrait_advisor.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_advisor_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 57826,
+          "sha256": "a49cbb1ed90ae5789bd81fbc97ec1982cddb94606d76a346cd46aca979a465ee"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_advisor.png"
+    },
+    "portrait_merchant": {
+      "id": "portrait_merchant",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "粮商立绘",
+      "status": "reviewed",
+      "characterId": "merchant",
+      "sourcePath": "art/source/portraits/portrait_merchant.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_merchant_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 73208,
+          "sha256": "1862cd66a9a66a6b14ed0c0d4e8ffb3e476a6d81fa11c2c8c1eacacadb026f33"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_merchant.png"
+    },
+    "portrait_gentry": {
+      "id": "portrait_gentry",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "乡绅立绘",
+      "status": "reviewed",
+      "characterId": "gentry",
+      "sourcePath": "art/source/portraits/portrait_gentry.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_gentry_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 64138,
+          "sha256": "29188088161bebf7e586d1fe4f7bbd94667359910f08810be6742526a4953cea"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_gentry.png"
+    },
+    "portrait_farmer": {
+      "id": "portrait_farmer",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "农户代表立绘",
+      "status": "reviewed",
+      "characterId": "farmer",
+      "sourcePath": "art/source/portraits/portrait_farmer.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_farmer_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 73248,
+          "sha256": "53cd37a8903050179bdcc622bfbd16256d5092545ab9cfff78828f5c27354cc5"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_farmer.png"
+    },
+    "portrait_prefect": {
+      "id": "portrait_prefect",
+      "type": "portrait",
+      "phase": "P0",
+      "label": "直属知府立绘",
+      "status": "reviewed",
+      "characterId": "prefect",
+      "sourcePath": "art/source/portraits/portrait_prefect.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_prefect_main.webp",
+          "width": 640,
+          "height": 960,
+          "targetMaxBytes": 358400,
+          "bytes": 64254,
+          "sha256": "40c5f55d074889ce7607bb02f1cb715fd63e62d854670b0b487d9c8a45c4a917"
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha_required",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "全身完整；帽顶、手、袖和脚均保留；与同ID头像共用身份参照。",
+      "reference": "art/source/portraits/portrait_prefect.png"
+    },
+    "avatar_player_a": {
+      "id": "avatar_player_a",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "青年玩家甲头像",
+      "status": "reviewed",
+      "characterId": "player_a",
+      "sourcePath": "art/source/avatars/avatar_player_a.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_player_a_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 6872,
+          "sha256": "34e2543aff5144435a752df6eb104b6a493107fca7d99f3a5047b1138d596619"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_player_a_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1708,
+          "sha256": "70e3eee3dad68debe9fd02bc171d6c3d7d0dcf87bc3523e0991dd9caef94d426"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_player_a.png"
+    },
+    "avatar_player_b": {
+      "id": "avatar_player_b",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "青年玩家乙头像",
+      "status": "reviewed",
+      "characterId": "player_b",
+      "sourcePath": "art/source/avatars/avatar_player_b.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_player_b_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 8720,
+          "sha256": "b41b4d319f582b5c43e9d06b5905317310cb42b922a857454cf04c7cfa336350"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_player_b_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1844,
+          "sha256": "83c806574ae2b9d2a417d7287111ce4067c58a55166bd018cd317549ee85fd14"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_player_b.png"
+    },
+    "avatar_player_c": {
+      "id": "avatar_player_c",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "青年玩家丙头像",
+      "status": "reviewed",
+      "characterId": "player_c",
+      "sourcePath": "art/source/avatars/avatar_player_c.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_player_c_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 8302,
+          "sha256": "3c3f9d311cd502d6fc58bdf9de5f7b547a2b264912cd45618215074c19d61a4a"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_player_c_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1810,
+          "sha256": "a84e833e0a843c2ad6942bc81fb49ffe2ce082e0fee2abc3cd2fee920c295170"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_player_c.png"
+    },
+    "avatar_deputy": {
+      "id": "avatar_deputy",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "县丞头像",
+      "status": "reviewed",
+      "characterId": "deputy",
+      "sourcePath": "art/source/avatars/avatar_deputy.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_deputy_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 9482,
+          "sha256": "f8428e59f61023f687dabeef0c48b3dfd18aa8915456b51d99bcfd841e988325"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_deputy_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 2032,
+          "sha256": "1398fb1fcdde4aaf80d64aa9f5bc7438224bd365c9c4fbc2f887966e92795697"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_deputy.png"
+    },
+    "avatar_dianshi": {
+      "id": "avatar_dianshi",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "典史头像",
+      "status": "reviewed",
+      "characterId": "dianshi",
+      "sourcePath": "art/source/avatars/avatar_dianshi.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_dianshi_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 6770,
+          "sha256": "10fc989cb63f305ca936ca95ee472017c4df5190e12e15ad0de44a099d3f124c"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_dianshi_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1696,
+          "sha256": "bf530bb40abf98e6c48076f2d8d61ecacc551417e0dd9f44d4fcce8f6672b3a0"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_dianshi.png"
+    },
+    "avatar_clerk": {
+      "id": "avatar_clerk",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "户房经承头像",
+      "status": "reviewed",
+      "characterId": "clerk",
+      "sourcePath": "art/source/avatars/avatar_clerk.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_clerk_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 8100,
+          "sha256": "5ab50a104b516a636c30c333cf2593d31d41b8c6c9735262f9fe1a17dcbcdbc0"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_clerk_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1760,
+          "sha256": "8e0825aa6178de31c4ed995cabcdc968d839606623b75a022e18a070725f5f80"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_clerk.png"
+    },
+    "avatar_captain": {
+      "id": "avatar_captain",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "捕役头目头像",
+      "status": "reviewed",
+      "characterId": "captain",
+      "sourcePath": "art/source/avatars/avatar_captain.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_captain_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 10550,
+          "sha256": "459761a4ec4546e92f549af5b1176e564a1c9b32deb070e76c8ee5eeb67b587d"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_captain_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 2174,
+          "sha256": "82561636d36a6805ebb28864dbc6b23fb46c1503d3485abba2a7a15c52305996"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_captain.png"
+    },
+    "avatar_advisor": {
+      "id": "avatar_advisor",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "幕友头像",
+      "status": "reviewed",
+      "characterId": "advisor",
+      "sourcePath": "art/source/avatars/avatar_advisor.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_advisor_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 6990,
+          "sha256": "04b13385b335671eb0146f7474674397d0f44bcbef8be551a82ffb468db4521d"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_advisor_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1612,
+          "sha256": "d6a2cabe091122778e1f2618e43cc5a4c55f0eb21d5c9f776b901b2c16488664"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_advisor.png"
+    },
+    "avatar_merchant": {
+      "id": "avatar_merchant",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "粮商头像",
+      "status": "reviewed",
+      "characterId": "merchant",
+      "sourcePath": "art/source/avatars/avatar_merchant.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_merchant_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 9488,
+          "sha256": "84f2488b8c9ec608e31629a03d4f72061528f1fd95f37d689b381dad295236ad"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_merchant_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 2060,
+          "sha256": "92a7a84d56e1eb84acc31238082178fc20c5b3d72e4ab911676e3b6f3f349a5e"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_merchant.png"
+    },
+    "avatar_gentry": {
+      "id": "avatar_gentry",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "乡绅头像",
+      "status": "reviewed",
+      "characterId": "gentry",
+      "sourcePath": "art/source/avatars/avatar_gentry.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_gentry_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 8536,
+          "sha256": "7b32c5f79bb26da2937a3e6e35814b06165356816fd16865bf3730a1bb8660d0"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_gentry_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1744,
+          "sha256": "bebc7a3f66deda2540dfbff4ffcf91dcfca79bae4c75f9773510d17e1f0b5b85"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_gentry.png"
+    },
+    "avatar_farmer": {
+      "id": "avatar_farmer",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "农户代表头像",
+      "status": "reviewed",
+      "characterId": "farmer",
+      "sourcePath": "art/source/avatars/avatar_farmer.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_farmer_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 10832,
+          "sha256": "4bfb47f2132e5c3d338aa7401df2eb8b000d20975a71ac2da6934783bb216583"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_farmer_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 2256,
+          "sha256": "e2bd803caf49c7909a54484e7f6453cadf4a09da62dd05c7d87d662d39302b90"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_farmer.png"
+    },
+    "avatar_prefect": {
+      "id": "avatar_prefect",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "直属知府头像",
+      "status": "reviewed",
+      "characterId": "prefect",
+      "sourcePath": "art/source/avatars/avatar_prefect.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_prefect_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 9170,
+          "sha256": "4c51c9ad85b153c091303132833dc721a82187993a8e51a2056efc6e6ff146ee"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_prefect_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1968,
+          "sha256": "8b4865a6dbaf632fa5673177c212882fe116e290b39599bc97d95a736dde9df7"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_prefect.png"
+    },
+    "avatar_widow": {
+      "id": "avatar_widow",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "守产妇人头像",
+      "status": "reviewed",
+      "characterId": "widow",
+      "sourcePath": "art/source/avatars/avatar_widow.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_widow_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 8048,
+          "sha256": "c0bd2a10728175781c853256e7adc3b83c195b33925c55f9cb4e08cedeeb9936"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_widow_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1804,
+          "sha256": "b56f00f934fd62a736da6b6115bebf9e5c4e85c9f3928319762a3e4b91a8df3d"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_widow.png"
+    },
+    "avatar_doctor": {
+      "id": "avatar_doctor",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "地方医者头像",
+      "status": "reviewed",
+      "characterId": "doctor",
+      "sourcePath": "art/source/avatars/avatar_doctor.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_doctor_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 9160,
+          "sha256": "4749b9eb0e8f6505ca71365a188a7183718b99142bae290999cbe540c43d798a"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_doctor_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1844,
+          "sha256": "165f3115d66f61c2cef2d06c84f930188977861a7df5e20eba843a4f5d4570a5"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_doctor.png"
+    },
+    "avatar_boatman": {
+      "id": "avatar_boatman",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "船户头像",
+      "status": "reviewed",
+      "characterId": "boatman",
+      "sourcePath": "art/source/avatars/avatar_boatman.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_boatman_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 11018,
+          "sha256": "40e2d526a0faa17c2c8f20f7719657a698108797f5c772e2cf11d323cc617ec3"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_boatman_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 2160,
+          "sha256": "8421ac59a99ec6a98819ff0f39750a2b83b5e1473579f32df0fb263853a5fcb3"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_boatman.png"
+    },
+    "avatar_witness": {
+      "id": "avatar_witness",
+      "type": "avatar",
+      "phase": "P0",
+      "label": "年轻证人头像",
+      "status": "reviewed",
+      "characterId": "witness",
+      "sourcePath": "art/source/avatars/avatar_witness.png",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_witness_md.webp",
+          "width": 256,
+          "height": 256,
+          "targetMaxBytes": 61440,
+          "bytes": 6932,
+          "sha256": "405850fa4189264bdd9f935b7643b2a65e7790942087e660a1a48fa6f92c9543"
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_witness_sm.webp",
+          "width": 96,
+          "height": 96,
+          "targetMaxBytes": 15360,
+          "bytes": 1606,
+          "sha256": "40c8da4266985d62b54491b2bef56252a33af317a1ed3d90c5f84a38ee018ff2"
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "notes": "头肩像、浅纸底；无内置边框姓名；与立绘保持同一人物。",
+      "reference": "art/source/avatars/avatar_witness.png"
+    },
+    "icon_court": {
+      "id": "icon_court",
+      "type": "icon",
+      "phase": "P0",
+      "label": "公堂",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_court.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_court.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 226,
+          "sha256": "61523b6619481e9ced174a25cb8386a4ee528aab8fa4af052dee9b844d43689a"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_court.svg"
+    },
+    "icon_map": {
+      "id": "icon_map",
+      "type": "icon",
+      "phase": "P0",
+      "label": "辖地",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_map.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_map.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 227,
+          "sha256": "c677d899f62f4faf5c306bc7390dcd87d8f37fd05350d1956ac36c7a7a66ae08"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_map.svg"
+    },
+    "icon_cases": {
+      "id": "icon_cases",
+      "type": "icon",
+      "phase": "P0",
+      "label": "案牍",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_cases.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_cases.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 239,
+          "sha256": "429522ea4d484d1fbeab5c0cc38c8a5b93e68a5fc4502ef5a8b1fcb4ce02650f"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_cases.svg"
+    },
+    "icon_career": {
+      "id": "icon_career",
+      "type": "icon",
+      "phase": "P0",
+      "label": "仕途",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_career.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_career.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 207,
+          "sha256": "084b68a3acb4b1b82e900b852bf859f50c08e22511f0be5c64a5021ecf4ae18d"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_career.svg"
+    },
+    "icon_treasury": {
+      "id": "icon_treasury",
+      "type": "icon",
+      "phase": "P0",
+      "label": "钱粮",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_treasury.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_treasury.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 215,
+          "sha256": "5c972762760f44b8a3e3dbd10e829ae2556e0da8ba2b99404e0eee16ca29a89d"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_treasury.svg"
+    },
+    "icon_staff": {
+      "id": "icon_staff",
+      "type": "icon",
+      "phase": "P0",
+      "label": "官署",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_staff.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_staff.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 212,
+          "sha256": "1eed81280dac722c8fae1b03db350c0fce3d3e61b1ae7e174871e7bdf4a41d81"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_staff.svg"
+    },
+    "icon_silver": {
+      "id": "icon_silver",
+      "type": "icon",
+      "phase": "P0",
+      "label": "银",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_silver.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_silver.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 224,
+          "sha256": "1543d1a8bdecf9193ee9fb4a6c924c6b8b89cd5ee28eb1b05eb53d6c8332c8a3"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_silver.svg"
+    },
+    "icon_grain": {
+      "id": "icon_grain",
+      "type": "icon",
+      "phase": "P0",
+      "label": "粮",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_grain.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_grain.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 245,
+          "sha256": "d02a6e7b7721273b91318a11bfc304285760aea0bd6d717f56efc75e9a5e0e47"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_grain.svg"
+    },
+    "icon_livelihood": {
+      "id": "icon_livelihood",
+      "type": "icon",
+      "phase": "P0",
+      "label": "民生",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_livelihood.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_livelihood.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 218,
+          "sha256": "bc00ec4509fd4e8fac3d0e9f9c5e0788d25edc2aed155415febb58d56da7edcc"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_livelihood.svg"
+    },
+    "icon_economy": {
+      "id": "icon_economy",
+      "type": "icon",
+      "phase": "P0",
+      "label": "农商",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_economy.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_economy.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 249,
+          "sha256": "3cee17bae3c012c009e6983ed60ed084691dc97c61fcd3df3848a7cdfa85ecd2"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_economy.svg"
+    },
+    "icon_order": {
+      "id": "icon_order",
+      "type": "icon",
+      "phase": "P0",
+      "label": "治安",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_order.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_order.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 230,
+          "sha256": "5104ab8a02f212dc41a15431a7a23b0f791f583ecb2cdb928954988e675a35a4"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_order.svg"
+    },
+    "icon_integrity": {
+      "id": "icon_integrity",
+      "type": "icon",
+      "phase": "P0",
+      "label": "吏治",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_integrity.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_integrity.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 213,
+          "sha256": "384548934f1a10a97ca9e382b96c212f4ca4ec1691e81878e2f379f37ad71b66"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_integrity.svg"
+    },
+    "icon_time": {
+      "id": "icon_time",
+      "type": "icon",
+      "phase": "P0",
+      "label": "时令",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_time.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_time.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 221,
+          "sha256": "6c3bd90899fe776d0773af31a16e3cf85108fde4c3f910fce9c3d6e63a697f90"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_time.svg"
+    },
+    "icon_action": {
+      "id": "icon_action",
+      "type": "icon",
+      "phase": "P0",
+      "label": "精力",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_action.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_action.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 222,
+          "sha256": "756c5185b223d5ff9a41f60e936e36b808bfc93c344ac65845567d588561605e"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_action.svg"
+    },
+    "icon_build": {
+      "id": "icon_build",
+      "type": "icon",
+      "phase": "P0",
+      "label": "兴修",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_build.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_build.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 233,
+          "sha256": "ba22b7ca21395b61f953960e00b6496bb312812c7c1e63726def1cbfda670257"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_build.svg"
+    },
+    "icon_farm": {
+      "id": "icon_farm",
+      "type": "icon",
+      "phase": "P0",
+      "label": "劝农",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_farm.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_farm.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 217,
+          "sha256": "2e6b71b4b87f738474ca7bc107409949ffd13fbe0cd5c5397813958b6381aaaa"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_farm.svg"
+    },
+    "icon_trade": {
+      "id": "icon_trade",
+      "type": "icon",
+      "phase": "P0",
+      "label": "市场",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_trade.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_trade.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 218,
+          "sha256": "e855fa76e5f6790ad669e63dff02b4d232b060bb2a404cc207ce2a2fa09c9df8"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_trade.svg"
+    },
+    "icon_inspect": {
+      "id": "icon_inspect",
+      "type": "icon",
+      "phase": "P0",
+      "label": "巡查",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_inspect.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_inspect.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 245,
+          "sha256": "15290d43963eb67a7c5f6081872af86b1278573dc38cff9611d75f80674ff132"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_inspect.svg"
+    },
+    "icon_judge": {
+      "id": "icon_judge",
+      "type": "icon",
+      "phase": "P0",
+      "label": "审案",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_judge.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_judge.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 215,
+          "sha256": "8d405fd59dd5430b1c8b7ace16357b5cc7948e10b5d08e49edcaa6caea2e2683"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_judge.svg"
+    },
+    "icon_relief": {
+      "id": "icon_relief",
+      "type": "icon",
+      "phase": "P0",
+      "label": "赈济",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_relief.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_relief.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 223,
+          "sha256": "17d60ac80357ac557807885654b4b66bf44318278528a5e065395d57ae53173d"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_relief.svg"
+    },
+    "icon_dispatch": {
+      "id": "icon_dispatch",
+      "type": "icon",
+      "phase": "P0",
+      "label": "调拨",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_dispatch.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_dispatch.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 203,
+          "sha256": "e2bfa54c760028a0ab58239c03c59196864342acd7cf2658b047071fa250a6f2"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_dispatch.svg"
+    },
+    "icon_report": {
+      "id": "icon_report",
+      "type": "icon",
+      "phase": "P0",
+      "label": "呈报",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_report.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_report.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 219,
+          "sha256": "b158787ac1577bc743b5dbc79432e7d631b4aec369f4eb5c6e011bc06304208f"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_report.svg"
+    },
+    "icon_save": {
+      "id": "icon_save",
+      "type": "icon",
+      "phase": "P0",
+      "label": "存档",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_save.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_save.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 214,
+          "sha256": "f703fd2da3946f587865d76f8c80c5aecb9b5720873057fba3ed96a9f0d9e893"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_save.svg"
+    },
+    "icon_load": {
+      "id": "icon_load",
+      "type": "icon",
+      "phase": "P0",
+      "label": "读档",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_load.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_load.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 219,
+          "sha256": "ee2c2cd6087cc2d54ac5a01edc117ca18eacf83ee0b9d9a7b85cfa90a6bee3ff"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_load.svg"
+    },
+    "icon_settings": {
+      "id": "icon_settings",
+      "type": "icon",
+      "phase": "P0",
+      "label": "设置",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_settings.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_settings.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 274,
+          "sha256": "906d797c3a29280eaa338b453ba87fd8fb71928121768615bf3c97f440642459"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_settings.svg"
+    },
+    "icon_close": {
+      "id": "icon_close",
+      "type": "icon",
+      "phase": "P0",
+      "label": "关闭",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_close.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_close.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 199,
+          "sha256": "dfa5106748b4f882e3574de283106d9817b08eb2b2acecce281e5a55cba6e1aa"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_close.svg"
+    },
+    "icon_back": {
+      "id": "icon_back",
+      "type": "icon",
+      "phase": "P0",
+      "label": "返回",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_back.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_back.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 201,
+          "sha256": "bf452a1c1105d91565efbcba582f35a9df36f418390dfaef5e549db96f4a71ca"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_back.svg"
+    },
+    "icon_chevron_right": {
+      "id": "icon_chevron_right",
+      "type": "icon",
+      "phase": "P0",
+      "label": "展开",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_chevron_right.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_chevron_right.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 191,
+          "sha256": "6a4b7ec20349b803c7915cdc43d7e22595977d5f1774d8428d2fd9519047f3eb"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_chevron_right.svg"
+    },
+    "icon_confirm": {
+      "id": "icon_confirm",
+      "type": "icon",
+      "phase": "P0",
+      "label": "确认",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_confirm.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_confirm.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 193,
+          "sha256": "3269008a2819246dd32fdce67442cafc098ed8218677590d1113a5585dc865f2"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_confirm.svg"
+    },
+    "icon_warning": {
+      "id": "icon_warning",
+      "type": "icon",
+      "phase": "P0",
+      "label": "警示",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_warning.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_warning.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 208,
+          "sha256": "461d3f10451b70a6b468b09cdf7c8c154191acf2b01f54ad1e804d9800b0a0ef"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_warning.svg"
+    },
+    "icon_info": {
+      "id": "icon_info",
+      "type": "icon",
+      "phase": "P0",
+      "label": "说明",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_info.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_info.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 225,
+          "sha256": "60dd2166910f6f4c64095e4ad057c61570ba3a6f882ec04cb9e5e35d9f7af94c"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_info.svg"
+    },
+    "icon_personnel": {
+      "id": "icon_personnel",
+      "type": "icon",
+      "phase": "P0",
+      "label": "任事",
+      "status": "reviewed",
+      "characterId": null,
+      "sourcePath": "art/source/icons/icon_personnel.svg",
+      "sourceSize": [
+        24,
+        24
+      ],
+      "runtimeVariants": [
+        {
+          "name": "vector",
+          "path": "assets/art/icons/icon_personnel.svg",
+          "viewBox": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "targetMaxBytes": 8192,
+          "bytes": 232,
+          "sha256": "b3105aaa8ed4d9e79e8f6783fc4568cd64e1528069ffb590ed23bdad92ba796e"
+        }
+      ],
+      "slotIds": [
+        "icon_inline"
+      ],
+      "transparency": "transparent_canvas",
+      "fit": "contain",
+      "focalPoint": null,
+      "visualState": "neutral",
+      "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
+      "reference": "art/source/icons/icon_personnel.svg"
+    }
+  }
+}

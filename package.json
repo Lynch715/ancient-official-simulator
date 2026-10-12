@@ -1,0 +1,11 @@
+{
+  "name": "qinghe-magistrate",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "build": "node tools/build.mjs",
+    "dev": "python3 -m http.server 8765 --bind 127.0.0.1",
+    "test:release": "npm run build && node --test tests/offline/*.test.js"
+  }
+}
