@@ -6,3 +6,7 @@ node_modules/
 art/source/
 art/previews/
 art/qa/*.png
+
+# Local production metadata and original art workspace
+.openai/
+art/
