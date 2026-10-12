@@ -5,9 +5,10 @@ from zipfile import ZipFile, ZIP_DEFLATED
 root = Path(__file__).resolve().parent.parent
 subprocess.run(['node', 'tools/build.mjs'], cwd=root, check=True)
 subprocess.run(['node', 'tools/make-demo.mjs'], cwd=root, check=True)
-out = root / 'outputs/古代官员升职记_县府两任试玩包.zip'
+subprocess.run(['node', 'tools/make-tongzhi-demo.mjs'], cwd=root, check=True)
+out = root / 'outputs/古代官员升职记_县府三任试玩包.zip'
 out.parent.mkdir(exist_ok=True)
-instructions = '''古代官员升职记 · 县府两任（周制）
+instructions = '''古代官员升职记 · 县府三任（周制）
 
 解压后，macOS 可双击“启动游戏.command”，然后打开：
 http://127.0.0.1:8765
@@ -30,9 +31,10 @@ python3 -m http.server 8765 --bind 127.0.0.1
 文件下载不可用时，使用设置中的“履历文本备份与恢复”。
 
 知县考满称职且无待查责任，可办理府通判任命，继续三年156周粮运任期。
-同知及更高任期尚未开放。
+通判考满称职无待查责任，可接任同知，继续三年156周跨县水利赈济。
+知府及更高任期尚未开放。
 
-包内“体验履历”含通判开局演示档。导入前请先导出自己的履历，体验后可恢复。
+包内“体验履历”含通判与同知开局演示档。导入前请先导出自己的履历，体验后可恢复。
 关闭服务所在终端即可停止本地服务。
 '''
 with ZipFile(out, 'w', ZIP_DEFLATED) as archive:
@@ -40,6 +42,8 @@ with ZipFile(out, 'w', ZIP_DEFLATED) as archive:
         if path.is_file():
             archive.write(path, str(Path('古代官员升职记') / path.relative_to(root / 'dist')))
     archive.write(root / '玩法深化说明_v0.2.md', '古代官员升职记/玩法深化说明_v0.2.md')
+    archive.write(root / '同知任职说明_v0.5.md', '古代官员升职记/同知任职说明_v0.5.md')
+    archive.write(root / 'outputs/永平府_同知开局体验履历.json', '古代官员升职记/体验履历/永平府_同知开局体验履历.json')
     archive.write(root / '手机与发布说明_v0.4.md', '古代官员升职记/手机与发布说明_v0.4.md')
     archive.write(root / '府级任职说明_v0.3.md', '古代官员升职记/府级任职说明_v0.3.md')
     archive.write(root / 'outputs/永平府_通判开局体验履历.json', '古代官员升职记/体验履历/永平府_通判开局体验履历.json')

@@ -1,0 +1,18 @@
+// 任命明确的游戏化分工；项目、人口和工期均为虚构玩法单位。
+export const TZ_TERM=156;
+export const TZ_PROJECTS=[
+ {id:'levee',name:'三县联防堤',scene:'scene_river_flood',county:'linhe',cost:120,weekly:6,weeks:12,quality:55,defence:{qinghe:24,linhe:32,yongning:12},desc:'联通三县险段。完工后须核验填料；合格设施按现有养护状况减轻汛灾。'},
+ {id:'drain',name:'上下游分洪渠',scene:'scene_fields_canal',county:'qinghe',cost:100,weekly:5,weeks:10,quality:85,defence:{qinghe:15,linhe:12,yongning:8},desc:'把县内水口接入跨县分洪安排，减少上游排水挤压下游。'},
+ {id:'ferry',name:'三县接济渡口',scene:'scene_river_ferry',county:'yongning',cost:90,weekly:4,weeks:8,quality:85,defence:{qinghe:0,linhe:0,yongning:0},desc:'验收后且状况不低于40，采购粮运输由两周缩为一周；周末三县民生各增0.06。'}
+];
+const o=(id,label,desc,cost={},effect={},special='')=>({id,label,desc,cost,effect,special});
+export const TZ_EVENTS=[
+ {id:'D01',week:0,title:'共修一条堤',speaker:'deputy',text:'上游怕多出力，下游急着挡水。新任命准你统筹河工专项，新增工程仍须勘查报批。',options:[o('fair','按受益议定轮役','支出12两、1精力；三县协作各增8，工程仍须逐项报批。',{silver:12,ap:1},{trust:2},'fair'),o('section','先议险段，余项再商','临河协作增5，其余两县不变。',{}, {},'section'),o('equal','三县一概均摊','省去会商，三县协作各减6，低协作将拖慢施工。',{}, {trust:-2},'equal')]},
+ {id:'D02',week:13,title:'验工只见表面',speaker:'advisor',text:'匠人提醒，联防堤的承办方案沿用了薄填料，外表平整不能证明内里可靠。该项目的事实固定，开工早晚都须面对。',options:[o('expert','请匠人查验填料','支出10两、1精力，查明联防堤质量55；施工完成后仍须返工至85再验收。',{silver:10,ap:1},{integrity:2},'expert'),o('record','将疑点随卷记录','保留问题，之后可在工程卡中深验；当前不替工程背书。',{}, {integrity:1}),o('cover','把疑点从验单中删去','记录隐瞒质量责任，不能凭政绩消除；并不会提高真实质量。',{}, {integrity:-12},'misconduct')]},
+ {id:'D03',week:26,title:'灾民越县',speaker:'widow',text:'上游48名受灾居民已暂入临河，其中16名病弱者。人员已登记在安置册，不会因为签一份公文就恢复生计。',options:[o('shelter','协调接济，按实安置','支出12两；临河协作增6。后续口粮和复耕仍按实结算。',{silver:12},{trust:2},'shelter'),o('trace','协查原籍和回乡条件','支出1精力，登记可信度增8；先保留临时安置。',{ap:1},{registry:8}),o('expel','将新来48人强行送回','未核归程便移出48人，记作未落实安置及遣返责任，不能计入复耕。',{}, {integrity:-12},'expel')]},
+ {id:'D04',week:39,title:'以工代赈',speaker:'farmer',text:'河工需要劳力，安置居民需要收入。病弱者不能承担同样的工役，口粮与工钱要分开列账。',options:[o('work','自愿雇工，病弱另济','未来8周有施工时，每周另支4两工资，首项工程多推进1周；所有待安置者照常领粮。',{ap:1},{integrity:2},'work'),o('care','先济后工','支出12两改善赈场，三县民生各增2，不改变实际待安置人数。',{silver:12}, {},'care'),o('compel','规定出工才给口粮','登记为排斥病弱的责任；口粮结算仍按全部登记人口计算。',{}, {integrity:-12},'misconduct')]},
+ {id:'D05',week:52,title:'三县争渡口',speaker:'boatman',text:'接济渡口影响三县商路，也影响旧渡户生计。论证不能替代实际工程，运输缩时要等渡口验收后兑现。',options:[o('compare','核客货量并商议转业','支出10两、1精力；永宁协作增8，完成渡口勘查。',{silver:10,ap:1},{trust:2},'ferry'),o('trial','先试旧路，保留改线','支出6两；永宁协作增3，渡口仍须另行勘查报批。',{silver:6}, {},'trial'),o('favor','以旧渡户利益压下争议','永宁协作减8，不获得工程或运输收益。',{}, {trust:-2},'favor')]},
+ {id:'D06',week:78,title:'户籍与赈册不合',speaker:'clerk',text:'新增24名迁入受灾居民已临时登记在永宁，8名病弱。旧籍核销方便，却不能据此否定眼前真实的人口。',options:[o('register','临时核实，后续复查','支出8两、1精力；登记可信度增12，保留24人救助资格。',{silver:8,ap:1},{registry:12,integrity:2}),o('origin','原籍协查，先保留救济','登记可信度增4；等待协查时仍照实供粮。',{}, {registry:4}),o('exclude','只认旧籍，删去24人','从永宁册中移出24人，记漏救和不实登记责任，不算安置成功。',{}, {registry:-20,integrity:-12},'exclude')]},
+ {id:'D07',week:104,title:'知府催办大工程',speaker:'prefect',text:'知府提出河工之外再修门楼。本任只有河工赈济授权，不能将专款悄悄挪去撑门面。',options:[o('phase','据实提出分期安排','不挪用专款；上级信任增2，按现有项目实际进度核验。',{}, {trust:2}),o('petition','另报门楼预算','支出1精力，三周后批复门楼延期、不占本任预算；不提前增加拨银或政绩。',{ap:1}, {},'petition'),o('divert','挪河工款先做门楼','实际支出100两，留下挪用责任；门楼不计河工成绩。',{silver:100},{integrity:-15},'misconduct')]},
+ {id:'D08',week:143,title:'工成后谁养护',speaker:'deputy',text:'设施将移交下一任，各县想少担巡检。你须把实际状况、养护开支与未竟工程一并写入交接。',options:[o('maintain','固定巡检并继续养护','启用养护，已验收设施每项每周2两；缺钱会实记停护。',{}, {trust:2},'maintain'),o('report','列明缺口，据实交接','不改变当前养护安排，不伪造工程状态。',{}, {integrity:2}),o('false','把未完工也报成圆满','留下虚报责任，真实进度、质量和考核不随报告增加。',{}, {integrity:-15},'misconduct')]}
+];
