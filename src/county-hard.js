@@ -120,9 +120,10 @@ export function nextFloodWeek(s) {
     .map(([w]) => Number(w));
   return weeks.length ? Math.min(...weeks) : null;
 }
+// 严苛：不透露是否还有汛期，第三年秋汛窗口结束前都可巡堤备汛。
 export const canPrepare = (s) => {
   if (!isHard(s)) return s.turn < 65 && s.patrol < 3;
-  return nextFloodWeek(s) !== null && s.hard.prep < 3;
+  return s.turn <= 141 && s.hard.prep < 3;
 };
 export const preparation = (s) => (isHard(s) ? s.hard.prep : s.patrol);
 
@@ -143,7 +144,7 @@ const levy = (title, text) => ({
   ],
 });
 Object.assign(EVENTS, {
-  H01: levy("府檄摊派", "府里为修城与军需摊派各县，清河应解银若干，限一月内起解。"),
+  H01: levy("府檄摊派", "府里为修城与军需摊派各县，限一月内起解。"),
   H03: levy("又一道摊派", "边饷吃紧，府里再次行文摊派。县丞翻着账册，没有说话。"),
   H02: {
     title: "蝻子出土",
@@ -169,7 +170,7 @@ export function hardEventDefinition(s, id, event) {
   if (!isHard(s)) return event;
   if (id === "H01" || id === "H03") {
     const amt = s.hard.levy[id];
-    event.text += ` 本次应解${amt}两。`;
+    event.text = event.text.replace("起解。", `起解。清河须解银${amt}两。`).replace("没有说话。", `没有说话：这回清河又摊到${amt}两。`);
     event.options[0].cost = { silver: amt };
     event.options[1].cost = { silver: Math.round(amt / 2), ap: 1 };
     event.options[1].desc = `先解${Math.round(amt / 2)}两，余${amt - Math.round(amt / 2)}两并入下季上解。`;
@@ -299,6 +300,7 @@ export function afterHarvest(s) {
   if (isHard(s)) s.hard.harvestMult = 1;
 }
 export const staffFactor = (s) => (isHard(s) ? HARD.staffFactor : 1);
+export const worksFactor = (s) => (isHard(s) ? HARD.staffFactor : 1);
 export const householdCost = (s) => (isHard(s) ? HARD.householdCost : 12);
 export const weeklyAp = (s) => (s.fatigue >= 65 ? 2 : 3) + (isHard(s) && s.hard.hired ? 1 : 0);
 
@@ -399,14 +401,14 @@ export function hardScores(s, ctx) {
         (h.floodQuality.length ? (8 - floods) * 1.5 : 0),
     ),
     finance: clamp(25 + (blend("economy") - 42) * 1.4 + remitRate * 25 - Math.min(15, h.remitMissed * 3)),
-    judicial: clamp(42 + s.wellJudged * 9 - s.badJudged * 8 - ctx.executionPenalty(s) - open * 6 - h.overdue * 5 + h.settled.length * 4),
+    judicial: clamp(42 + s.wellJudged * 9 - s.badJudged * 8 - ctx.executionPenalty(s) - open * 6 - h.overdue * 5 - (h.lateExec || 0) * 4 + h.settled.length * 4),
     integrity: clamp(blend("integrity")),
     mission: clamp(
-      33 + s.projectsCompleted * 9 +
+      25 + s.projectsCompleted * 9 +
         (s.flags.handoverFinal ? 4 : 0) +
         Math.min(6, Math.max(0, (s.education - 40) / 5)) +
-        Math.min(12, s.governance.mandatesMet * 1.5) -
-        Math.min(9, s.governance.mandatesMissed * 1.5),
+        Math.min(24, s.governance.mandatesMet * 3) -
+        Math.min(18, s.governance.mandatesMissed * 3),
     ),
   };
 }
@@ -422,5 +424,6 @@ export function validateHard(s) {
     if (!Number.isInteger(Number(w)) || Number(w) < 0 || Number(w) > 155 || !EVENTS[id]) throw Error("严苛日程异常。");
   for (const k of ["droughtSev", "floodSev", "flood2Sev", "harvestMult", "prep", "owedSilver", "owedGrain", "remitDue", "remitPaid", "remitMissed", "hireWeeks", "donated", "overdue", "levyOnPeople"])
     if (!Number.isFinite(h[k]) || h[k] < 0 || h[k] > 1e6) throw Error("严苛数值异常。");
+  if (h.lateExec !== undefined && (!Number.isInteger(h.lateExec) || h.lateExec < 0)) throw Error("严苛数值异常。");
   if (typeof h.hired !== "boolean" || !Array.isArray(h.settled) || !Array.isArray(h.floodQuality) || !h.attempts || !h.levy) throw Error("严苛记录异常。");
 }

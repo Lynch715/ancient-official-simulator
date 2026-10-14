@@ -180,7 +180,11 @@ export function staffWorkBonus(s, projectId) {
     0,
     ...Object.entries(s.staffAssignments)
       .filter(([, task]) => task === "works")
-      .map(([id]) => STAFF_PROFILES[id]?.tasks.works ?? 1),
+      .map(
+        ([id]) =>
+          (STAFF_PROFILES[id]?.tasks.works ?? 1) *
+          (isHard(s) ? HARD.staffFactor : 1),
+      ),
   );
 }
 export function staffTaskOptions(s, id) {

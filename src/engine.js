@@ -237,7 +237,7 @@ function openWeek(s) {
         due: null,
         result: null,
       };
-      log(s, "新案入牍", `${c.name}已立卷。可在案牍中逐项调查。`, "case");
+      log(s, "新案入牍", `${countyCase(s, c.id).name}已立卷。可在案牍中逐项调查。`, "case");
     }
   log(s, "本周开衙", `${label(s)}。先看本周要事，再安排工程与调查。`);
 }
@@ -531,8 +531,8 @@ function assess(s) {
     scores.people * 0.25 +
       scores.finance * 0.25 +
       scores.judicial * 0.2 +
-      scores.integrity * 0.2 +
-      scores.mission * 0.1,
+      scores.integrity * (isHard(s) ? 0.15 : 0.2) +
+      scores.mission * (isHard(s) ? 0.15 : 0.1),
   );
   let misconduct = !!(s.flags.bribe || s.flags.concealed || s.flags.destroyed);
   const duties = countyDuties(s);

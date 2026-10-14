@@ -77,7 +77,7 @@ let s = null,
   tab = "court",
   modal = null,
   art = null,
-  onboarding = { family: "humble", appearance: "player_a" },
+  onboarding = { family: "humble", appearance: "player_a", difficulty: "hard" },
   lastFocus = null,
   storageError = "",
   artError = "";
@@ -312,7 +312,15 @@ function startView() {
     )
     .join(
       "",
-    )}</div>${btn("接印赴任 " + icon("chevron_right"), "start", "", "button primary large")}<div class="notice hard-note"><p><b>严苛难度</b>：开局银粮微薄，季末须实解府库；旱涝的时间与轻重每局不同；考评按全任平均与期末各半计算，不再封顶。精打细算、未雨绸缪，才可能称职。</p></div><div class="onboarding-note">知县、通判、同知、知府四任各156周，可随时存档。<br>考核失利可整改复考，主动违法另案查核。<br>历史制度为参照，人物与地方为虚构。</div>${btn("办事指南", "help", "", "text-button")}${btn("导入已有履历", "import", "", "text-button")}${storageError ? `<p class="warning-text">${storageError}</p>` : ""}</section></main>`;
+    )}</div><div class="field-label">为官难度</div><div class="family-options difficulty-options">${[
+      ["hard", "严苛", "银粮微薄，季末实解府库；旱涝时间与轻重每局不同，考评不封顶。精打细算、未雨绸缪，才可能称职。"],
+      ["standard", "常例", "钱粮宽裕，灾情按固定时节到来，适合初次上手、熟悉各项办事流程。"],
+    ]
+      .map(
+        ([id, name, desc]) =>
+          `<button data-act="difficulty" data-id="${id}" class="family ${onboarding.difficulty === id ? "selected" : ""}" aria-pressed="${onboarding.difficulty === id}"><b>${name}</b><span>${desc}</span></button>`,
+      )
+      .join("")}</div>${btn("接印赴任 " + icon("chevron_right"), "start", "", "button primary large")}<div class="onboarding-note">难度在接印时选定，整段仕途沿用；知县、通判、同知、知府四任各156周，可随时存档。<br>考核失利可整改复考，主动违法另案查核。<br>历史制度为参照，人物与地方为虚构。</div>${btn("办事指南", "help", "", "text-button")}${btn("导入已有履历", "import", "", "text-button")}${storageError ? `<p class="warning-text">${storageError}</p>` : ""}</section></main>`;
 }
 function metrics() {
   const items = [
@@ -347,7 +355,7 @@ function court() {
       "一县之事，先辨轻重缓急。",
       `<div class="ap-badge">${icon("action")}<b>${s.ap}</b><span>可用精力</span></div>`,
     ) +
-    `<div class="mobile-shortcuts">${btn(icon("treasury") + " 钱粮账簿", "tab", 'data-id="treasury"', "text-button")}${btn(icon("staff") + " 官署任事", "tab", 'data-id="staff"', "text-button")}${btn(icon("report") + " 县政方略", "tab", 'data-id="governance"', "text-button")}</div><div class="court-top"><section class="hero-stage">${scene("scene_county_hall", "hero-scene", "清河县公堂")}<div class="hero-wash"></div><div class="hero-caption"><span>正堂 · 清河县衙</span><h2>为官一任<br>安此一方</h2><p>案上是公文，案下是人间。</p></div>${portrait(s.appearance, "player-figure")}<span class="scene-signature">${esc(s.name)} · ${s.turn < 13 ? "初任知县" : "清河县知县"}</span></section><section class="today-panel"><div class="section-head"><h2>案头待办</h2><span>${s.events.length}件</span></div>${s.events.length ? s.events.map(eventCard).join("") : `<div class="empty compact">${icon("confirm")}<h3>本周没有新来信</h3><p>例行事务由属员办理。可安排工程、调查案卷，或结算下一周。</p></div>`}<div class="small-link-row">${btn(`待办案卷 <b>${openCases}</b> ${icon("chevron_right")}`, "tab", 'data-id="cases"', "text-button")}${btn("查看任职进度", "tab", 'data-id="career"', "text-button")}${s.receipts.length ? btn("最近回执", "receipt", "", "text-button") : ""}</div></section></div>${metrics()}${hardPanel()}${mandateCard()}<div class="two-col"><section class="panel"><div class="section-head"><h2>亲自督办</h2><span>每周三点 · 高疲劳时减少</span></div><div class="action-grid">${ACTIONS.map(
+    `<div class="mobile-shortcuts">${btn(icon("treasury") + " 钱粮账簿", "tab", 'data-id="treasury"', "text-button")}${btn(icon("staff") + " 官署任事", "tab", 'data-id="staff"', "text-button")}${btn(icon("report") + " 县政方略", "tab", 'data-id="governance"', "text-button")}</div><div class="court-top"><section class="hero-stage">${scene("scene_county_hall", "hero-scene", "清河县公堂")}<div class="hero-wash"></div><div class="hero-caption"><span>正堂 · 清河县衙</span><h2>为官一任<br>安此一方</h2><p>案上是公文，案下是人间。</p></div>${portrait(s.appearance, "player-figure")}<span class="scene-signature">${esc(s.name)} · ${s.turn < 13 ? "初任知县" : "清河县知县"}</span></section><section class="today-panel"><div class="section-head"><h2>案头待办</h2><span>${s.events.length + dutyItems().length}件</span></div>${s.events.map(eventCard).join("")}${dutyItems().map(dutyCard).join("")}${s.events.length || dutyItems().length ? "" : `<div class="empty compact">${icon("confirm")}<h3>本周没有新来信</h3><p>例行事务由属员办理。可安排工程、调查案卷，或结算下一周。</p></div>`}<div class="small-link-row">${btn(`待办案卷 <b>${openCases}</b> ${icon("chevron_right")}`, "tab", 'data-id="cases"', "text-button")}${btn("查看任职进度", "tab", 'data-id="career"', "text-button")}${s.receipts.length ? btn("最近回执", "receipt", "", "text-button") : ""}</div></section></div>${metrics()}${hardPanel()}${mandateCard()}<div class="two-col"><section class="panel"><div class="section-head"><h2>亲自督办</h2><span>每周三点 · 高疲劳时减少</span></div><div class="action-grid">${ACTIONS.map(
       (a) => {
         let reason = s.finished
           ? "本任已结束"
@@ -834,7 +842,7 @@ function renderModal() {
   if (m.type === "settings")
     html = dialog(
       "存档与设置",
-      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("查看美术图鉴", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府四任 · v0.13 · 履历保存在当前浏览器</small></div>`,
+      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("查看美术图鉴", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府四任 · v0.14 · 履历保存在当前浏览器</small></div>`,
     );
   if (m.type === "save-text")
     html = dialog(
@@ -926,6 +934,13 @@ document.addEventListener("click", (e) => {
     case "family": {
       const name = $("#player-name")?.value;
       onboarding.family = id;
+      render();
+      if (name) $("#player-name").value = name;
+      break;
+    }
+    case "difficulty": {
+      const name = $("#player-name")?.value;
+      onboarding.difficulty = id === "standard" ? "standard" : "hard";
       render();
       if (name) $("#player-name").value = name;
       break;
@@ -1390,11 +1405,64 @@ function hireCard() {
 // 手机端常驻工具栏：精力、待办与结束本周，各页都能直接推进。
 function countyToolbar() {
   const urgent = s.events.filter((e) => e.mandatory).length,
-    letters = s.events.length;
+    letters = s.events.length + dutyItems().length;
   const action = s.finished
     ? btn("查看任满考核", "tab", 'data-id="career"', "button primary")
     : urgent
       ? btn(`先办本周要事 · ${urgent}件`, "tab", 'data-id="court"', "button primary")
       : btn(`结束本周 ${icon("chevron_right")}`, "advance", "", "button primary");
   return `<div class="county-toolbar" role="region" aria-label="本周进度"><div><b>${s.finished ? "三年任满" : `精力 ${s.ap}`}</b><span>${s.finished ? "履历已归卷" : letters ? `案头${letters}件` : "案头已清"}</span></div>${action}</div>`;
+}
+
+// 公堂案头：除来信外，列出有期限的判后执行、待查案卷和需亲自安排的地方要务。
+function dutyItems() {
+  if (!s || s.finished) return [];
+  const items = [];
+  for (const c of Object.values(s.cases)) {
+    const name = countyCase(s, c.id).name;
+    if (["awaiting", "overdue"].includes(c.execution?.status))
+      items.push({
+        kind: "case",
+        id: c.id,
+        tag: "判后执行",
+        urgent: true,
+        late: c.execution.status === "overdue",
+        title: name,
+        text: c.execution.status === "overdue" ? "复核已获准，执行已迟延，越拖越伤民生与信任。" : `复核已获准，须在${Math.max(0, c.execution.deadline - s.turn)}周内安排执行。`,
+      });
+    else if (["open", "returned"].includes(c.status)) {
+      const left = isHard(s) ? HARD.caseLimit - (s.turn - c.opened) : null;
+      items.push({
+        kind: "case",
+        id: c.id,
+        tag: c.status === "returned" ? "退回补查" : "案卷待查",
+        urgent: left !== null && left <= 4,
+        late: !!c.overdue,
+        title: name,
+        text: left === null ? "查证后拟判，呈府复核。" : c.overdue ? "已逾呈审期限，仍须办结。" : `立卷${HARD.caseLimit}周内须呈审，尚余${Math.max(0, left)}周。`,
+      });
+    }
+  }
+  const m = s.governance.mandate;
+  if (m?.status === "active" && (m.mode === "verified" ? !m.ordered : s.governance.districts[m.district][m.metric] < m.target)) {
+    const d = DISTRICTS.find((x) => x.id === m.district);
+    items.push({
+      kind: m.mode === "verified" && !m.checked ? "inspect" : "district",
+      id: m.district,
+      tag: "地方要务",
+      urgent: m.due - s.turn <= 3,
+      title: `${d.name} · 改善${LOCAL_METRICS[m.metric]}`,
+      text: `${Math.max(0, m.due - s.turn)}周后核定：${m.mode === "verified" && !m.checked ? "先走访勘察核实现场" : "到辖地安排投入"}。`,
+    });
+  }
+  return items;
+}
+function dutyCard(d) {
+  const act =
+    d.kind === "case"
+      ? `data-act="case" data-id="${d.id}"`
+      : d.kind === "inspect" && s.ap > 0 && !s.actions.includes("inspect")
+        ? `data-act="action" data-id="inspect"`
+        : `data-act="district" data-id="${d.id}"`;
+  return `<button class="event-card duty-card ${d.urgent ? "urgent" : ""}" ${act}><div class="event-copy"><div class="event-meta">${d.tag}<span>${d.late ? "已逾期" : d.urgent ? "期限将至" : "有期限"}</span></div><h3>${esc(d.title)}</h3><p>${esc(d.text)}</p></div>${icon("chevron_right")}</button>`;
 }

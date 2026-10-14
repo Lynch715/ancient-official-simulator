@@ -29,7 +29,7 @@ test("严苛知县升任通判：开任钱粮缩减，申请数额与期限随�
   assert.equal(p.silver, OFFICE_HARD.pref.silver);
   assert.equal(p.grain, OFFICE_HARD.pref.grain);
   assert(OFFICE_HARD.pref.needs.includes(p.request.need));
-  assert(p.request.due - p.turn >= 8 && p.request.due - p.turn <= 13);
+  assert(p.request.due - p.turn >= 7 && p.request.due - p.turn <= 12);
   const a = prefHard(7, PREF_EVENTS),
     b = prefHard(8, PREF_EVENTS);
   assert.deepEqual(prefHard(7, PREF_EVENTS), a);

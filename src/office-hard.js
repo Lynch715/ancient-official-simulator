@@ -4,10 +4,10 @@
 import { roll } from "./county-hard.js";
 
 export const OFFICE_HARD = {
-  pref: { silver: 300, grain: 400, allot: 8, use: { qinghe: 4, linhe: 5, yongning: 4 }, needs: [60, 60, 80, 100, 120, 120], lowStock: 80 },
-  tz: { silver: 780, grain: 420, net: 6, people: [53, 0.006], integrity: [56, 0.009] },
-  zf: { silver: 920, grain: 480, net: 8, economyDrift: 0.16, orderDrift: 0.18, goalStep: 6, people: [53, 0.006], integrity: [56, 0.009] },
-  integrity: [52, 0.009],
+  pref: { silver: 300, grain: 400, allot: 8, use: { qinghe: 4, linhe: 5, yongning: 4 }, needs: [60, 80, 100, 120, 120, 140], lowStock: 80 },
+  tz: { silver: 780, grain: 420, net: 6, people: [53, 0.006], integrity: [60, 0.009] },
+  zf: { silver: 920, grain: 480, net: 8, economyDrift: 0.16, orderDrift: 0.18, goalStep: 6, people: [53, 0.006], integrity: [60, 0.009] },
+  integrity: [50, 0.012],
   people: [45, 0.006],
 };
 const between = (seed, key, min, max) => min + Math.floor(roll(seed, key) * (max - min + 1));
@@ -75,7 +75,7 @@ export function prefHard(seed, events) {
   const h = base(seed);
   h.weeks = jitter(seed, "pref", events);
   h.needs = Array.from({ length: 12 }, (_, i) => OFFICE_HARD.pref.needs[between(seed, `need:${i}`, 0, OFFICE_HARD.pref.needs.length - 1)]);
-  h.spans = Array.from({ length: 12 }, (_, i) => between(seed, `span:${i}`, 8, 13));
+  h.spans = Array.from({ length: 12 }, (_, i) => between(seed, `span:${i}`, 7, 12));
   h.second = Array.from({ length: 12 }, (_, i) => roll(seed, `second:${i}`) < 0.35);
   h.lean = { year: between(seed, "lean-year", 0, 2), county: ["qinghe", "linhe", "yongning"][between(seed, "lean-county", 0, 2)] };
   h.shoal = { week: between(seed, "shoal", 140, 150), length: between(seed, "shoal-len", 4, 8) };

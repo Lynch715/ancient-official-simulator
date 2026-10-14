@@ -172,7 +172,7 @@ function mandate(s) {
     start: pick.value,
     target: Math.min(
       95,
-      s.difficulty === "hard" ? Math.ceil(pick.value + 8) : pick.value + 8,
+      s.difficulty === "hard" ? Math.ceil(pick.value + 6) : pick.value + 8,
     ),
     due: Math.min(156, (Math.floor(s.turn / 13) + 1) * 13),
     status: "active",
@@ -539,6 +539,7 @@ export function settleGovernance(s, ctx) {
     if (e.status === "awaiting" && e.deadline <= s.turn) {
       e.status = "overdue";
       ctx.effect(s, { people: -2, trust: -1 });
+      if (s.hard) s.hard.lateExec = (s.hard.lateExec || 0) + 1;
       ctx.log(
         s,
         "判后执行迟延",
@@ -562,7 +563,7 @@ export function settleGovernance(s, ctx) {
       ctx.log(
         s,
         "阶段要务达成",
-        `${DISTRICTS.find((d) => d.id === m.district).name}的${LOCAL_METRICS[m.metric]}达到${m.target}，本次实际值${round(value)}。`,
+        `${DISTRICTS.find((d) => d.id === m.district).name}的${LOCAL_METRICS[m.metric]}达到${Math.ceil(m.target)}，本次实际值${Math.floor(value)}。`,
         "gain",
       );
     }

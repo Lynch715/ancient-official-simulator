@@ -2,21 +2,21 @@ export const SEASONS = ["春", "夏", "秋", "冬"];
 export const FAMILIES = {
   humble: {
     name: "寒门出身",
-    desc: "家资虽薄，更知稼穑艰难。",
+    desc: "家资虽薄，更知稼穑艰难。民生、吏治起点最高，私产最少。",
     private: 90,
     people: 57,
     integrity: 72,
   },
   scholar: {
     name: "书香门第",
-    desc: "熟悉文书礼法，也背负家族期望。",
+    desc: "熟悉文书礼法，也背负家族期望。各项居中，私产可支撑一段自聘书启。",
     private: 180,
     people: 52,
     integrity: 72,
   },
   gentry: {
     name: "乡绅之家",
-    desc: "家资宽裕，来往人情亦多。",
+    desc: "家资宽裕，来往人情亦多。私产最厚，民生、吏治起点略低。",
     private: 340,
     people: 50,
     integrity: 68,

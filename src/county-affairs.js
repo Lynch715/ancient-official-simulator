@@ -23,14 +23,15 @@ const item = (
 export const AFFAIRS = {
   C01: item(
     56,
-    "旱后重新排水次",
+    "补灌的先后",
     "farmer",
     "scene_fields_canal",
     "fields",
     (s) =>
-      s.flags.waterAgreement
-        ? "两岸沿用原轮水约定，旱后水位回升，几块晚种田想补一次灌溉。原时段和实际需水要重新对照。"
-        : "旱后水位回升，早种与晚种田同时要求放水。里老带来田亩和播种日期，请县里排明先后。",
+      (s.flags.waterAgreement ? "两岸沿用原轮水约定，" : "") +
+      (s.flags.drought || s.difficulty !== "hard"
+        ? "旱后水位回升，早种与晚种田同时要求放水。里老带来田亩和播种日期，请县里排明先后。"
+        : "入春雨水偏少，早种与晚种田同时要求放水。里老带来田亩和播种日期，请县里排明先后。"),
     ["到水口核定补灌时段", "雇人疏通两处田间支口", "交里老保留争议与水位记录"],
     "commerce",
     "canal",
@@ -48,14 +49,15 @@ export const AFFAIRS = {
   ),
   C03: item(
     68,
-    "退水后的堤脚",
+    "堤脚的冲刷痕",
     "captain",
     "scene_embankment_calm",
     "river",
     (s) =>
-      s.projects.some((p) => p.id === "embankment" && p.status === "complete")
-        ? "东堤已交付，退水后几处堤脚露出泥痕。是表面冲刷还是需要补护，应先把位置点清。"
-        : "退水后河边露出几处冲刷痕。东堤尚未交付，捕役请先标明临时护岸与施工地段。",
+      (s.flags.floodResolved || s.difficulty !== "hard" ? "退水后" : "几场春雨后，") +
+      (s.projects.some((p) => p.id === "embankment" && p.status === "complete")
+        ? "东堤几处堤脚露出泥痕。是表面冲刷还是需要补护，应先把位置点清。"
+        : "河边露出几处冲刷痕。东堤尚未交付，捕役请先标明临时护岸与施工地段。"),
     ["逐段查勘，圈出需补处", "派工补护现有险段", "留入巡堤册，交属员跟看"],
     "security",
     "embankment",

@@ -67,10 +67,10 @@ export function actionDescription(s, a) {
   if (c?.kind === "follow")
     return "跟办地方在办事项，核验提前一周；成果仍在到期查验时入账。";
   if (a.id === "patrol")
-    return nextFloodWeek(s) !== null
+    return canPrepare(s) || (isHard(s) && s.turn <= 141)
       ? `改善治安；汛前准备${Math.min(3, preparation(s))}/3${preparation(s) >= 3 ? "，已备足" : "，本次补一次巡查"}${isHard(s) ? "。汛期何时到来，要看天时" : ""}。`
       : isHard(s)
-        ? "本任暂无可预备的汛期，本次巡守只改善治安。"
+        ? "改善治安。"
         : "汛期已过，本次巡守改善治安，不再积累汛前准备。";
   return a.desc;
 }

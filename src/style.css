@@ -4221,3 +4221,12 @@ textarea:focus-visible {
 .section-head h2 {
   flex-shrink: 0;
 }
+.duty-card {
+  border-left: 3px solid var(--gold);
+}
+.duty-card.urgent {
+  border-left-color: var(--red);
+}
+.duty-card .event-copy {
+  grid-column: 1 / 3;
+}
