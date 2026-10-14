@@ -842,7 +842,7 @@ function renderModal() {
   if (m.type === "settings")
     html = dialog(
       "存档与设置",
-      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("查看美术图鉴", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府四任 · v0.14 · 履历保存在当前浏览器</small></div>`,
+      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("查看美术图鉴", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府四任 · v0.15 · 履历保存在当前浏览器</small></div>`,
     );
   if (m.type === "save-text")
     html = dialog(
