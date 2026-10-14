@@ -1,3 +1,5 @@
+import { mainlineContext } from "./office-mainline.js";
+import { officeStoriesView, storyBadge } from "./office-stories-view.js";
 import { officeEvent } from "./office-hard.js";
 import { zhifuCase } from "./case-content.js";
 import { canFinish } from "./rules.js";
@@ -20,7 +22,7 @@ import {
 export function zhifuView(s, h) {
   const { esc, num, scene, avatar, portrait, btn, icon } = h,
     q = s.zhifu,
-    event = officeEvent(q, ZF_EVENTS.find((e) => e.id === q.event)),
+    event = mainlineContext(s, "zhifu", officeEvent(q, ZF_EVENTS.find((e) => e.id === q.event))),
     goal = q.goal;
   const disabled = (cost = {}) =>
     q.finished || Object.entries(cost).some(([k, v]) => q[k] < v);
@@ -72,7 +74,7 @@ export function zhifuView(s, h) {
     .filter((t) => t.status !== "working")
     .slice()
     .reverse();
-  return `<div class="pref-shell zf-shell"><header class="masthead"><div class="brand"><span class="brand-seal">永<br>平</span><span>古代官员升职记<small>卷四 · 一府之治</small></span></div><div class="header-right">${btn(icon("save"), "save", 'aria-label="手动存档"', "header-button")}${btn(icon("settings"), "settings", 'aria-label="设置与存档"', "header-button")}</div></header><main class="pref-main" id="main-content"><div class="page-heading"><div><span class="eyebrow">永平府 · ${q.finished ? "知府三年任满" : zfLabel(q)}</span><h1>一府之治</h1><p>${esc(s.name)} · 正四品知府 · 用人、统筹与核实</p></div><div class="ap-badge">${icon("action")}<b>${q.ap}</b><span>可用精力</span></div></div><nav class="pref-nav" aria-label="知府页内导航"><a href="#zf-counties">三县预算</a><a href="#zf-reports">履职核验</a><a href="#zf-cases">上诉与联案</a><a href="#zf-works">承接河工</a><a href="#zf-record">四任履历</a>${s.receipts.length ? btn("最近回执", "receipt", "", "text-button") : ""}</nav><section class="pref-hero">${scene("scene_prefecture_hall", "hero-scene", "永平府议事堂")}<div class="hero-wash"></div><div class="hero-caption"><span>永平府 · 府署</span><h2>永平府<br>三县同治</h2><p>公文、县情、交付。</p></div>${portrait(s.appearance, "player-figure")}</section><div class="metrics">${[
+  return `<div class="pref-shell zf-shell"><header class="masthead"><div class="brand"><span class="brand-seal">永<br>平</span><span>古代官员升职记<small>卷四 · 一府之治</small></span></div><div class="header-right">${btn(icon("save"), "save", 'aria-label="手动存档"', "header-button")}${btn(icon("settings"), "settings", 'aria-label="设置与存档"', "header-button")}</div></header><main class="pref-main" id="main-content"><div class="page-heading"><div><span class="eyebrow">永平府 · ${q.finished ? "知府三年任满" : zfLabel(q)}</span><h1>一府之治</h1><p>${esc(s.name)} · 正四品知府 · 用人、统筹与核实</p></div><div class="ap-badge">${icon("action")}<b>${q.ap}</b><span>可用精力</span></div></div><nav class="pref-nav" aria-label="知府页内导航"><a href="#zf-stories">剧情与案牍 · ${storyBadge(s, "zhifu")}</a><a href="#zf-counties">三县预算</a><a href="#zf-reports">履职核验</a><a href="#zf-cases">上诉与联案</a><a href="#zf-works">承接河工</a><a href="#zf-record">四任履历</a>${s.receipts.length ? btn("最近回执", "receipt", "", "text-button") : ""}</nav><section class="pref-hero">${scene("scene_prefecture_hall", "hero-scene", "永平府议事堂")}<div class="hero-wash"></div><div class="hero-caption"><span>永平府 · 府署</span><h2>永平府<br>三县同治</h2><p>公文、县情、交付。</p></div>${portrait(s.appearance, "player-figure")}</section><div class="metrics">${[
     ["统筹官银", q.silver, "两"],
     ["府仓实粮", q.grain, "石"],
     [
@@ -94,6 +96,7 @@ export function zhifuView(s, h) {
     )
     .join("")}</div>
  ${q.finished ? `<section class="assessment"><div class="assessment-score"><span>知府考语</span><h2>${q.outcome.rating}</h2><strong>${q.outcome.score}<small>/100</small></strong></div><div><h2>${q.outcome.candidate ? "一府有治，列入按察司副使候选" : "本任得失，据实交接"}</h2><p>${q.outcome.summary}</p><p>按察司副使任期尚未开放。当前履历可导出保存；未验报告和未竟事项随卷保留。</p>${btn("导出四任履历", "export", "", "button outline")}</div></section>` : `<section class="mandate-panel"><div>${icon("report")}</div><div><span class="eyebrow">本阶段要务 · ${goal.due - q.turn}周后核定</span><h3>${q.counties[goal.county].name} · ${goal.metric === "economy" ? "农商恢复" : "护道治安"}</h3><p>当前${num(q.counties[goal.county][goal.metric])} / 目标${num(goal.target)}。每13周选择短板县，按实际指标核定；报称不代替实效。请给交付留出时间。</p></div></section>${event ? `<section class="panel"><div class="section-head"><h2>本周知府公文</h2><span>须先处置</span></div><div class="speaker">${avatar(event.speaker)}<div><b>${event.title}</b><span>府政统筹 · 依权限核办</span></div></div><p>${event.text}</p><div class="choice-list">${event.options.map((o) => btn(`<b>${o.label}</b><small>${costText(o.cost)}</small><p>${o.desc}</p>${decisionRisk("zhifu", event.id, o.id) ? `<p class="warning-text">${decisionRisk("zhifu", event.id, o.id)}</p>` : ""}`, "zf-event", `data-choice="${o.id}"`, "choice", disabled(o.cost))).join("")}</div></section>` : '<div class="notice"><p>本周公文已办，可转到县情、报告或案卷安排差事。</p></div>'}`}
+ ${officeStoriesView(s, "zhifu", h)}
  <section class="spaced" id="zf-counties"><div class="section-head"><h2>三县预算与属官</h2><span>拨款 → 办理 → 交付 → 现场核验</span></div><div class="pref-counties">${counties}</div></section>
  <section class="panel" id="zf-reports"><div class="section-head"><h2>履职报告核验</h2><span>在外巡察 ${inspectorCount(q)}/2组</span></div><p>交付时已结算实际变化。报表须另派员核验两周，当前每份${auditCost(q)}两、1精力${q.auditCredits ? `（底册优惠还余${q.auditCredits}份）` : ""}；查实侵渔形成证据，未追回的款不计收入。调查属官与核验报告共用两组人手。</p>${
    reports.length

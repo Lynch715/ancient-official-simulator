@@ -1,3 +1,4 @@
+import { MAINLINE_TEXT } from "./office-mainline.js";
 // 永平府及人物、金额、工期均为游戏化设定，不视作明代制度定额。
 export const ZF_TERM = 156;
 export const ZF_TASKS = {
@@ -289,3 +290,5 @@ export const ZF_CASES = [
     finding: "证物、证言相互印证，依法移送承审并补足护道；待执行回报后归档。",
   },
 ];
+
+for (const event of ZF_EVENTS) event.text = MAINLINE_TEXT[event.id] ?? event.text;

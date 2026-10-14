@@ -1,3 +1,4 @@
+import { blankOfficeStories, migrateOfficeStories, syncOfficeStories, officeStoryCommand, officeStoryReceipt, validateOfficeStories } from "./office-stories.js";
 import {
   countyCase,
   chooseCaseVariant,
@@ -110,7 +111,7 @@ import {
   WEEKS_PER_YEAR,
   WEEKS_PER_SEASON,
 } from "./data.js";
-export const VERSION = 11;
+export const VERSION = 12;
 const clone = (x) => structuredClone(x),
   clamp = (x, min = 0, max = 100) => Math.max(min, Math.min(max, x));
 export const seasonIndex = (turn) =>
@@ -254,6 +255,7 @@ export function createGame({
     : FAMILIES.humble;
   const s = {
     version: VERSION,
+    officeStories: blankOfficeStories(),
     difficulty: hard ? "hard" : "standard",
     hard: null,
     countyRules: "current",
@@ -791,6 +793,12 @@ export function dispatch(state, command) {
   )
     throw Error("当前须先办理考课或处分附卷，不能绕过程序升任。");
   const n = coreDispatch(state, command);
+  syncOfficeStories(n, state, command);
+  // 到期的剧情回报也属于本次实际结算，重新收集回执。
+  if (["pref_advance", "tz_advance", "zf_advance"].includes(command.type)) {
+    const receipt = command.type === "pref_advance" ? prefectureReceipt(state, n, command) : command.type === "tz_advance" ? tongzhiReceipt(state, n, command) : zhifuReceipt(state, n, command);
+    n.receipts[0] = receipt;
+  }
   trackAccountability(state, n, command);
   return n;
 }
@@ -798,6 +806,16 @@ function coreDispatch(state, command) {
   if (!state || state.version !== VERSION) throw Error("存档版本不兼容。");
   if (!command.id) throw Error("操作缺少编号。");
   if (state.completedCommands.includes(command.id)) return state;
+  if (["office_story", "office_case"].includes(command.type)) {
+    const n = clone(state);
+    officeStoryCommand(n, command);
+    n.receipts.unshift(officeStoryReceipt(state, n, command));
+    n.receipts = n.receipts.slice(0, 24);
+    n.revision++;
+    n.completedCommands.push(command.id);
+    n.completedCommands = n.completedCommands.slice(-1500);
+    return n;
+  }
   if (command.type.startsWith("zf_")) {
     const n = clone(state);
     if (command.type === "zf_appoint") appointZhifu(n);
@@ -1118,6 +1136,12 @@ export function validateSave(raw) {
     upgraded.hard = null;
     return validateSave(upgraded);
   }
+  if (raw.version === 11) {
+    const upgraded = clone(raw);
+    upgraded.version = 12;
+    migrateOfficeStories(upgraded);
+    return validateSave(upgraded);
+  }
   if (raw.version !== VERSION) throw Error("存档版本不兼容。");
   const base = createGame();
   for (const k of Object.keys(base))
@@ -1401,6 +1425,7 @@ export function validateSave(raw) {
   validatePrefecture(clean);
   validateTongzhi(clean);
   validateZhifu(clean);
+  validateOfficeStories(clean);
   ensureReview(clean);
   validateAccountability(clean);
   return clean;

@@ -4230,6 +4230,16 @@ textarea:focus-visible {
 .duty-card .event-copy {
   grid-column: 1 / 3;
 }
+.office-letter { border-bottom: 1px solid var(--line, #d8d3c3); padding: 18px 0; }
+.office-letter:first-of-type { padding-top: 8px; }
+.office-stories .story-prose { font-family: "Songti SC", "STSong", serif; line-height: 1.95; white-space: pre-line; }
+.office-stories .choice-list { margin: 12px 0 18px; }
+.office-stories .choice b, .office-stories .choice small, .case-source a { overflow-wrap: anywhere; }
+.office-stories .section-head { flex-wrap: wrap; gap: 8px; }
+.office-stories .tz-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.office-stories .tz-controls .button { white-space: normal; }
+.office-stories details { margin: 12px 0; }
+.case-source a { display: inline-block; padding: 8px 0; }
 /* v0.15 精力徽章：手机上“可用精力”两字一行，不再溢出边框 */
 @media (max-width: 700px) {
   .ap-badge {

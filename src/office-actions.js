@@ -13,6 +13,12 @@ export function handleOfficeAction(action, button, context) {
     id = b.dataset.id,
     modal = getModal();
   switch (action) {
+    case "office-story":
+      run("office_story", { event: id, choice: b.dataset.choice });
+      break;
+    case "office-case":
+      run("office_case", { case: id, action: b.dataset.action, clue: b.dataset.clue, choice: b.dataset.choice });
+      break;
     case "ac-case-clue":
       run("ac_case_clue", { case: id, clue: b.dataset.clue });
       break;

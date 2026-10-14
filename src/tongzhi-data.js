@@ -1,3 +1,4 @@
+import { MAINLINE_TEXT } from "./office-mainline.js";
 // 任命明确的游戏化分工；项目、人口和工期均为虚构玩法单位。
 export const TZ_TERM = 156;
 export const TZ_PROJECTS = [
@@ -306,3 +307,5 @@ export const TZ_EVENTS = [
     ],
   },
 ];
+
+for (const event of TZ_EVENTS) event.text = MAINLINE_TEXT[event.id] ?? event.text;

@@ -1,5 +1,7 @@
+import { mainlineContext } from "./office-mainline.js";
 import { officeEvent } from "./office-hard.js";
 import { adminCost } from "./rules.js";
+import { officeStoriesView, storyBadge } from "./office-stories-view.js";
 import { decisionRisk } from "./accountability.js";
 import {
   COUNTIES,
@@ -12,7 +14,7 @@ export function prefectureView(s, h) {
   const { esc, num, scene, avatar, portrait, btn, icon } = h,
     p = s.prefecture,
     r = p.request,
-    event = officeEvent(p, PREF_EVENTS.find((e) => e.id === p.event));
+    event = mainlineContext(s, "prefecture", officeEvent(p, PREF_EVENTS.find((e) => e.id === p.event)));
   const names = [
     ["silver", "府库官银", "两"],
     ["grain", "府仓实粮", "石"],
@@ -22,7 +24,7 @@ export function prefectureView(s, h) {
     ["condition", "府仓状况", ""],
   ];
   const top = `<header class="masthead"><div class="brand"><span class="brand-seal">永<br>平</span><span>古代官员升职记<small>卷二 · 府署粮运</small></span></div><div class="header-right">${btn(icon("save"), "save", 'aria-label="手动存档"', "header-button")}${btn(icon("settings"), "settings", 'aria-label="设置与存档"', "header-button")}</div></header>`;
-  return `<div class="pref-shell">${top}<main id="main-content" class="pref-main"><div class="page-heading"><div><div class="eyebrow">永平府 · ${p.finished ? "三年任满" : prefLabel(p)}</div><h1>府署粮运</h1><p>${esc(s.name)} · 正六品通判 · 奉命分管粮储与运输</p></div><div class="ap-badge">${icon("action")}<b>${p.ap}</b><span>可用精力</span></div></div><nav class="pref-nav" aria-label="府署页内导航"><a href="#pref-counties">三县余缺</a><a href="#pref-transport">调粮运次</a><a href="#pref-record">任职履历</a>${btn("最近回执", "receipt", "", "text-button")}</nav><section class="pref-hero">${scene("scene_granary", "hero-scene", "府仓环境示意")}<div class="hero-wash"></div><div class="hero-caption"><span>府仓 · 分司钱粮</span><h2>一府粮运<br>三县冷暖</h2><p>账上有数，更须仓中有粮。</p></div>${portrait(s.appearance, "player-figure")}</section><div class="metrics">${names.map(([k, n, u]) => `<div class="metric"><div class="metric-label">${n}</div><div class="metric-value">${num(k === "currentRelief" ? r.received : k === "inTransit" ? p.shipments.filter((x) => x.status === "transit").reduce((n, x) => n + x.amount, 0) : k === "weeksLeft" ? Math.max(0, r.due - p.turn) : p[k])}<small>${u}</small></div></div>`).join("")}</div>
+  return `<div class="pref-shell">${top}<main id="main-content" class="pref-main"><div class="page-heading"><div><div class="eyebrow">永平府 · ${p.finished ? "三年任满" : prefLabel(p)}</div><h1>府署粮运</h1><p>${esc(s.name)} · 正六品通判 · 奉命分管粮储与运输</p></div><div class="ap-badge">${icon("action")}<b>${p.ap}</b><span>可用精力</span></div></div><nav class="pref-nav" aria-label="府署页内导航"><a href="#pref-stories">剧情与案牍 · ${storyBadge(s, "prefecture")}</a><a href="#pref-counties">三县余缺</a><a href="#pref-transport">调粮运次</a><a href="#pref-record">任职履历</a>${btn("最近回执", "receipt", "", "text-button")}</nav><section class="pref-hero">${scene("scene_granary", "hero-scene", "府仓环境示意")}<div class="hero-wash"></div><div class="hero-caption"><span>府仓 · 分司钱粮</span><h2>一府粮运<br>三县冷暖</h2><p>账上有数，更须仓中有粮。</p></div>${portrait(s.appearance, "player-figure")}</section><div class="metrics">${names.map(([k, n, u]) => `<div class="metric"><div class="metric-label">${n}</div><div class="metric-value">${num(k === "currentRelief" ? r.received : k === "inTransit" ? p.shipments.filter((x) => x.status === "transit").reduce((n, x) => n + x.amount, 0) : k === "weeksLeft" ? Math.max(0, r.due - p.turn) : p[k])}<small>${u}</small></div></div>`).join("")}</div>
  ${
    p.finished
      ? `<section class="assessment"><div class="assessment-score"><span>通判考语</span><h2>${p.outcome.rating}</h2><strong>${p.outcome.score}<small>/100</small></strong></div><div><h2>${p.outcome.candidate ? "粮运有绩，列入同知候选" : "本任成败，归卷备查"}</h2><p>${p.outcome.summary}</p><p>${p.misconduct ? "本任有虚报、包庇或重复征收记录，须先查明责任。" : `总评按属县民生30%、吏治30%、调粮要务25%、有效接济15%汇总。${p.hard ? "严苛难度：民生与吏治按全任平均与期末各半计，有效接济按各期实际申请总量折算，75分方可列入候选。" : ""}`}</p><p class="muted">称职且无待查责任，可接任分管水利赈济的同知。旧府账完整留作交接。</p>${p.outcome.candidate ? btn("办理同知任命", "tz-appointment", "", "button primary") : ""}${btn("导出两任履历", "export", "", "button outline")}</div></section>`
@@ -49,6 +51,7 @@ export function prefectureView(s, h) {
            : '<div class="notice"><p>本周府署公文已办，可核账、调粮或修仓，再结算下一周。</p></div>'
        }`
  }
+ ${officeStoriesView(s, "prefecture", h)}
  <div class="section-head spaced" id="pref-counties"><h2>三县余缺</h2><span>调粮权限已列入任命；实粮与账面分别核验</span></div><div class="pref-counties">${COUNTIES.map(
    (d) => {
      const c = p.counties[d.id];

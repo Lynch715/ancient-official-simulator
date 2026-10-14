@@ -1,3 +1,4 @@
+import { MAINLINE_TEXT } from "./office-mainline.js";
 import { adminCost } from "./rules.js";
 import { familyAllowance } from "./county-content.js";
 import { termLabel } from "./rules.js";
@@ -1093,3 +1094,5 @@ export function validatePrefecture(s) {
   validateOfficeHard(p);
   if (p.finished) p.outcome = prefAssessment(p);
 }
+
+for (const event of PREF_EVENTS) event.text = MAINLINE_TEXT[event.id] ?? event.text;

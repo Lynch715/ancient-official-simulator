@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
+  VERSION,
   createGame,
   dispatch,
   validateSave,
@@ -140,7 +141,7 @@ test("已经完成的v9考语与任命保留，未办案件的旧称职履历不
         fs.readFileSync(new URL("./fixtures/" + name, import.meta.url)),
       ),
       n = validateSave(old);
-    assert.equal(n.version, 11);
+    assert.equal(n.version, VERSION);
     assert.equal(n.countyPacing, "legacy");
     assert.equal(n.outcome.score, old.outcome.score);
     assert.equal(n.outcome.rating, old.outcome.rating);
