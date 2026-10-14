@@ -9,4 +9,4 @@ art/qa/*.png
 
 # Local production metadata and original art workspace
 .openai/
-art/
+/art/

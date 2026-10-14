@@ -1,9 +1,110 @@
-import{TZ_EVENTS,TZ_PROJECTS,availableResettlers}from'../../src/tongzhi.js';
-import fs from'node:fs';
-import{dispatch,validateSave}from'../../src/engine.js';
-import{PREF_EVENTS}from'../../src/prefecture.js';
-let id=0;
-export const act=(s,type,args={})=>dispatch(s,{id:`career-helper-${id++}`,type,...args});
-export function completedPrefecture(){let s=validateSave(JSON.parse(fs.readFileSync(new URL('../fixtures/quarter-v1-finished.json',import.meta.url))));s=act(s,'appointment');while(!s.prefecture.finished){let p=s.prefecture;if(p.event){const e=PREF_EVENTS.find(e=>e.id===p.event);s=act(s,'pref_event',{choice:e.options[0].id});p=s.prefecture;}if(p.request.status==='active'&&!p.shipments.some(x=>x.status==='transit'&&x.to===p.request.county)&&p.ap&&p.turn<153){s=act(s,'pref_transfer',{from:p.grain>=60?'府仓':'qinghe',to:p.request.county,amount:60,route:'normal'});p=s.prefecture;}if(p.condition<65&&p.ap)s=act(s,'pref_repair');s=act(s,'pref_advance');}return validateSave(s);}
+import {
+  TZ_EVENTS,
+  TZ_PROJECTS,
+  availableResettlers,
+} from "../../src/tongzhi.js";
+import fs from "node:fs";
+import { dispatch, validateSave } from "../../src/engine.js";
+import { PREF_EVENTS } from "../../src/prefecture.js";
+let id = 0;
+export const act = (s, type, args = {}) =>
+  dispatch(s, { id: `career-helper-${id++}`, type, ...args });
+export function completedPrefecture() {
+  let s = validateSave(
+    JSON.parse(
+      fs.readFileSync(
+        new URL("../fixtures/quarter-v1-finished.json", import.meta.url),
+      ),
+    ),
+  );
+  s = act(s, "appointment");
+  while (!s.prefecture.finished) {
+    let p = s.prefecture;
+    if (p.event) {
+      const e = PREF_EVENTS.find((e) => e.id === p.event);
+      s = act(s, "pref_event", { choice: e.options[0].id });
+      p = s.prefecture;
+    }
+    if (
+      p.request.status === "active" &&
+      !p.shipments.some(
+        (x) => x.status === "transit" && x.to === p.request.county,
+      ) &&
+      p.ap &&
+      p.turn < 153
+    ) {
+      s = act(s, "pref_transfer", {
+        from: p.grain >= 60 ? "府仓" : "qinghe",
+        to: p.request.county,
+        amount: 60,
+        route: "normal",
+      });
+      p = s.prefecture;
+    }
+    if (p.condition < 65 && p.ap) s = act(s, "pref_repair");
+    s = act(s, "pref_advance");
+  }
+  return validateSave(s);
+}
 
-export function completedTongzhi(){let s=act(completedPrefecture(),'tz_appoint');while(!s.tongzhi.finished){let q=s.tongzhi;if(q.event){const e=TZ_EVENTS.find(e=>e.id===q.event),o=e.options.find(o=>Object.entries(o.cost).every(([k,v])=>q[k]>=v));s=act(s,'tz_event',{choice:o.id});}q=s.tongzhi;if(q.ap&&q.grain<160&&q.turn-q.lastAid>=13&&q.turn<153)s=act(s,'tz_supply',{kind:'aid'});for(const d of TZ_PROJECTS){q=s.tongzhi;if(!q.ap)break;const p=q.projects[d.id];const action=p.status==='planned'?(p.surveyed?'propose':'survey'):p.status==='approved'?'start':p.status==='ready'?(!p.inspected?'inspect':p.quality<70?'rework':'accept'):p.status==='complete'&&p.condition<65?'maintain':null;if(action&&q.turn<140&&!(action==='start'&&Object.values(q.projects).filter(x=>['building','reworking'].includes(x.status)).length>=2))s=act(s,'tz_project',{project:d.id,action});}for(const d of Object.values(s.tongzhi.counties)){q=s.tongzhi;if(q.ap&&q.turn<154&&q.silver>=12&&q.grain>=8&&availableResettlers(q,d.id)>0)s=act(s,'tz_settle',{county:d.id});}s=act(s,'tz_advance');}return validateSave(s);}
+export function completedTongzhi() {
+  let s = act(completedPrefecture(), "tz_appoint");
+  while (!s.tongzhi.finished) {
+    let q = s.tongzhi;
+    if (q.event) {
+      const e = TZ_EVENTS.find((e) => e.id === q.event),
+        o = e.options.find((o) =>
+          Object.entries(o.cost).every(([k, v]) => q[k] >= v),
+        );
+      s = act(s, "tz_event", { choice: o.id });
+    }
+    q = s.tongzhi;
+    if (q.ap && q.grain < 160 && q.turn - q.lastAid >= 13 && q.turn < 153)
+      s = act(s, "tz_supply", { kind: "aid" });
+    for (const d of TZ_PROJECTS) {
+      q = s.tongzhi;
+      if (!q.ap) break;
+      const p = q.projects[d.id];
+      const action =
+        p.status === "planned"
+          ? p.surveyed
+            ? "propose"
+            : "survey"
+          : p.status === "approved"
+            ? "start"
+            : p.status === "ready"
+              ? !p.inspected
+                ? "inspect"
+                : p.quality < 70
+                  ? "rework"
+                  : "accept"
+              : p.status === "complete" && p.condition < 65
+                ? "maintain"
+                : null;
+      if (
+        action &&
+        q.turn < 140 &&
+        !(
+          action === "start" &&
+          Object.values(q.projects).filter((x) =>
+            ["building", "reworking"].includes(x.status),
+          ).length >= 2
+        )
+      )
+        s = act(s, "tz_project", { project: d.id, action });
+    }
+    for (const d of Object.values(s.tongzhi.counties)) {
+      q = s.tongzhi;
+      if (
+        q.ap &&
+        q.turn < 154 &&
+        q.silver >= 12 &&
+        q.grain >= 8 &&
+        availableResettlers(q, d.id) > 0
+      )
+        s = act(s, "tz_settle", { county: d.id });
+    }
+    s = act(s, "tz_advance");
+  }
+  return validateSave(s);
+}

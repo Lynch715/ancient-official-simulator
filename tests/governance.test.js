@@ -1,18 +1,299 @@
-import test from 'node:test';import assert from 'node:assert/strict';import{createGame,dispatch,validateSave,budgetForecast}from'../src/engine.js';import{EVENTS}from'../src/data.js';import{interventionCost,districtIncomeFactor,executionPenalty}from'../src/governance.js';
-let seq=0;const go=(s,type,args={})=>dispatch(s,{id:'depth-'+seq++,type,...args});
-function next(s){for(const e of s.events.filter(e=>e.mandatory)){const o=EVENTS[e.id].options.find(o=>Object.entries(o.cost).every(([k,v])=>s[k]>=v));s=go(s,'event',{event:e.id,choice:o.id});}return go(s,'advance');}function until(s,n){while(s.turn<n)s=next(s);return s;}
-test('policy pays at settlement, locks four weeks and duplicate command never spends twice',()=>{let s=createGame(),c={id:'policy-once',type:'policy',category:'labor',choice:'gentle'};let p=dispatch(s,c);assert.equal(p.silver,s.silver);assert.equal(p.ap,2);assert.deepEqual(dispatch(p,c),p);assert.throws(()=>go(p,'policy',{category:'labor',choice:'balanced'}));p=until(p,4);assert(p.ledger.some(l=>l.title==='县政 · 雇工减役'&&l.silver===-2));p=go(p,'policy',{category:'labor',choice:'balanced'});assert.equal(p.governance.policies.labor,'balanced');});
-test('policy tradeoffs alter actual engineering speed and livelihood',()=>{let base=go(createGame(),'project',{project:'canal'}),slow=go(base,'policy',{category:'labor',choice:'gentle'}),fast=go(base,'policy',{category:'labor',choice:'intensive'});slow=next(slow);fast=next(fast);assert.equal(slow.projects[0].remaining,25.25);assert.equal(fast.projects[0].remaining,24.5);assert(slow.people>fast.people);assert(slow.governance.districts.fields.livelihood>fast.governance.districts.fields.livelihood);});
-test('insufficient policy funds suspend cost, gain and acceleration atomically',()=>{let s=go(createGame(),'policy',{category:'labor',choice:'gentle'});s=go(s,'event',{event:'X01',choice:'note'});s.silver=1;let n=go(s,'advance');assert.equal(n.governance.funded.labor,false);assert.equal(n.governance.districts.fields.livelihood,s.governance.districts.fields.livelihood);assert(!n.receipts[0].ledger.some(l=>l.title==='县政 · 雇工减役'));assert(n.receipts[0].policies.some(t=>t.includes('暂停')));});
-test('market investment begins fixed returns in fifth consecutive funded week',()=>{let s=go(createGame(),'policy',{category:'commerce',choice:'fair'});s=until(s,4);assert.equal(s.governance.streak.commerce,4);assert(!s.governance.lastWeekly.some(t=>t.includes('增收4两')));assert(budgetForecast(s).net>0);s=next(s);assert(s.governance.lastWeekly.some(t=>t.includes('增收4两')));s.silver=0;s=next(s);assert.equal(s.governance.streak.commerce,0);assert.equal(s.governance.funded.commerce,false);});
-test('no displaced population means no kitchen cost or unearned benefit',()=>{let s=go(createGame(),'policy',{category:'relief',choice:'kitchen'});const grain=s.grain;s=next(s);assert.equal(s.grain,grain);assert.equal(s.governance.funded.relief,false);assert(s.governance.lastWeekly.some(t=>t.includes('无人')));});
-test('district intervention affects income, respects four-week spacing and real cooperation discount',()=>{let s=createGame();s.governance.relations.merchant=60;assert.equal(interventionCost(s,'market','commerce').silver,20);let n=go(s,'district',{district:'market',kind:'commerce'});assert.equal(n.silver,s.silver-20);assert.equal(n.governance.districts.market.commerce,68);assert(districtIncomeFactor(n)>districtIncomeFactor(s));assert.throws(()=>go(n,'district',{district:'market',kind:'security'}));n=until(n,4);assert.doesNotThrow(()=>go(n,'district',{district:'market',kind:'security'}));});
-test('district receipts show capped actual deltas rather than promised gains',()=>{let s=createGame();s.governance.districts.hills.livelihood=97;s=go(s,'district',{district:'hills',kind:'livelihood'});const r=s.receipts[0].changes.find(x=>x.name==='西岗村落 · 生计');assert.equal(r.delta,3);assert.equal(r.after,100);assert.equal(s.receipts[0].changes.find(x=>x.name==='官银').delta,-12);assert.equal(s.receipts[0].changes.find(x=>x.name==='仓粮').delta,-15);});
-test('mandate rewards once and missing deadline records one failure',()=>{let s=createGame();s=go(s,'district',{district:'hills',kind:'livelihood'});s=next(s);assert.equal(s.governance.mandatesMet,1);assert.equal(s.governance.mandate.status,'met');s=next(s);assert.equal(s.governance.mandatesMet,1);let idle=until(createGame(),13);assert.equal(idle.governance.mandatesMissed,1);assert.equal(idle.governance.mandate.due,26);});
-function reviewed(){let s=until(createGame(),5);for(const clue of ['survey','deed'])s=go(s,'investigate',{case:'boundary',clue});s=go(s,'judge',{case:'boundary',choice:'good'});return until(s,7);}
-test('review creates execution responsibility; deadline lapse penalizes once and remains recoverable',()=>{let s=reviewed();assert.equal(s.cases.boundary.execution.status,'awaiting');assert.equal(s.cases.boundary.execution.deadline,11);assert.equal(executionPenalty(s),4);s=until(s,12);assert.equal(s.cases.boundary.execution.status,'overdue');assert.equal(s.logs.filter(l=>l.title==='判后执行迟延').length,1);s=go(s,'enforce',{case:'boundary'});s=next(s);assert.equal(s.cases.boundary.execution.status,'executing');s=next(s);assert.equal(s.cases.boundary.execution.status,'done');assert.equal(executionPenalty(s),0);assert.throws(()=>go(s,'enforce',{case:'boundary'}));});
-test('execution restores from save without double reward',()=>{let s=go(reviewed(),'enforce',{case:'boundary'});s=validateSave(JSON.parse(JSON.stringify(s)));s=until(s,9);const life=s.people;s=next(s);assert.equal(s.people,life);assert.equal(s.logs.filter(l=>l.title==='判后执行查验').length,1);});
-test('v2 migration preserves time and resources and does not reopen old judgments',()=>{let old=reviewed();old.version=2;delete old.governance;delete old.receipts;delete old.cases.boundary.execution;let n=validateSave(old);assert.equal(n.turn,old.turn);assert.equal(n.silver,old.silver);assert.equal(n.cases.boundary.execution.status,'legacy');assert.equal(executionPenalty(n),0);assert.deepEqual(validateSave(n),n);});
-test('repair and arrears commands settle exact costs and cap repairs',()=>{let s=createGame();s.flags.arrears=20;s=go(s,'arrears');assert.equal(s.silver,880);assert.equal(s.flags.arrears,0);s.projects.push({id:'canal',status:'complete',remaining:0,condition:85});s=go(s,'repair',{project:'canal'});assert.equal(s.projects[0].condition,100);assert.equal(s.receipts[0].changes.find(x=>x.name.includes('养护')).delta,15);assert.throws(()=>go(s,'repair',{project:'canal'}));});
-test('malformed depth data and unknown command identifiers fail without mutation',()=>{let s=createGame(),copy=structuredClone(s);assert.throws(()=>go(s,'policy',{category:'__proto__',choice:'foo'}));assert.throws(()=>go(s,'district',{district:'fields',kind:'__proto__'}));assert.deepEqual(s,copy);s.governance.districts.fields.commerce=-1;assert.throws(()=>validateSave(s));s=createGame();s.receipts=[null];assert.throws(()=>validateSave(s));});
-test('active 156-week governance career preserves policies, executes all cases and survives weekly restore',async()=>{const {CASES,PROJECTS}=await import('../src/data.js');let s=createGame();s=go(s,'policy',{category:'commerce',choice:'fair'});s=go(s,'policy',{category:'labor',choice:'gentle'});s=go(s,'staff',{person:'deputy',task:'works'});while(!s.finished){for(const e of s.events.filter(e=>e.mandatory)){const o=EVENTS[e.id].options.find(o=>Object.entries(o.cost).every(([k,v])=>s[k]>=v));s=go(s,'event',{event:e.id,choice:o.id});}for(const def of CASES){let c=s.cases[def.id];if(!c)continue;if(['open','returned'].includes(c.status)){for(const clue of def.clues)if(!c.clues.includes(clue.id)&&s.ap>0){s=go(s,'investigate',{case:c.id,clue:clue.id});c=s.cases[c.id];}if(c.clues.length===def.clues.length)s=go(s,'judge',{case:c.id,choice:'good'});}else if(['awaiting','overdue'].includes(c.execution?.status)&&s.ap>0&&s.silver>=6)s=go(s,'enforce',{case:c.id});}const m=s.governance.mandate;if(m.status==='active'&&s.ap>0&&s.turn-(s.governance.visits[m.district]??-4)>=4){const cost=interventionCost(s,m.district,m.metric);if(Object.entries(cost).every(([k,v])=>s[k]>=v))s=go(s,'district',{district:m.district,kind:m.metric});}for(const p of PROJECTS)if(s.ap>0&&s.silver>=p.cost+300&&!s.projects.some(x=>x.id===p.id))s=go(s,'project',{project:p.id});if(s.displaced&&s.ap>0&&s.governance.policies.relief==='reserve')s=go(s,'policy',{category:'relief',choice:'kitchen'});s=go(s,'advance');s=validateSave(JSON.parse(JSON.stringify(s)));assert(s.silver>=0&&s.grain>=0);assert(s.receipts.length<=24);}assert.equal(s.turn,156);assert.equal(s.wellJudged,4);assert.equal(executionPenalty(s),0);assert.equal(Object.values(s.cases).filter(c=>c.execution.status==='done').length,4);assert(s.governance.mandatesMet>5);assert(s.projectsCompleted>=3);assert(s.outcome.score>=75);});
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  createGame,
+  dispatch,
+  validateSave,
+  budgetForecast,
+} from "../src/engine.js";
+import { EVENTS } from "../src/data.js";
+import {
+  interventionCost,
+  districtIncomeFactor,
+  executionPenalty,
+  marketYield,
+} from "../src/governance.js";
+let seq = 0;
+const go = (s, type, args = {}) =>
+  dispatch(s, { id: "depth-" + seq++, type, ...args });
+function next(s) {
+  for (const e of s.events.filter((e) => e.mandatory)) {
+    const o = EVENTS[e.id].options.find((o) =>
+      Object.entries(o.cost).every(([k, v]) => s[k] >= v),
+    );
+    s = go(s, "event", { event: e.id, choice: o.id });
+  }
+  return go(s, "advance");
+}
+function until(s, n) {
+  while (s.turn < n) s = next(s);
+  return s;
+}
+test("policy pays at settlement, locks four weeks and duplicate command never spends twice", () => {
+  let s = go(createGame({ difficulty: "standard" }), "project", { project: "canal" }),
+    c = {
+      id: "policy-once",
+      type: "policy",
+      category: "labor",
+      choice: "gentle",
+    };
+  let p = dispatch(s, c);
+  assert.equal(p.silver, s.silver);
+  assert.equal(p.ap, s.ap - 1);
+  assert.deepEqual(dispatch(p, c), p);
+  assert.throws(() =>
+    go(p, "policy", { category: "labor", choice: "balanced" }),
+  );
+  p = until(p, 4);
+  assert(
+    p.ledger.some((l) => l.title === "县政 · 雇工减役" && l.silver === -2),
+  );
+  p = go(p, "policy", { category: "labor", choice: "balanced" });
+  assert.equal(p.governance.policies.labor, "balanced");
+});
+test("policy tradeoffs alter actual engineering speed and livelihood", () => {
+  let base = go(createGame({ difficulty: "standard" }), "project", { project: "canal" }),
+    slow = go(base, "policy", { category: "labor", choice: "gentle" }),
+    fast = go(base, "policy", { category: "labor", choice: "intensive" });
+  slow = next(slow);
+  fast = next(fast);
+  assert.equal(slow.projects[0].remaining, 25.25);
+  assert.equal(fast.projects[0].remaining, 24.5);
+  assert(slow.people > fast.people);
+  assert(
+    slow.governance.districts.fields.livelihood >
+      fast.governance.districts.fields.livelihood,
+  );
+});
+test("insufficient policy funds suspend cost, gain and acceleration atomically", () => {
+  let s = go(go(createGame({ difficulty: "standard" }), "project", { project: "canal" }), "policy", {
+    category: "labor",
+    choice: "gentle",
+  });
+  s = go(s, "event", { event: "X01", choice: "note" });
+  s.silver = 1;
+  let n = go(s, "advance");
+  assert.equal(n.governance.funded.labor, false);
+  assert.equal(
+    n.governance.districts.fields.livelihood,
+    s.governance.districts.fields.livelihood,
+  );
+  assert(!n.receipts[0].ledger.some((l) => l.title === "县政 · 雇工减役"));
+  assert(n.receipts[0].policies.some((t) => t.includes("暂停")));
+});
+test("market investment begins capacity and seasonal returns in fifth funded week", () => {
+  let s = go(createGame({ difficulty: "standard" }), "policy", { category: "commerce", choice: "fair" });
+  s = until(s, 4);
+  assert.equal(s.governance.streak.commerce, 4);
+  assert(!s.governance.lastWeekly.some((t) => t.includes("增收4两")));
+  assert(budgetForecast(s).net > 0);
+  s = next(s);
+  assert(
+    s.governance.lastWeekly.some((t) => t.includes(`增收${marketYield(s)}两`)),
+  );
+  s.silver = 0;
+  s = next(s);
+  assert.equal(s.governance.streak.commerce, 0);
+  assert.equal(s.governance.funded.commerce, false);
+});
+test("no displaced population means no kitchen cost or unearned benefit", () => {
+  let s = go(createGame({ difficulty: "standard" }), "policy", { category: "relief", choice: "kitchen" });
+  const grain = s.grain;
+  s = next(s);
+  assert.equal(s.grain, grain);
+  assert.equal(s.governance.funded.relief, false);
+  assert(s.governance.lastWeekly.some((t) => t.includes("无人")));
+});
+test("district intervention affects income, respects four-week spacing and real cooperation discount", () => {
+  let s = createGame({ difficulty: "standard" });
+  s.governance.relations.merchant = 60;
+  assert.equal(interventionCost(s, "market", "commerce").silver, 20);
+  let n = go(s, "district", { district: "market", kind: "commerce" });
+  assert.equal(n.silver, s.silver - 20);
+  assert.equal(n.governance.districts.market.commerce, 68);
+  assert(districtIncomeFactor(n) > districtIncomeFactor(s));
+  assert.throws(() =>
+    go(n, "district", { district: "market", kind: "security" }),
+  );
+  n = until(n, 4);
+  assert.doesNotThrow(() =>
+    go(n, "district", { district: "market", kind: "security" }),
+  );
+});
+test("district receipts show capped actual deltas rather than promised gains", () => {
+  let s = createGame({ difficulty: "standard" });
+  s.governance.districts.hills.livelihood = 97;
+  s = go(s, "district", { district: "hills", kind: "livelihood" });
+  const r = s.receipts[0].changes.find((x) => x.name === "西岗村落 · 生计");
+  assert.equal(r.delta, 3);
+  assert.equal(r.after, 100);
+  assert.equal(s.receipts[0].changes.find((x) => x.name === "官银").delta, -12);
+  assert.equal(s.receipts[0].changes.find((x) => x.name === "仓粮").delta, -15);
+});
+test("mandate rewards once and missing deadline records one failure", () => {
+  let s = createGame({ difficulty: "standard" });
+  s = go(s, "district", { district: "hills", kind: "livelihood" });
+  s = next(s);
+  assert.equal(s.governance.mandatesMet, 1);
+  assert.equal(s.governance.mandate.status, "met");
+  s = next(s);
+  assert.equal(s.governance.mandatesMet, 1);
+  let idle = until(createGame({ difficulty: "standard" }), 13);
+  assert.equal(idle.governance.mandatesMissed, 1);
+  assert.equal(idle.governance.mandate.due, 26);
+});
+function reviewed() {
+  let s = until(createGame({ difficulty: "standard" }), 5);
+  for (const clue of ["survey", "deed"])
+    s = go(s, "investigate", { case: "boundary", clue });
+  s = go(s, "judge", { case: "boundary", choice: "good" });
+  return until(s, 7);
+}
+test("review creates execution responsibility; deadline lapse penalizes once and remains recoverable", () => {
+  let s = reviewed();
+  assert.equal(s.cases.boundary.execution.status, "awaiting");
+  assert.equal(s.cases.boundary.execution.deadline, 11);
+  assert.equal(executionPenalty(s), 4);
+  s = until(s, 12);
+  assert.equal(s.cases.boundary.execution.status, "overdue");
+  assert.equal(s.logs.filter((l) => l.title === "判后执行迟延").length, 1);
+  s = go(s, "enforce", { case: "boundary" });
+  s = next(s);
+  assert.equal(s.cases.boundary.execution.status, "executing");
+  s = next(s);
+  assert.equal(s.cases.boundary.execution.status, "done");
+  assert.equal(executionPenalty(s), 0);
+  assert.throws(() => go(s, "enforce", { case: "boundary" }));
+});
+test("execution restores from save without double reward", () => {
+  let s = go(reviewed(), "enforce", { case: "boundary" });
+  s = validateSave(JSON.parse(JSON.stringify(s)));
+  s = until(s, 9);
+  const life = s.people;
+  s = next(s);
+  assert.equal(s.people, life);
+  assert.equal(s.logs.filter((l) => l.title === "判后执行查验").length, 1);
+});
+test("v2 migration preserves time and resources and does not reopen old judgments", () => {
+  let old = reviewed();
+  old.version = 2;
+  delete old.governance;
+  delete old.receipts;
+  delete old.cases.boundary.execution;
+  let n = validateSave(old);
+  assert.equal(n.turn, old.turn);
+  assert.equal(n.silver, old.silver);
+  assert.equal(n.cases.boundary.execution.status, "legacy");
+  assert.equal(executionPenalty(n), 0);
+  assert.deepEqual(validateSave(n), n);
+});
+test("repair and arrears commands settle exact costs and cap repairs", () => {
+  let s = createGame({ difficulty: "standard" });
+  s.flags.arrears = 20;
+  s = go(s, "arrears");
+  assert.equal(s.silver, 880);
+  assert.equal(s.flags.arrears, 0);
+  s.projects.push({
+    id: "canal",
+    status: "complete",
+    remaining: 0,
+    condition: 85,
+  });
+  s = go(s, "repair", { project: "canal" });
+  assert.equal(s.projects[0].condition, 100);
+  assert.equal(
+    s.receipts[0].changes.find((x) => x.name.includes("养护")).delta,
+    15,
+  );
+  assert.throws(() => go(s, "repair", { project: "canal" }));
+});
+test("malformed depth data and unknown command identifiers fail without mutation", () => {
+  let s = createGame({ difficulty: "standard" }),
+    copy = structuredClone(s);
+  assert.throws(() =>
+    go(s, "policy", { category: "__proto__", choice: "foo" }),
+  );
+  assert.throws(() =>
+    go(s, "district", { district: "fields", kind: "__proto__" }),
+  );
+  assert.deepEqual(s, copy);
+  s.governance.districts.fields.commerce = -1;
+  assert.throws(() => validateSave(s));
+  s = createGame({ difficulty: "standard" });
+  s.receipts = [null];
+  assert.throws(() => validateSave(s));
+});
+test("active 156-week governance career preserves policies, executes all cases and survives weekly restore", async () => {
+  const { CASES, PROJECTS } = await import("../src/data.js");
+  let s = createGame({ difficulty: "standard" });
+  s = go(s, "policy", { category: "commerce", choice: "fair" });
+  s = go(s, "policy", { category: "labor", choice: "gentle" });
+  s = go(s, "staff", { person: "deputy", task: "works" });
+  while (!s.finished) {
+    for (const e of s.events.filter((e) => e.mandatory)) {
+      const o = EVENTS[e.id].options.find((o) =>
+        Object.entries(o.cost).every(([k, v]) => s[k] >= v),
+      );
+      s = go(s, "event", { event: e.id, choice: o.id });
+    }
+    for (const def of CASES) {
+      let c = s.cases[def.id];
+      if (!c) continue;
+      if (["open", "returned"].includes(c.status)) {
+        for (const clue of def.clues)
+          if (!c.clues.includes(clue.id) && s.ap > 0) {
+            s = go(s, "investigate", { case: c.id, clue: clue.id });
+            c = s.cases[c.id];
+          }
+        if (c.clues.length === def.clues.length)
+          s = go(s, "judge", { case: c.id, choice: "good" });
+      } else if (
+        ["awaiting", "overdue"].includes(c.execution?.status) &&
+        s.ap > 0 &&
+        s.silver >= 6
+      )
+        s = go(s, "enforce", { case: c.id });
+    }
+    const m = s.governance.mandate;
+    if (
+      m.status === "active" &&
+      m.mode === "verified" &&
+      !m.checked &&
+      s.ap > 0
+    )
+      s = go(s, "action", { action: "inspect" });
+    if (
+      m.status === "active" &&
+      !s.governance.mandate.ordered &&
+      s.ap > 0 &&
+      s.turn - (s.governance.visits[m.district] ?? -4) >= 4
+    ) {
+      const cost = interventionCost(s, m.district, m.metric);
+      if (Object.entries(cost).every(([k, v]) => s[k] >= v))
+        s = go(s, "district", { district: m.district, kind: m.metric });
+    }
+    for (const p of PROJECTS)
+      if (
+        s.ap > 0 &&
+        s.silver >= p.cost + 300 &&
+        !s.projects.some((x) => x.id === p.id)
+      )
+        s = go(s, "project", { project: p.id });
+    if (s.displaced && s.ap > 0 && s.governance.policies.relief === "reserve")
+      s = go(s, "policy", { category: "relief", choice: "kitchen" });
+    s = go(s, "advance");
+    s = validateSave(JSON.parse(JSON.stringify(s)));
+    assert(s.silver >= 0 && s.grain >= 0);
+    assert(s.receipts.length <= 24);
+  }
+  assert.equal(s.turn, 156);
+  assert.equal(s.wellJudged, 4);
+  assert.equal(executionPenalty(s), 0);
+  assert.equal(
+    Object.values(s.cases).filter((c) => c.execution.status === "done").length,
+    4,
+  );
+  assert(s.governance.mandatesMet > 5);
+  assert(s.projectsCompleted >= 3);
+  assert(s.outcome.score >= 75);
+});

@@ -1,17 +1,162 @@
-import{decisionRisk}from'./accountability.js';
-import{COUNTIES}from'./prefecture.js';
-import{TZ_PROJECTS}from'./tongzhi.js';
-import{ZF_TASKS,ZF_EVENTS,ZF_CASES,zfLabel,activeTask,inspectorCount,projectPlan,taskCost}from'./zhifu.js';
-export function zhifuView(s,h){const{esc,num,scene,avatar,portrait,btn,icon}=h,q=s.zhifu,event=ZF_EVENTS.find(e=>e.id===q.event),goal=q.goal;
- const disabled=(cost={})=>q.finished||Object.entries(cost).some(([k,v])=>q[k]<v);
- const costText=c=>Object.entries(c).map(([k,v])=>`${{silver:'官银',grain:'实粮',ap:'精力'}[k]}${v}${k==='ap'?'点':k==='grain'?'石':'两'}`).join(' · ')||'不另耗银粮精力';
- const counties=COUNTIES.map(d=>{const c=q.counties[d.id],o=c.official,t=activeTask(q,d.id);return`<article class="district-card"><div class="district-image">${scene(d.scene,'',d.name+'环境示意')}<h3>${d.name}</h3></div><div class="district-body"><div class="district-stats">${[['民生',c.people],['农商',c.economy],['治安',c.order]].map(([k,v])=>`<div><span>${k}</span><b>${num(v)}</b></div>`).join('')}</div><p>待安置${c.displaced}人，含病弱${c.vulnerable}人。<br>${t?`第${t.id}号${ZF_TASKS[t.kind].name} · 余${t.remaining}个施工周${o.status==='replacing'?' · 接任暂停':''}`:'暂无正在办理的差事'}</p><div class="tz-controls">${Object.entries(ZF_TASKS).map(([id,a])=>btn(`${a.name} · ${taskCost(q,d.id,id)}两${a.grain?' / '+a.grain+'石':''}`,'zf-task',`data-id="${d.id}" data-kind="${id}"`,'button outline',disabled({silver:taskCost(q,d.id,id),grain:a.grain||0,ap:1})||!!t||q.turn-c.lastTask<4||o.status==='replacing'||q.turn+a.weeks>156||id==='relief'&&!c.displaced)).join('')}</div><p class="muted">协作${num(c.cooperation)}${c.cooperation>=80?'，已省4两拨款':'，达到80可省4两拨款'}。每项用1精力；同县一次一项、拨款间隔4周。农商4周预计+8，护道4周预计+10，安置3周最多24人；实效由承办落实，不能以预期当实绩。</p><div class="zf-official"><div class="district-contact">${avatar(d.person)}<span>${esc(o.name)}<small>属官角色示意 · ${o.replaced?'接任已落实':o.evidence?'已取得侵渔账证':o.exonerated?'已查未见侵渔':'待以账证核实'}</small></span></div><p>${o.status==='investigating'?`调查还有${o.due-q.turn}周，原差事继续。`:o.status==='replacing'?`已报请处置，接任还有${o.due-q.turn}周。`:'正式升降由有权机关核定。'}</p><div class="tz-controls">${btn('调查账证 · 16两','zf-official',`data-id="${d.id}" data-action="investigate"`,'button outline',disabled({silver:16,ap:1})||o.status!=='serving'||o.evidence||o.exonerated||o.replaced||inspectorCount(q)>=2||q.turn>154)}${btn('报请处置接任 · 12两','zf-official',`data-id="${d.id}" data-action="replace"`,'button outline',disabled({silver:12,ap:1})||!o.evidence||o.status!=='serving'||o.replaced||q.turn>153)}</div></div></div></article>`;}).join('');
- const reports=q.tasks.filter(t=>t.status!=='working').slice().reverse();
- return`<div class="pref-shell zf-shell"><header class="masthead"><div class="brand"><span class="brand-seal">永<br>平</span><span>古代官员升职记<small>卷四 · 一府之治</small></span></div><div class="header-right">${btn(icon('save'),'save','aria-label="手动存档"','header-button')}${btn(icon('settings'),'settings','aria-label="设置与存档"','header-button')}</div></header><main class="pref-main" id="main-content"><div class="page-heading"><div><span class="eyebrow">永平府 · ${q.finished?'知府三年任满':zfLabel(q)}</span><h1>一府之治</h1><p>${esc(s.name)} · 正四品知府 · 用人、统筹与核实</p></div><div class="ap-badge">${icon('action')}<b>${q.ap}</b><span>可用精力</span></div></div><nav class="pref-nav" aria-label="知府页内导航"><a href="#zf-counties">三县预算</a><a href="#zf-reports">履职核验</a><a href="#zf-cases">上诉与联案</a><a href="#zf-works">承接河工</a><a href="#zf-record">四任履历</a>${s.receipts.length?btn('最近回执','receipt','','text-button'):''}</nav><section class="pref-hero">${scene('scene_county_hall','hero-scene','府署议事环境示意')}<div class="hero-wash"></div><div class="hero-caption"><span>永平府 · 府署</span><h2>案上有三县<br>心中有百姓</h2><p>拨款问去向，用人问实绩。</p></div>${portrait(s.appearance,'player-figure')}</section><div class="metrics">${[['统筹官银',q.silver,'两'],['府仓实粮',q.grain,'石'],['待安置居民',Object.values(q.counties).reduce((n,c)=>n+c.displaced,0),'人'],['已核验报告',q.tasks.filter(t=>t.status==='verified').length,'份'],['阶段要务',q.goals.filter(g=>g.met).length,'项'],['吏治',q.integrity,'']].map(([k,v,u])=>`<div class="metric"><div class="metric-label">${k}</div><div class="metric-value">${num(v)}<small>${u}</small></div></div>`).join('')}</div>
- ${q.finished?`<section class="assessment"><div class="assessment-score"><span>知府考语</span><h2>${q.outcome.rating}</h2><strong>${q.outcome.score}<small>/100</small></strong></div><div><h2>${q.outcome.candidate?'一府有治，列入按察司副使候选':'本任得失，据实交接'}</h2><p>${q.outcome.summary}</p><p>按察司副使任期尚未开放。属于职责转向，不将同品级转任写成升品；未核报告、未竟工程和未结案件继续留在履历。</p>${btn('导出四任履历','export','','button outline')}</div></section>`:`<section class="mandate-panel"><div>${icon('report')}</div><div><span class="eyebrow">本阶段要务 · ${goal.due-q.turn}周后核定</span><h3>${q.counties[goal.county].name} · ${goal.metric==='economy'?'农商恢复':'护道治安'}</h3><p>当前${num(q.counties[goal.county][goal.metric])} / 目标${num(goal.target)}。每13周选择短板县，按实际指标核定；报称不代替实效。请给交付留出时间。</p></div></section>${event?`<section class="panel"><div class="section-head"><h2>本周知府公文</h2><span>${event.id} · 须先处置</span></div><div class="speaker">${avatar(event.speaker)}<div><b>${event.title}</b><span>府政统筹 · 依权限核办</span></div></div><p>${event.text}</p><div class="choice-list">${event.options.map(o=>btn(`<b>${o.label}</b><small>${costText(o.cost)}</small><p>${o.desc}</p>${decisionRisk('zhifu',event.id,o.id)?`<p class="warning-text">${decisionRisk('zhifu',event.id,o.id)}</p>`:''}`,'zf-event',`data-choice="${o.id}"`,'choice',disabled(o.cost))).join('')}</div></section>`:'<div class="notice"><p>本周公文已办。先看阶段短板，再拨款、查账或办理案卷；周末回执列出真实交付与到期结果。</p></div>'}`}
+import { officeEvent } from "./office-hard.js";
+import { zhifuCase } from "./case-content.js";
+import { canFinish } from "./rules.js";
+import { OFFICIALS } from "./officials.js";
+import { familyAllowance } from "./county-content.js";
+import { decisionRisk } from "./accountability.js";
+import { COUNTIES } from "./prefecture.js";
+import { TZ_PROJECTS } from "./tongzhi.js";
+import {
+  ZF_TASKS,
+  ZF_EVENTS,
+  ZF_CASES,
+  zfLabel,
+  activeTask,
+  inspectorCount,
+  auditCost,
+  projectPlan,
+  taskCost,
+} from "./zhifu.js";
+export function zhifuView(s, h) {
+  const { esc, num, scene, avatar, portrait, btn, icon } = h,
+    q = s.zhifu,
+    event = officeEvent(q, ZF_EVENTS.find((e) => e.id === q.event)),
+    goal = q.goal;
+  const disabled = (cost = {}) =>
+    q.finished || Object.entries(cost).some(([k, v]) => q[k] < v);
+  const costText = (c) =>
+    Object.entries(c)
+      .map(
+        ([k, v]) =>
+          `${{ silver: "官银", grain: "实粮", ap: "精力" }[k]}${v}${k === "ap" ? "点" : k === "grain" ? "石" : "两"}`,
+      )
+      .join(" · ") || "不另耗银粮精力";
+  const counties = COUNTIES.map((d) => {
+    const c = q.counties[d.id],
+      o = c.official,
+      t = activeTask(q, d.id);
+    return `<article class="district-card"><div class="district-image">${scene(d.scene, "", d.name + "环境示意")}<h3>${d.name}</h3></div><div class="district-body"><div class="district-stats">${[
+      ["民生", c.people],
+      ["农商", c.economy],
+      ["治安", c.order],
+    ]
+      .map(([k, v]) => `<div><span>${k}</span><b>${num(Math.round(v))}</b></div>`)
+      .join(
+        "",
+      )}</div><p>待安置${c.displaced}人，含病弱${c.vulnerable}人。<br>${t ? `第${t.id}号${ZF_TASKS[t.kind].name} · 余${t.remaining}个办理周${o.status === "replacing" ? " · 接任暂停" : ""}` : "暂无正在办理的差事"}</p><div class="tz-controls">${Object.entries(
+      ZF_TASKS,
+    )
+      .map(([id, a]) =>
+        btn(
+          `${a.name} · ${taskCost(q, d.id, id)}两${a.grain ? " / " + a.grain + "石" : ""}`,
+          "zf-task",
+          `data-id="${d.id}" data-kind="${id}"`,
+          "button outline",
+          disabled({
+            silver: taskCost(q, d.id, id),
+            grain: a.grain || 0,
+            ap: 1,
+          }) ||
+            !!t ||
+            q.turn - c.lastTask < 4 ||
+            o.status === "replacing" ||
+            q.turn + a.weeks > 156 ||
+            (id === "relief" && !c.displaced),
+        ),
+      )
+      .join(
+        "",
+      )}</div><p class="muted">协作${num(c.cooperation)}${c.cooperation >= 80 ? "，已省4两拨款" : "，达到80可省4两拨款"}。每项用1精力；同县一次一项、拨款间隔4周。农商4周预计+8，护道4周预计+10，安置3周最多24人；交付后查看实际改善。</p><div class="zf-official"><div class="district-contact">${avatar(o.replaced ? "official_successor" : OFFICIALS[d.id].id, "avatar", o.name)}<span>${esc(o.name)}<small>${o.replaced ? "接任已落实" : o.evidence ? "已取得侵渔账证" : o.exonerated ? "已查未见侵渔" : "待以账证核实"}</small></span></div><p>${o.status === "investigating" ? `调查还有${o.due - q.turn}周，原差事继续。` : o.status === "replacing" ? `已报请处置，接任还有${o.due - q.turn}周。` : "属官处分与接任须报批。"}</p><div class="tz-controls">${btn("调查账证 · 16两", "zf-official", `data-id="${d.id}" data-action="investigate"`, "button outline", disabled({ silver: 16, ap: 1 }) || o.status !== "serving" || o.evidence || o.exonerated || o.replaced || inspectorCount(q) >= 2 || q.turn > 154)}${btn("报请处置接任 · 12两", "zf-official", `data-id="${d.id}" data-action="replace"`, "button outline", disabled({ silver: 12, ap: 1 }) || !o.evidence || o.status !== "serving" || o.replaced || q.turn > 153)}</div></div></div></article>`;
+  }).join("");
+  const reports = q.tasks
+    .filter((t) => t.status !== "working")
+    .slice()
+    .reverse();
+  return `<div class="pref-shell zf-shell"><header class="masthead"><div class="brand"><span class="brand-seal">永<br>平</span><span>古代官员升职记<small>卷四 · 一府之治</small></span></div><div class="header-right">${btn(icon("save"), "save", 'aria-label="手动存档"', "header-button")}${btn(icon("settings"), "settings", 'aria-label="设置与存档"', "header-button")}</div></header><main class="pref-main" id="main-content"><div class="page-heading"><div><span class="eyebrow">永平府 · ${q.finished ? "知府三年任满" : zfLabel(q)}</span><h1>一府之治</h1><p>${esc(s.name)} · 正四品知府 · 用人、统筹与核实</p></div><div class="ap-badge">${icon("action")}<b>${q.ap}</b><span>可用精力</span></div></div><nav class="pref-nav" aria-label="知府页内导航"><a href="#zf-counties">三县预算</a><a href="#zf-reports">履职核验</a><a href="#zf-cases">上诉与联案</a><a href="#zf-works">承接河工</a><a href="#zf-record">四任履历</a>${s.receipts.length ? btn("最近回执", "receipt", "", "text-button") : ""}</nav><section class="pref-hero">${scene("scene_prefecture_hall", "hero-scene", "永平府议事堂")}<div class="hero-wash"></div><div class="hero-caption"><span>永平府 · 府署</span><h2>永平府<br>三县同治</h2><p>公文、县情、交付。</p></div>${portrait(s.appearance, "player-figure")}</section><div class="metrics">${[
+    ["统筹官银", q.silver, "两"],
+    ["府仓实粮", q.grain, "石"],
+    [
+      "待安置居民",
+      Object.values(q.counties).reduce((n, c) => n + c.displaced, 0),
+      "人",
+    ],
+    ["待核验报告", q.tasks.filter((t) => t.status === "reported").length, "份"],
+    [
+      "在办差事",
+      q.tasks.filter((t) => ["working", "checking"].includes(t.status)).length,
+      "项",
+    ],
+    ["在外巡察", inspectorCount(q), "组"],
+  ]
+    .map(
+      ([k, v, u]) =>
+        `<div class="metric"><div class="metric-label">${k}</div><div class="metric-value">${num(v)}<small>${u}</small></div></div>`,
+    )
+    .join("")}</div>
+ ${q.finished ? `<section class="assessment"><div class="assessment-score"><span>知府考语</span><h2>${q.outcome.rating}</h2><strong>${q.outcome.score}<small>/100</small></strong></div><div><h2>${q.outcome.candidate ? "一府有治，列入按察司副使候选" : "本任得失，据实交接"}</h2><p>${q.outcome.summary}</p><p>按察司副使任期尚未开放。当前履历可导出保存；未验报告和未竟事项随卷保留。</p>${btn("导出四任履历", "export", "", "button outline")}</div></section>` : `<section class="mandate-panel"><div>${icon("report")}</div><div><span class="eyebrow">本阶段要务 · ${goal.due - q.turn}周后核定</span><h3>${q.counties[goal.county].name} · ${goal.metric === "economy" ? "农商恢复" : "护道治安"}</h3><p>当前${num(q.counties[goal.county][goal.metric])} / 目标${num(goal.target)}。每13周选择短板县，按实际指标核定；报称不代替实效。请给交付留出时间。</p></div></section>${event ? `<section class="panel"><div class="section-head"><h2>本周知府公文</h2><span>须先处置</span></div><div class="speaker">${avatar(event.speaker)}<div><b>${event.title}</b><span>府政统筹 · 依权限核办</span></div></div><p>${event.text}</p><div class="choice-list">${event.options.map((o) => btn(`<b>${o.label}</b><small>${costText(o.cost)}</small><p>${o.desc}</p>${decisionRisk("zhifu", event.id, o.id) ? `<p class="warning-text">${decisionRisk("zhifu", event.id, o.id)}</p>` : ""}`, "zf-event", `data-choice="${o.id}"`, "choice", disabled(o.cost))).join("")}</div></section>` : '<div class="notice"><p>本周公文已办，可转到县情、报告或案卷安排差事。</p></div>'}`}
  <section class="spaced" id="zf-counties"><div class="section-head"><h2>三县预算与属官</h2><span>拨款 → 办理 → 交付 → 现场核验</span></div><div class="pref-counties">${counties}</div></section>
- <section class="panel" id="zf-reports"><div class="section-head"><h2>履职报告核验</h2><span>在外巡察 ${inspectorCount(q)}/2组</span></div><p>交付时已结算实际变化。报表须另派员核验两周，每份12两、1精力；查实侵渔形成证据，未追回的款不计收入。调查属官与核验报告共用两组人手。</p>${reports.length?`<div class="zf-reports">${reports.slice(0,12).map(t=>`<article class="zf-report"><div><b>${q.counties[t.county].name} · 第${t.id}号${ZF_TASKS[t.kind].name}</b><p>原承办：${esc(t.official)} · 报称${t.reported}${t.kind==='relief'?'人':'点'}<br>${t.status==='verified'?`已核实${t.actual}${t.kind==='relief'?'人实际安置':'点改善（受指标上限约束）'}；${t.diverted?'查实侵渔'+t.diverted+'两，材料留卷':'账实相符'}`:t.status==='checking'?`现场核验中 · ${t.due-q.turn}周后回报`:'已交付 · 尚未现场核验'}</p></div>${btn('派员核验 · 12两','zf-audit',`data-task="${t.id}"`,'button outline',disabled({silver:12,ap:1})||t.status!=='reported'||inspectorCount(q)>=2||q.turn>154)}</article>`).join('')}</div>${reports.length>12?`<details><summary>较早报告（${reports.length-12}份）</summary>${reports.slice(12).map(t=>`<article class="zf-report"><p>${q.counties[t.county].name}第${t.id}号${ZF_TASKS[t.kind].name} · ${t.status==='verified'?'已核验，实成'+t.actual:t.status==='checking'?'核验中':'待核验'}</p>${btn('派员核验 · 12两','zf-audit',`data-task="${t.id}"`,'button outline',disabled({silver:12,ap:1})||t.status!=='reported'||inspectorCount(q)>=2||q.turn>154)}</article>`).join('')}</details>`:''}`:'<p class="muted">暂无交付报告。先向属县下达一项差事。</p>'}</section>
- <section class="panel" id="zf-cases"><div class="section-head"><h2>上诉与联县案卷</h2><span>查证 → 核办两周 → 执行两周</span></div>${ZF_CASES.map(d=>{const a=q.cases[d.id];if(!a)return`<p class="muted">${d.name} · 知府第${d.week+1}周立卷。</p>`;return`<article class="zf-case"><h3>${d.name}</h3><p>${{open:'待查证',review:'核办中',approved:'核办通过，待执行',executing:'执行核验中',closed:'执行完成，已归档'}[a.status]}${a.due?' · '+(a.due-q.turn)+'周后回报':''}</p>${d.clues.filter(c=>a.clues.includes(c.id)).map(c=>`<p class="evidence-note">${c.text}</p>`).join('')}<div class="tz-controls">${a.status==='open'?d.clues.map(c=>btn(a.clues.includes(c.id)?'已查 · '+c.name:c.name+' · 6两','zf-clue',`data-id="${d.id}" data-clue="${c.id}"`,'button outline',disabled({silver:6,ap:1})||a.clues.includes(c.id))).join('')+btn('依证据报办 · 1精力','zf-case',`data-id="${d.id}" data-action="review"`,'button primary',disabled({ap:1})||a.clues.length!==2||q.turn>154):a.status==='approved'?btn('督促执行 · 10两 / 1精力','zf-case',`data-id="${d.id}" data-action="execute"`,'button primary',disabled({silver:10,ap:1})||q.turn>154):''}</div>${a.status!=='open'?`<p>${d.finding}</p>`:''}</article>`;}).join('')}</section>
- <section id="zf-works" class="spaced"><div class="section-head"><h2>承接河工与安置</h2><span>设施原状接收 · 公账分别交接</span></div><div class="tz-projects">${TZ_PROJECTS.map(d=>{const p=q.projects[d.id],j=q.projectJobs[d.id],plan=projectPlan(q,d.id);return`<article class="district-card"><div class="district-image">${scene(d.scene,'',d.name+'环境示意')}<h3>${d.name}</h3></div><div class="district-body"><p>${p.status==='complete'?`已交付 · 状况${num(p.condition)} / 质量上限${p.quality}`:`旧任未完成交付 · 原进度${num(p.progress)}/${d.weeks}周`}</p><p>${j?{approval:`等待预算批复 · ${j.due-q.turn}周`,approved:`预算已批 · ${j.cost}两、${j.weeks}周`,working:`同知督办施工 · 剩余${j.remaining}周`,ready:'施工复验完成，待正式交付'}[j.status]:`${plan.name}预计${plan.cost}两、${plan.weeks}周，另需报批2周；交付核验10两。`}</p><div class="tz-controls">${!j?btn('报请'+plan.name+' · 1精力','zf-project',`data-id="${d.id}" data-action="propose"`,'button outline',disabled({ap:1})||q.turn+2+plan.weeks>156||plan.kind==='repair'&&p.condition>=p.quality):j.status==='approved'?btn(`正式拨款 · ${j.cost}两`,'zf-project',`data-id="${d.id}" data-action="start"`,'button outline',disabled({silver:j.cost,ap:1})||q.turn+j.weeks>156):j.status==='ready'?btn('核验交付 · 10两','zf-project',`data-id="${d.id}" data-action="accept"`,'button primary',disabled({silver:10,ap:1})):''}</div></div></article>`;}).join('')}</div><div class="panel"><h3>全年救助与常项</h3><p>已交付设施按实际状况减轻第26、78、130周的汛情；每项养护1两/周，状况折损0.15，缺款折损0.8。修护最多恢复30，不超过质量上限；未竟或劣质设施续办后，须正式核验才形成85质量的设施。</p><p>待安置者每6人每周1石（各县向上取整），病弱照供；安置差事交付前继续领粮。购粮120石需50两、1精力，2周到仓，间隔4周。</p>${btn('采购120石 · 50两','zf-supply','','button outline',disabled({silver:50,ap:1})||q.turn-q.lastBuy<4||q.turn>154)}${q.pending.map(x=>`<p>在途采购${x.amount}石 · ${x.due-q.turn}周后实到。</p>`).join('')}<p class="muted">每周统筹核拨22两、署务14两，净入8两；养护、口粮另扣。各县农商自然折损0.1、治安折损0.12，低于40治安时民生每周减0.15。渡口已交付且状况≥40时，三县民生每周各增0.06。私人俸入与家计净余1.5两。</p></div></section>
- <section class="panel" id="zf-record"><div class="section-head"><h2>四任履历与交接</h2><span>知府 ${q.turn}/156周 · 生涯 ${468+q.turn}周</span></div><p>知县${s.outcome.score}分 → 通判${s.prefecture.outcome.score}分 → 同知${s.tongzhi.outcome.score}分。私产${num(q.private)}两。</p><p>接任时待安置${q.record.displaced}人；本任累计需安置${q.affected}人，已实际安置${q.settled}人，累计缺供${q.shortage}石。旧任专项银${num(q.record.silver)}两、粮${num(q.record.grain)}石保留原账，未重复计入新任。</p><p>总评：民生、农商、治安、吏治各15%，报告核验、阶段要务、执行归档各10%，实际安置、设施状况各5%。70分且无待查责任方可列入候选。</p><details><summary>阶段要务记录</summary>${q.goals.map(g=>`<p>第${g.due}周 · ${q.counties[g.county].name}${g.metric==='economy'?'农商':'治安'}：目标${num(g.target)}，实绩${num(g.actual)}，${g.met?'达标':'未达标'}。</p>`).join('')||'<p>首阶段尚未结束。</p>'}</details><details><summary>最近府政日录</summary>${q.logs.slice(0,20).map(l=>`<p><small>已结算${l.turn}周</small> ${esc(l.text)}</p>`).join('')}</details><details><summary>最近公私账目</summary>${q.ledger.slice(-20).reverse().map(l=>`<p>${esc(l.title)}：${['silver','grain','private'].filter(k=>l[k]!==undefined).map(k=>`${{silver:'官银',grain:'实粮',private:'私产'}[k]} ${l[k]>0?'+':''}${num(l[k])}`).join(' · ')}</p>`).join('')}</details>${btn('导出完整履历','export','','text-button')}</section>${q.finished?'':`<div class="season-footer"><div><b>本周尚余${q.ap}点精力</b><p>按实际交付、现场核验、粮食到仓逐项结算。</p></div>${btn(q.turn===155?'提交知府考满':'结束知府本周','zf-next','','button primary',!!q.event)}</div>`}</main></div>`;
+ <section class="panel" id="zf-reports"><div class="section-head"><h2>履职报告核验</h2><span>在外巡察 ${inspectorCount(q)}/2组</span></div><p>交付时已结算实际变化。报表须另派员核验两周，当前每份${auditCost(q)}两、1精力${q.auditCredits ? `（底册优惠还余${q.auditCredits}份）` : ""}；查实侵渔形成证据，未追回的款不计收入。调查属官与核验报告共用两组人手。</p>${
+   reports.length
+     ? `<div class="zf-reports">${reports
+         .slice(0, 12)
+         .map(
+           (t) =>
+             `<article class="zf-report"><div><b>${q.counties[t.county].name} · 第${t.id}号${ZF_TASKS[t.kind].name}</b><p>原承办：${esc(t.official)} · 报称${num(t.reported)}${t.kind === "relief" ? "人" : "点"}<br>${t.status === "verified" ? `已核实${num(t.actual)}${t.kind === "relief" ? "人实际安置" : "点改善"}；${t.diverted ? "查实侵渔" + t.diverted + "两，材料留卷" : "账实相符"}` : t.status === "checking" ? `现场核验中 · ${t.due - q.turn}周后回报` : "已交付 · 尚未现场核验"}${t.actualBasis === "legacy" ? "<small>旧报告未记录封顶前后值，原数留卷。</small>" : t.kind !== "relief" && t.actualBasis === "measured" ? `<small>计划${num(t.plannedActual)}点 · 交付时${num(t.deliveryBefore)} → ${num(t.deliveryAfter)}</small>` : ""}</p></div>${btn(`派员核验 · ${auditCost(q)}两`, "zf-audit", `data-task="${t.id}"`, "button outline", disabled({ silver: auditCost(q), ap: 1 }) || t.status !== "reported" || inspectorCount(q) >= 2 || q.turn > 154)}</article>`,
+         )
+         .join("")}</div>${
+         reports.length > 12
+           ? `<details><summary>较早报告（${reports.length - 12}份）</summary>${reports
+               .slice(12)
+               .map(
+                 (t) =>
+                   `<article class="zf-report"><p>${q.counties[t.county].name}第${t.id}号${ZF_TASKS[t.kind].name} · ${t.status === "verified" ? "已核验，实成" + num(t.actual) : t.status === "checking" ? "核验中" : "待核验"}</p>${btn(`派员核验 · ${auditCost(q)}两`, "zf-audit", `data-task="${t.id}"`, "button outline", disabled({ silver: auditCost(q), ap: 1 }) || t.status !== "reported" || inspectorCount(q) >= 2 || q.turn > 154)}</article>`,
+               )
+               .join("")}</details>`
+           : ""
+       }`
+     : '<p class="muted">暂无交付报告。先向属县下达一项差事。</p>'
+ }</section>
+ <section class="panel" id="zf-cases"><div class="section-head"><h2>上诉与联县案卷</h2><span>查证 → 核办两周 → 执行两周</span></div>${ZF_CASES.map(
+   (base) => {
+     const d = zhifuCase(q, base.id),
+       a = q.cases[d.id];
+     if (!a)
+       return `<p class="muted">${d.name} · 知府第${d.week + 1}周立卷。</p>`;
+     return `<article class="zf-case"><h3>${d.name}</h3><p>${{ open: "待查证", review: "核办中", approved: "核办通过，待执行", executing: "执行核验中", closed: "执行完成，已归档" }[a.status]}${a.due ? " · " + (a.due - q.turn) + "周后回报" : ""}</p>${d.clues
+       .filter((c) => a.clues.includes(c.id))
+       .map((c) => `<p class="evidence-note">${c.text}</p>`)
+       .join(
+         "",
+       )}<div class="tz-controls">${a.status === "open" ? d.clues.map((c) => btn(a.clues.includes(c.id) ? "已查 · " + c.name : c.name + " · 6两", "zf-clue", `data-id="${d.id}" data-clue="${c.id}"`, "button outline", disabled({ silver: 6, ap: 1 }) || a.clues.includes(c.id))).join("") + btn("依证据报办 · 1精力", "zf-case", `data-id="${d.id}" data-action="review"`, "button primary", disabled({ ap: 1 }) || a.clues.length !== 2 || !canFinish(q.turn, 4)) : a.status === "approved" ? btn("督促执行 · 10两 / 1精力", "zf-case", `data-id="${d.id}" data-action="execute"`, "button primary", disabled({ silver: 10, ap: 1 }) || q.turn > 154) : ""}</div>${a.status !== "open" ? `<p>${d.finding}</p>` : ""}</article>`;
+   },
+ ).join("")}</section>
+ <section id="zf-works" class="spaced"><div class="section-head"><h2>承接河工与安置</h2><span>设施原状接收 · 公账分别交接</span></div><div class="tz-projects">${TZ_PROJECTS.map(
+   (d) => {
+     const p = q.projects[d.id],
+       j = q.projectJobs[d.id],
+       plan = projectPlan(q, d.id);
+     return `<article class="district-card"><div class="district-image">${scene(d.scene, "", d.name + "环境示意")}<h3>${d.name}</h3></div><div class="district-body"><p>${p.status === "complete" ? `已交付 · 状况${num(Math.round(p.condition))} / 质量上限${p.quality}` : `旧任未完成交付 · 原进度${num(p.progress)}/${d.weeks}周`}</p><p>${j ? { approval: `等待预算批复 · ${j.due - q.turn}周`, approved: `预算已批 · ${j.cost}两、${j.weeks}周`, working: `同知督办施工 · 剩余${j.remaining}周`, ready: "施工复验完成，待正式交付" }[j.status] : `${plan.name}预计${plan.cost}两、${plan.weeks}周，另需报批2周；交付核验10两。`}</p><div class="tz-controls">${!j ? btn("报请" + plan.name + " · 1精力", "zf-project", `data-id="${d.id}" data-action="propose"`, "button outline", disabled({ ap: 1 }) || q.turn + 2 + plan.weeks > 156 || (plan.kind === "repair" && p.condition >= p.quality)) : j.status === "approved" ? btn(`正式拨款 · ${j.cost}两`, "zf-project", `data-id="${d.id}" data-action="start"`, "button outline", disabled({ silver: j.cost, ap: 1 }) || q.turn + j.weeks > 156) : j.status === "ready" ? btn("核验交付 · 10两", "zf-project", `data-id="${d.id}" data-action="accept"`, "button primary", disabled({ silver: 10, ap: 1 })) : ""}</div></div></article>`;
+   },
+ ).join(
+   "",
+ )}</div><div class="panel"><h3>全年救助与常项</h3><p>已交付设施按实际状况减轻${q.hard ? "每年夏秋之际（具体周次难料）" : "第26、78、130周"}的汛情；每项养护1两/周，状况折损0.15，缺款折损0.8。修护最多恢复30，不超过质量上限；未竟或劣质设施续办后，须正式核验才形成85质量的设施。</p><p>待安置者每6人每周1石（各县向上取整），病弱照供；安置差事交付前继续领粮。购粮120石需50两、1精力，2周到仓，间隔4周。</p>${btn("采购120石 · 50两", "zf-supply", "", "button outline", disabled({ silver: 50, ap: 1 }) || q.turn - q.lastBuy < 4 || q.turn > 154)}${q.pending.map((x) => `<p>在途采购${x.amount}石 · ${x.due - q.turn}周后实到。</p>`).join("")}<p class="muted">每周统筹核拨22两、署务14两，净入8两；养护、口粮另扣。县情按周变化，完整规则见办事指南。渡口已交付且状况≥40时，三县民生每周各增0.06。私人俸入与家计净余${num(1.5 + familyAllowance(s))}两。</p></div></section>
+ <section class="panel" id="zf-record"><div class="section-head"><h2>四任履历与交接</h2><span>知府 ${q.turn}/156周 · 生涯 ${468 + q.turn}周</span></div><p>知县${s.outcome.score}分 → 通判${s.prefecture.outcome.score}分 → 同知${s.tongzhi.outcome.score}分。私产${num(q.private)}两。交接目录${q.handover ? "已登记" : "尚待整理"}。</p><p>吏治${num(Math.round(q.integrity))} · 已核验${q.tasks.filter((t) => t.status === "verified").length}份 · 阶段达标${q.goals.filter((g) => g.met).length}项。</p><p>接任时待安置${q.record.displaced}人；本任累计需安置${q.affected}人，已实际安置${q.settled}人，累计缺供${q.shortage}石。旧任专项银${num(q.record.silver)}两、粮${num(q.record.grain)}石保留原账，未重复计入新任。</p><p>总评：民生、农商、治安、吏治各15%，报告核验、阶段要务、执行归档各10%，实际安置、设施状况各5%。${q.hard ? "严苛难度：民生、吏治按全任平均与期末各半计，75分" : "70分"}且无待查责任方可列入候选。</p><details><summary>阶段要务记录</summary>${q.goals.map((g) => `<p>第${g.due}周 · ${q.counties[g.county].name}${g.metric === "economy" ? "农商" : "治安"}：目标${num(g.target)}，实绩${num(g.actual)}，${g.met ? "达标" : "未达标"}。</p>`).join("") || "<p>首阶段尚未结束。</p>"}</details><details><summary>最近府政日录</summary>${q.logs
+   .slice(0, 20)
+   .map((l) => `<p><small>已结算${l.turn}周</small> ${esc(l.text)}</p>`)
+   .join("")}</details><details><summary>最近公私账目</summary>${q.ledger
+   .slice(-20)
+   .reverse()
+   .map(
+     (l) =>
+       `<p>${esc(l.title)}：${["silver", "grain", "private"]
+         .filter((k) => l[k] !== undefined)
+         .map(
+           (k) =>
+             `${{ silver: "官银", grain: "实粮", private: "私产" }[k]} ${l[k] > 0 ? "+" : ""}${num(l[k])}`,
+         )
+         .join(" · ")}</p>`,
+   )
+   .join(
+     "",
+   )}</details>${btn("导出完整履历", "export", "", "text-button")}</section>${q.finished ? "" : `<div class="season-footer"><div><b>本周尚余${q.ap}点精力</b><p>按实际交付、现场核验、粮食到仓逐项结算。</p></div>${btn(q.turn === 155 ? "提交知府考满" : "结束知府本周", "zf-next", "", "button primary", !!q.event)}</div>`}</main></div>`;
 }

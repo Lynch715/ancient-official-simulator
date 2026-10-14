@@ -1,99 +1,1067 @@
 // 四任共用的考课附卷。处分档位及期限为虚构玩法，不是明律量刑表。
-export const OFFICES={county:'知县',prefecture:'通判',tongzhi:'同知',zhifu:'知府'};
-export const LOWER={county:'县丞',prefecture:'知县',tongzhi:'通判',zhifu:'同知'};
-export const STATUS={notice:'考课复议',remedy:'限期整改',retest:'留任复考',demotionNotice:'降调处分',demotion:'降调试用',inquiry:'立案查核',review:'审拟复核',capitalReview:'死刑覆核与最终核准',cleared:'复考通过',dismissed:'罢官',prison:'下狱服刑',exile:'流放',executed:'斩首'};
-const FINALS=['dismissed','prison','exile','executed'];
-const round=n=>Math.round(n*100)/100;
-export const currentOffice=s=>s.zhifu?'zhifu':s.tongzhi?'tongzhi':s.prefecture?'prefecture':'county';
-export const officeState=(s,role=currentOffice(s))=>role==='county'?s:s[role];
-export const qualified=(s,role)=>!!s.accountability?.qualifications?.[role];
-export const hasActiveReview=s=>!!s.accountability?.current&&s.accountability.current.status!=='cleared';
-export const blankAccountability=()=>({incidents:[],history:[],qualifications:{},current:null,nextIncident:1,totalWeeks:0,legacyRoles:[]});
-const now=(s,role)=>officeState(s,role).turn;
-const pushLog=(p,text)=>{p.logs.unshift({id:p.nextLog++,week:p.week,text});p.logs=p.logs.slice(0,250);};
-function cash(p,title,delta){for(const[k,v]of Object.entries(delta))if(!['silver','grain','private'].includes(k)||!Number.isFinite(v)||p[k]+v<0)throw Error('可用银粮不足。');for(const[k,v]of Object.entries(delta))p[k]=round(p[k]+v);const l={turn:p.week,title,...delta};p.ledger.push(l);p.lastLedger.push(l);}
-function pay(p,cost,title){for(const[k,v]of Object.entries(cost))if(p[k]<v)throw Error(k==='ap'?'本周精力不足。':'专项银粮不足。');if(cost.ap)p.ap-=cost.ap;const d=Object.fromEntries(Object.entries(cost).filter(([k])=>k!=='ap').map(([k,v])=>[k,-v]));if(Object.keys(d).length)cash(p,title,d);}
-function record(s,role,code,title,severity,amount=0,legacy=false){const a=s.accountability;if(a.incidents.some(x=>x.role===role&&x.code===code))return;a.incidents.push({id:a.nextIncident++,role,week:now(s,role),code,title,severity,amount,legacy});}
-// Only explicit committed decisions become criminal evidence. Low metrics never do.
-const DECISIONS={
- 'county:X03:conceal':['false-report','沿用明知不实的仓账',1,0],
- 'county:X15:accept':['bribe','私收礼物并许诺照顾',2,80],
- 'county:G07:destroy':['destroy','删除不利原始记录',3,0],
- 'prefecture:T03:allow':['cover','包庇承运队私售粮食',2,0],
- 'prefecture:T07:collect':['extort','明知已缴仍重复征收',2,0],
- 'prefecture:T08:inflate':['false-report','将未到粮写成实收',1,0],
- 'tongzhi:D02:cover':['cover','隐瞒工程质量疑点',2,0],
- 'tongzhi:D03:expel':['expel','未核归程强行遣返灾民',2,0],
- 'tongzhi:D04:compel':['coerce','以出工为救济前提排斥病弱',2,0],
- 'tongzhi:D06:exclude':['exclude','删去实际受灾居民救助资格',2,0],
- 'tongzhi:D07:divert':['divert','将河工专项挪作门楼',3,100],
- 'tongzhi:D08:false':['false-report','将未完工程报为完成',1,0],
- 'zhifu:F02:suppress':['cover','以属官政绩压下侵渔线索',2,0],
- 'zhifu:F03:reject':['obstruct','压回上诉、拒绝核实',2,0],
- 'zhifu:F04:accept':['false-report','未经核实背书政绩册',1,0],
- 'zhifu:F06:facade':['divert','抽走民生公款装点门面',3,100],
- 'zhifu:F07:favor':['favor','以私人亲疏作属官考语',2,0],
- 'zhifu:F08:sign':['false-report','将未办事项签作圆满',1,0]
+import { countyCase } from "./case-content.js";
+export const OFFICES = {
+  county: "知县",
+  prefecture: "通判",
+  tongzhi: "同知",
+  zhifu: "知府",
 };
-export function decisionRisk(role,event,choice){const d=DECISIONS[`${role}:${event}:${choice}`];return d?`将留下主动违法记录；经查证复核，可能${d[2]>=3?'流放':d[2]===2?'下狱':'罢官'}，政绩不能抵销。`:'';}
-export function trackAccountability(before,s,c){const role=currentOffice(before),a=s.accountability;if(currentOffice(s)!==role){if(a.current){const old=a.current,newRole=currentOffice(s),q=officeState(s),delta=round(old.private-officeState(before,role).private);q.private=round(q.private+delta);const row={turn:0,title:'承接考课期间私人收支净额',private:delta};if(q.ledger){q.ledger.push(row);q.lastLedger.push(row);if(s.receipts[0].ledger!==q.lastLedger)s.receipts[0].ledger.push(row);}else s.receipts[0].ledger.push(row);s.receipts[0].changes.push({name:'承接私产净变化',before:officeState(before,role).private,after:q.private,delta});if(newRole==='zhifu'&&old.settled){let remaining=old.settled;for(const d of Object.values(q.counties)){const take=Math.min(d.displaced,remaining);d.displaced-=take;d.vulnerable=Math.min(d.vulnerable,d.displaced);remaining-=take;q.settled+=take;}s.receipts[0].notes.push(`已承接考课附卷实际安置${old.settled-remaining}人，原任名册留底。`);}a.history.push(structuredClone(old));a.current=null;}return;}
- const e=c.type==='event'?c.event:c.type==='pref_event'?before.prefecture?.event:c.type==='tz_event'?before.tongzhi?.event:c.type==='zf_event'?before.zhifu?.event:null;
- const d=DECISIONS[`${role}:${e}:${c.choice}`];if(d)record(s,role,...d);
- // County flags are also durable facts in this version; legacy migration is deliberately milder.
- ensureReview(s);
+export const LOWER = {
+  county: "县丞",
+  prefecture: "知县",
+  tongzhi: "通判",
+  zhifu: "同知",
+};
+export const STATUS = {
+  notice: "考课复议",
+  remedy: "限期整改",
+  retest: "留任复考",
+  demotionNotice: "降调处分",
+  demotion: "降调试用",
+  inquiry: "立案查核",
+  review: "审拟复核",
+  capitalReview: "死刑覆核与最终核准",
+  cleared: "复考通过",
+  dismissed: "罢官",
+  prison: "下狱服刑",
+  exile: "流放",
+  executed: "斩首",
+};
+const FINALS = ["dismissed", "prison", "exile", "executed"];
+const round = (n) => Math.round(n * 100) / 100;
+export const currentOffice = (s) =>
+  s.zhifu
+    ? "zhifu"
+    : s.tongzhi
+      ? "tongzhi"
+      : s.prefecture
+        ? "prefecture"
+        : "county";
+export const officeState = (s, role = currentOffice(s)) =>
+  role === "county" ? s : s[role];
+export const qualified = (s, role) =>
+  !!s.accountability?.qualifications?.[role];
+export const hasActiveReview = (s) =>
+  !!s.accountability?.current && s.accountability.current.status !== "cleared";
+export const blankAccountability = () => ({
+  incidents: [],
+  history: [],
+  qualifications: {},
+  current: null,
+  nextIncident: 1,
+  totalWeeks: 0,
+  legacyRoles: [],
+});
+const now = (s, role) => officeState(s, role).turn;
+const pushLog = (p, text) => {
+  p.logs.unshift({ id: p.nextLog++, week: p.week, text });
+  p.logs = p.logs.slice(0, 250);
+};
+function cash(p, title, delta) {
+  for (const [k, v] of Object.entries(delta))
+    if (
+      !["silver", "grain", "private"].includes(k) ||
+      !Number.isFinite(v) ||
+      p[k] + v < 0
+    )
+      throw Error("可用银粮不足。");
+  for (const [k, v] of Object.entries(delta)) p[k] = round(p[k] + v);
+  const l = { turn: p.week, title, ...delta };
+  p.ledger.push(l);
+  p.lastLedger.push(l);
 }
-export function disasterEvidence(s,role=currentOffice(s)){const q=officeState(s,role);let disaster=false,diligence=false,text='未见可核对的本任灾情记录。';
- if(role==='county'){disaster=!!(q.flags.drought||q.flags.floodResolved);diligence=!!q.flags.responded&&(q.patrol>0||q.flags.healthCare||q.flags.settle);text=disaster?'县卷记有旱情或汛情；据实说明及救助、巡堤记录须一并核实。':text;}
- if(role==='prefecture'){disaster=q.logs.some(l=>l.text.includes('据实申报延误'));diligence=disaster;text=disaster?'府署日录保留枯水阻航及如实申报记录。':text;}
- if(role==='tongzhi'){disaster=q.floods.length>0;diligence=disaster&&((q.affected>0&&q.resettled/q.affected>=.5)||q.floods.some(f=>f.counties.some(c=>c.defence>=40)));text=disaster?`有${q.floods.length}次汛情记录，实际安置${q.resettled}/${q.affected}人；防护和救助仍依原卷。`:text;}
- if(role==='zhifu'){disaster=q.affected>q.record.displaced;diligence=disaster&&q.affected>0&&q.settled/q.affected>=.5;text=disaster?`本任汛情新增需安置${q.affected-q.record.displaced}人，实际安置${q.settled}人。`:text;}
- return{disaster,eligible:!!(disaster&&diligence&&!q.misconduct&&!q.outcome?.misconduct),text};
+function pay(p, cost, title) {
+  for (const [k, v] of Object.entries(cost))
+    if (p[k] < v) throw Error(k === "ap" ? "本周精力不足。" : "专项银粮不足。");
+  if (cost.ap) p.ap -= cost.ap;
+  const d = Object.fromEntries(
+    Object.entries(cost)
+      .filter(([k]) => k !== "ap")
+      .map(([k, v]) => [k, -v]),
+  );
+  if (Object.keys(d).length) cash(p, title, d);
 }
-const TOPICS={county:[['life','民生与灾后善后'],['justice','积案与执行复查'],['finance','钱粮与工程清查']],prefecture:[['life','属县粮食接济'],['finance','府仓修护与清账'],['justice','调粮交付核验']],tongzhi:[['finance','河工质量与修护'],['life','安置居民回访'],['justice','赈册与拨款复核']],zhifu:[['life','属县民生督办'],['finance','预算与属官报告核验'],['justice','跨县案卷执行复查']]};
-function targets(role,n){return TOPICS[role].map(([id,name])=>({id,name,done:0,required:n}));}
-export function ensureReview(s){const a=s.accountability,role=currentOffice(s),q=officeState(s,role);if(!q.finished||a.current||qualified(s,role))return;const bad=q.outcome?.misconduct||q.misconduct;if(!bad&&q.outcome?.rating==='称职')return;
- if(bad&&!a.incidents.some(i=>i.role===role))record(s,role,'legacy-review','旧卷仅保留违规标记，具体罪情未完整记录',1,0,true);
- const evidence=disasterEvidence(s,role),incidents=a.incidents.filter(i=>i.role===role);a.current={role,status:incidents.length?'inquiry':'notice',cause:incidents.length?'violation':evidence.eligible?'disaster':'ability',week:0,stageStart:0,deadline:null,ap:2,silver:0,grain:0,private:q.private,initialPrivate:q.private,stage:'',targets:[],pending:[],logs:[],nextLog:1,ledger:[],lastLedger:[],discipline:0,reliefClaimed:false,reliefDue:null,reliefGranted:false,initialScore:q.outcome.score,disaster:evidence,checkpoints:[],remedyPassed:null,demoted:false,restored:false,retestAfterDemotion:false,sourceDisplaced:role==='county'?q.displaced:Object.values(q.counties).reduce((n,c)=>n+(c.displaced||0),0),remainingDisplaced:role==='county'?q.displaced:Object.values(q.counties).reduce((n,c)=>n+(c.displaced||0),0),settled:0,sourceShortage:q.shortage||0,evidence:incidents.map(i=>({incident:i.id,documents:false,witnesses:false,entered:0})),reply:null,repaid:0,liability:incidents.reduce((n,i)=>n+i.amount,0),proposed:null,appealed:false,sentence:null,finalizedAt:null,criminalChoice:null,stageResults:[]};const p=a.current;pushLog(p,incidents.length?'本任停职立案，原任公账与履历封存；先查证、再申辩、后复核。旧卷分数不能代替罪证。':`原考语${q.outcome.rating}，${q.outcome.score}分。进入限期整改程序；原考满记录保留，新增工作另列考课附卷。`);
+function record(s, role, code, title, severity, amount = 0, legacy = false) {
+  const a = s.accountability;
+  if (a.incidents.some((x) => x.role === role && x.code === code)) return;
+  a.incidents.push({
+    id: a.nextIncident++,
+    role,
+    week: now(s, role),
+    code,
+    title,
+    severity,
+    amount,
+    legacy,
+  });
 }
-export function migrateAccountability(s){s.accountability=blankAccountability();for(const role of Object.keys(OFFICES)){const q=role==='county'?s:s[role];if(q)s.accountability.legacyRoles.push(role);}}
-function beginStage(s,status){const p=s.accountability.current;p.status=status;p.stage=status;p.stageStart=p.week;p.deadline=p.week+(status==='remedy'?13:26);p.ap=2;p.targets=targets(p.role,status==='remedy'?2:3);p.pending=[];attachExtension(p);if(status==='retest'&&p.remedyPassed===false&&!p.retestAfterDemotion)for(const t of p.targets)t.required=4;if(status==='demotion'){p.demoted=true;p.discipline++;}const silver=status==='demotion'?110:status==='remedy'?140:180,grain=status==='demotion'?60:90;cash(p,`${STATUS[status]}专款核拨`,{silver,grain});pushLog(p,`${STATUS[status]}开始，${p.deadline-p.week}周，每周2点精力；已核拨${silver}两、${grain}石。${status==='demotion'?`现任降为${LOWER[p.role]}，俸余减半；通过后仍须在原职留任复考。`:''}旧任公帑不挪用，所有差事两周后核验。`);}
-export const stagePassed=p=>p.targets.length===3&&p.targets.every(t=>t.done>=t.required);
-function concludeStage(s){const a=s.accountability,p=a.current,passed=stagePassed(p);p.stageResults.push({stage:p.status,week:p.week,passed,targets:structuredClone(p.targets)});pushLog(p,`${STATUS[p.status]}到期：${passed?'三项要求均已核验完成':'仍有要求未达成'}。`);
- if(p.status==='remedy'){p.remedyPassed=passed;beginStage(s,'retest');return;}
- if(p.status==='demotion'){if(passed){p.retestAfterDemotion=true;p.restored=true;beginStage(s,'retest');pushLog(p,'降调试用通过，获准回原职复考；未直接获得晋升资格。');}else finish(s,'dismissed','降调试用仍未完成基本职务要求，罢官归籍。');return;}
- if(passed){p.status='cleared';p.ap=0;p.deadline=null;p.finalizedAt=p.week;a.qualifications[p.role]={week:p.week,demoted:p.demoted,score:p.initialScore};pushLog(p,'留任复考通过，另附合格记录，恢复候选资格；原任低分及降调处分不删除。');}
- else if(p.demoted||p.role==='county')finish(s,'dismissed','整改与留任复考仍未达标，罢官归籍；无刑事罪证，不附加监禁、流放或死刑。');
- else{p.status='demotionNotice';p.ap=0;p.deadline=null;pushLog(p,`留任复考仍未达标，降调为${LOWER[p.role]}。接受26周试用可争取回原职复考；未完成交接前不恢复任职。`);}
+// Only explicit committed decisions become criminal evidence. Low metrics never do.
+const DECISIONS = {
+  "county:X03:conceal": ["false-report", "沿用明知不实的仓账", 1, 0],
+  "county:X15:accept": ["bribe", "私收礼物并许诺照顾", 2, 80],
+  "county:G07:destroy": ["destroy", "删除不利原始记录", 3, 0],
+  "prefecture:T03:allow": ["cover", "包庇承运队私售粮食", 2, 0],
+  "prefecture:T07:collect": ["extort", "明知已缴仍重复征收", 2, 0],
+  "prefecture:T08:inflate": ["false-report", "将未到粮写成实收", 1, 0],
+  "tongzhi:D02:cover": ["cover", "隐瞒工程质量疑点", 2, 0],
+  "tongzhi:D03:expel": ["expel", "未核归程强行遣返灾民", 2, 0],
+  "tongzhi:D04:compel": ["coerce", "以出工为救济前提排斥病弱", 2, 0],
+  "tongzhi:D06:exclude": ["exclude", "删去实际受灾居民救助资格", 2, 0],
+  "tongzhi:D07:divert": ["divert", "将河工专项挪作门楼", 3, 100],
+  "tongzhi:D08:false": ["false-report", "将未完工程报为完成", 1, 0],
+  "zhifu:F02:suppress": ["cover", "以属官政绩压下侵渔线索", 2, 0],
+  "zhifu:F03:reject": ["obstruct", "压回上诉、拒绝核实", 2, 0],
+  "zhifu:F04:accept": ["false-report", "未经核实背书政绩册", 1, 0],
+  "zhifu:F06:facade": ["divert", "抽走民生公款装点门面", 3, 100],
+  "zhifu:F07:favor": ["favor", "以私人亲疏作属官考语", 2, 0],
+  "zhifu:F08:sign": ["false-report", "将未办事项签作圆满", 1, 0],
+};
+export function decisionRisk(role, event, choice) {
+  const d = DECISIONS[`${role}:${event}:${choice}`];
+  return d
+    ? `将留下主动违法记录；经查证复核，可能${d[2] >= 3 ? "流放" : d[2] === 2 ? "下狱" : "罢官"}，政绩不能抵销。`
+    : "";
 }
-function finish(s,status,reason){const p=s.accountability.current;p.status=status;p.sentence=status;p.finalizedAt=p.week;p.ap=0;p.deadline=null;p.proposed=status;pushLog(p,reason);}
-export function proposedSentence(s){const p=s.accountability.current,a=s.accountability;const confirmed=p.evidence.filter(e=>e.documents&&e.witnesses).map(e=>a.incidents.find(i=>i.id===e.incident));if(!confirmed.length)return'dismissed';if(confirmed.some(i=>i.code==='murder'))return'executed';let grade=Math.max(...confirmed.map(i=>i.severity));if(confirmed.filter(i=>i.severity>=2&&!i.legacy).length>=3)grade=Math.max(grade,3);if(grade===3&&p.reply==='truth'&&p.liability>0&&p.repaid>=p.liability&&!confirmed.some(i=>i.code==='destroy'||i.code==='case-destroy'))grade=2;return grade>=3?'exile':grade===2?'prison':'dismissed';}
-export function accountabilityCommand(s,c){const a=s.accountability,p=a.current;if(!p)throw Error('当前没有考课或处分事项。');p.lastLedger=[];if(FINALS.includes(p.status)||p.status==='cleared')throw Error('本附卷已经结案。');
- if(c.type==='ac_begin'){if(p.status==='notice')beginStage(s,'remedy');else if(p.status==='demotionNotice')beginStage(s,'demotion');else throw Error('当前不能开始该任用阶段。');return;}
- if(c.type==='ac_disaster'){if(!['notice','remedy','retest'].includes(p.status)||p.reliefClaimed||p.cause==='violation')throw Error('当前不能重复申请灾情复核。');p.reliefClaimed=true;p.reliefDue=p.week+2;pushLog(p,'已申请灾情与履职责任复核，2周后答复；申请本身不算免责。');return;}
- if(c.type==='ac_work'){if(!['remedy','retest','demotion'].includes(p.status))throw Error('当前不是整改或试用阶段。');const t=p.targets.find(t=>t.id===c.topic);if(!t)throw Error('督办事项无效。');if(p.week+2>p.deadline)throw Error('剩余时间不足两周，无法按期核验。');if(p.pending.length>=2)throw Error('两组查验人手均已外派。');if(t.done+p.pending.filter(x=>x.topic===t.id).length>=t.required)throw Error('此项已有足够的核验或在办安排。');const cost={silver:8,grain:t.id==='life'?4:0,ap:1};pay(p,cost,t.name+'督办');p.pending.push({topic:t.id,due:p.week+2});pushLog(p,`${t.name}已派员，实付8两${cost.grain?'、4石':''}，2周后核验；在办不算完成。`);return;}
- if(c.type==='ac_reply'){if(p.status!=='inquiry'||p.reply||!['truth','deny','disaster'].includes(c.reply))throw Error('当前不能递交此申辩。');p.reply=c.reply;pushLog(p,`${{truth:'如实陈述并配合核查',deny:'对指控提出异议，要求核对独立证据',disaster:'请求区分灾害因素与主观行为'}[c.reply]}。申辩不构成新罪；既有事实不因表态消失。`);return;}
- if(c.type==='ac_repay'){if(!['inquiry','review'].includes(p.status)||p.repaid>=p.liability||p.private<=0)throw Error('当前没有可退赔金额。');const amount=Math.min(p.private,p.liability-p.repaid);cash(p,'以私产退赔，交有司收讫',{private:-amount});p.repaid=round(p.repaid+amount);pushLog(p,`实际退赔${amount}两，累计${p.repaid}/${p.liability}两；未退部分保留，退赔不抵销罪证。`);return;}
- if(c.type==='ac_crime'){if(p.status!=='inquiry'||p.criminalChoice||!['destroy','murder'].includes(c.kind))throw Error('当前无法办理该项。');if(c.confirmed!==true)throw Error('须确认不可逆的新增罪责。');p.criminalChoice=c.kind;record(s,p.role,c.kind==='murder'?'murder':'case-destroy',c.kind==='murder'?'查案期间指使杀害关键证人':'查案期间指使销毁留存账证',c.kind==='murder'?4:3,0,false);const i=a.incidents.at(-1);p.evidence.push({incident:i.id,documents:false,witnesses:false,entered:p.week});pushLog(p,c.kind==='murder'?'已执行指使灭口的选择，新增故意杀人案；原有副本、往来书信及独立证言继续留存，可能判斩。':'已执行毁证选择，形成新的妨害查核罪责；独立留存副本仍可核验。');return;}
- if(c.type==='ac_appeal'){if(p.status!=='review'||p.appealed)throw Error('当前不能重复上诉。');p.appealed=true;p.deadline+=2;pushLog(p,'申诉受理，复核延长2周，再核罪名、证据与退赔。提出申诉不加重处分。');return;}
- if(c.type!=='ac_advance')throw Error('考课操作无效。');if(['notice','demotionNotice'].includes(p.status)&&p.reliefDue===null)throw Error('请先接受整改或降调安排。');advance(s);
+export function trackAccountability(before, s, c) {
+  const role = currentOffice(before),
+    a = s.accountability;
+  if (currentOffice(s) !== role) {
+    if (a.current) {
+      const old = a.current,
+        newRole = currentOffice(s),
+        q = officeState(s),
+        delta = round(old.private - officeState(before, role).private);
+      q.private = round(q.private + delta);
+      const row = {
+        turn: 0,
+        title: "承接考课期间私人收支净额",
+        private: delta,
+      };
+      if (q.ledger) {
+        q.ledger.push(row);
+        q.lastLedger.push(row);
+        if (s.receipts[0].ledger !== q.lastLedger)
+          s.receipts[0].ledger.push(row);
+      } else s.receipts[0].ledger.push(row);
+      s.receipts[0].changes.push({
+        name: "承接私产净变化",
+        before: officeState(before, role).private,
+        after: q.private,
+        delta,
+      });
+      if (newRole === "zhifu" && old.settled) {
+        let remaining = old.settled;
+        for (const d of Object.values(q.counties)) {
+          const take = Math.min(d.displaced, remaining);
+          d.displaced -= take;
+          d.vulnerable = Math.min(d.vulnerable, d.displaced);
+          remaining -= take;
+          q.settled += take;
+        }
+        s.receipts[0].notes.push(
+          `已承接考课附卷实际安置${old.settled - remaining}人，原任名册留底。`,
+        );
+      }
+      a.history.push(structuredClone(old));
+      a.current = null;
+    }
+    return;
+  }
+  const e =
+    c.type === "event"
+      ? c.event
+      : c.type === "pref_event"
+        ? before.prefecture?.event
+        : c.type === "tz_event"
+          ? before.tongzhi?.event
+          : c.type === "zf_event"
+            ? before.zhifu?.event
+            : null;
+  const d = DECISIONS[`${role}:${e}:${c.choice}`];
+  if (d) record(s, role, ...d);
+  // County flags are also durable facts in this version; legacy migration is deliberately milder.
+  ensureReview(s);
 }
-function advance(s){const a=s.accountability,p=a.current;if(['remedy','retest','demotion'].includes(p.status)){const privateIncome=p.status==='demotion'?.5:1;cash(p,'考课期间俸入与家计净余',{private:privateIncome});}
- p.week++;a.totalWeeks++;
- if(p.reliefDue!==null&&p.week>=p.reliefDue){p.reliefDue=null;if(p.disaster.eligible){p.reliefGranted=true;p.cause='disaster';if(p.deadline!==null)p.deadline+=13;else p.checkpoints.push('disaster-extension');cash(p,'灾后恢复专项协济实到',{silver:80,grain:80});pushLog(p,'灾情与履职记录核实，获准延长当前整改/复考13周，补拨80两、80石；仍须完成实际改善，不免除主动违法。');}else pushLog(p,'未能核实足以延长考限的灾情与履职记录，维持原期限；未因申辩加罪。');}
- for(const x of p.pending.filter(x=>x.due<=p.week)){const t=p.targets.find(t=>t.id===x.topic);t.done++;if(t.id==='life'){const n=Math.min(12,p.remainingDisplaced);p.remainingDisplaced-=n;p.settled+=n;pushLog(p,`${t.name}核验完成1项${n?`，实际落实${n}名旧册居民安置`:'，回访与救助清册已查实'}。`);}else pushLog(p,`${t.name}核验完成1项，已附新记录，不改写原任事实。`);}
- p.pending=p.pending.filter(x=>x.due>p.week);
- if(p.status==='inquiry'){for(const e of p.evidence){if(p.week>=e.entered+2)e.documents=true;if(p.week>=e.entered+4)e.witnesses=true;}if(p.week===2)pushLog(p,'原始账证、留存副本已核；涉及较重指控者收押待审，尚未作最终定罪。');if(p.week===4)pushLog(p,'独立证言与凭据交叉核对完成。拒绝认罪或提出申辩不会单独成为定罪依据。');if(p.week>=6&&p.evidence.every(e=>e.documents&&e.witnesses)){p.proposed=proposedSentence(s);p.status='review';p.deadline=p.week+3;pushLog(p,`审拟结果：${STATUS[p.proposed]}。进入3周复核；现在仍非最终处分，可提出申诉。`);}}
- else if(p.status==='review'&&p.week>=p.deadline){p.proposed=proposedSentence(s);if(p.proposed==='executed'){p.status='capitalReview';p.deadline=p.week+2;pushLog(p,'独立证据证实故意杀人，死刑审拟仍须再经2周覆核与最终核准；未核准前不执行。');}else finish(s,p.proposed,`${p.appealed?'申诉复核':'复核'}完毕，${STATUS[p.proposed]}处分生效。${p.proposed==='prison'?'革职后下狱服刑，本线终结。':p.proposed==='exile'?'革职并押送流放，本线终结。':'解除官职，归籍，本线终结。'}尚欠退赔${round(p.liability-p.repaid)}两随案记录。`);}
- else if(p.status==='capitalReview'&&p.week>=p.deadline){if(proposedSentence(s)!=='executed'||!p.evidence.some(e=>e.documents&&e.witnesses&&a.incidents.find(i=>i.id===e.incident)?.code==='murder'))throw Error('不具备死刑核准条件。');finish(s,'executed','故意杀人案经审拟、复核及最终核准，斩首执行。此生履历终结；不展示血腥场面。');}
- else if(['remedy','retest','demotion'].includes(p.status)&&p.week>=p.deadline)concludeStage(s);
- if(['remedy','retest','demotion'].includes(p.status))p.ap=2;
+export function disasterEvidence(s, role = currentOffice(s)) {
+  const q = officeState(s, role);
+  let disaster = false,
+    diligence = false,
+    text = "未见可核对的本任灾情记录。";
+  if (role === "county") {
+    disaster = !!(q.flags.drought || q.flags.floodResolved);
+    diligence =
+      !!q.flags.responded &&
+      (q.patrol > 0 || q.flags.healthCare || q.flags.settle);
+    text = disaster
+      ? "县卷记有旱情或汛情；据实说明及救助、巡堤记录须一并核实。"
+      : text;
+  }
+  if (role === "prefecture") {
+    disaster = q.logs.some((l) => l.text.includes("据实申报延误"));
+    diligence = disaster;
+    text = disaster ? "府署日录保留枯水阻航及如实申报记录。" : text;
+  }
+  if (role === "tongzhi") {
+    disaster = q.floods.length > 0;
+    diligence =
+      disaster &&
+      ((q.affected > 0 && q.resettled / q.affected >= 0.5) ||
+        q.floods.some((f) => f.counties.some((c) => c.defence >= 40)));
+    text = disaster
+      ? `有${q.floods.length}次汛情记录，实际安置${q.resettled}/${q.affected}人；防护和救助仍依原卷。`
+      : text;
+  }
+  if (role === "zhifu") {
+    disaster = q.affected > q.record.displaced;
+    diligence = disaster && q.affected > 0 && q.settled / q.affected >= 0.5;
+    text = disaster
+      ? `本任汛情新增需安置${q.affected - q.record.displaced}人，实际安置${q.settled}人。`
+      : text;
+  }
+  return {
+    disaster,
+    eligible: !!(
+      disaster &&
+      diligence &&
+      !q.misconduct &&
+      !q.outcome?.misconduct
+    ),
+    text,
+  };
 }
-export function attachExtension(p){if(p.checkpoints.includes('disaster-extension')){p.deadline+=13;p.checkpoints=p.checkpoints.filter(x=>x!=='disaster-extension');}}
-export function accountabilityReceipt(before,after,c){const p=after.accountability.current,b=before.accountability.current,changes=[];for(const[k,name]of Object.entries({silver:'考课专项银',grain:'考课专项粮',private:'私产',settled:'附卷实际安置',repaid:'实际退赔',remainingDisplaced:'待安置居民',ap:'精力'}))if(p[k]!==b[k])changes.push({name,before:b[k],after:p[k],delta:round(p[k]-b[k])});return{id:c.id,chapter:'考课',turn:b.week,title:c.type==='ac_advance'?'考课本周结算':'考课与处分回执',changes,notes:p.logs.filter(x=>x.id>=b.nextLog).reverse().map(x=>x.text),ledger:p.lastLedger,policies:[]};}
-export function validateAccountability(s){const a=s.accountability,fail=()=>{throw Error('考课或处分附卷结构异常。');},num=(x,min=0,max=1e9)=>Number.isFinite(x)&&x>=min&&x<=max,int=(x,min=0,max=1e9)=>Number.isInteger(x)&&num(x,min,max);if(!a||!Array.isArray(a.incidents)||!Array.isArray(a.history)||!Array.isArray(a.legacyRoles)||!a.qualifications||!int(a.nextIncident,1)||!int(a.totalWeeks)||a.incidents.length>100||a.history.length>8)fail();const ids=new Set();for(const i of a.incidents){if(!OFFICES[i.role]||!int(i.id,1,a.nextIncident-1)||ids.has(i.id)||!int(i.week,0,156)||!int(i.severity,1,4)||!num(i.amount)||typeof i.title!=='string'||typeof i.code!=='string'||typeof i.legacy!=='boolean'||i.legacy&&i.severity>1||i.severity===4&&i.code!=='murder')fail();ids.add(i.id);}if(a.nextIncident!==a.incidents.length+1)fail();for(const role of a.legacyRoles)if(!OFFICES[role])fail();
- const phases=[...a.history,...(a.current?[a.current]:[])];for(const p of phases){if(!p||!OFFICES[p.role]||!STATUS[p.status]||!['ability','disaster','violation'].includes(p.cause)||!int(p.week,0,300)||!int(p.ap,0,2)||!int(p.nextLog,1)||!num(p.initialScore,0,100)||!p.disaster||typeof p.disaster.eligible!=='boolean'||!Array.isArray(p.targets)||!Array.isArray(p.pending)||!Array.isArray(p.logs)||!Array.isArray(p.ledger)||!Array.isArray(p.lastLedger)||!Array.isArray(p.evidence)||!Array.isArray(p.stageResults)||!Array.isArray(p.checkpoints))fail();for(const k of ['silver','grain','private','initialPrivate','settled','remainingDisplaced','sourceDisplaced','repaid','liability'])if(!num(p[k]))fail();if(p.sourceDisplaced!==p.settled+p.remainingDisplaced||p.repaid>p.liability||p.initialPrivate!==officeState(s,p.role)?.private)fail();for(const k of ['reliefClaimed','reliefGranted','demoted','restored','retestAfterDemotion','appealed'])if(typeof p[k]!=='boolean')fail();if(p.reliefDue!==null&&!int(p.reliefDue,p.week+1,300))fail();if(![null,'truth','deny','disaster'].includes(p.reply)||![null,'destroy','murder'].includes(p.criminalChoice))fail();
- if(['remedy','retest','demotion','review','capitalReview'].includes(p.status)?!int(p.deadline,p.week+1,300):p.deadline!==null)fail();if(p.targets.length&&!([2,3,4].includes(p.targets[0].required)&&p.targets.length===3&&new Set(p.targets.map(t=>t.id)).size===3))fail();for(const t of p.targets)if(!TOPICS[p.role].some(([id])=>id===t.id)||!int(t.done,0,t.required)||!int(t.required,2,4))fail();if(p.pending.length>2)fail();for(const x of p.pending)if(!p.targets.some(t=>t.id===x.topic)||!int(x.due,p.week+1,300)||x.due>p.deadline)fail();for(const t of p.targets)if(t.done+p.pending.filter(x=>x.topic===t.id).length>t.required)fail();
- const evidenceIds=new Set();for(const e of p.evidence){const i=a.incidents.find(i=>i.id===e.incident);if(!i||i.role!==p.role||evidenceIds.has(e.incident)||typeof e.documents!=='boolean'||typeof e.witnesses!=='boolean'||!int(e.entered,0,p.week)||e.documents&&p.week<e.entered+2||e.witnesses&&p.week<e.entered+4)fail();evidenceIds.add(e.incident);}if(p.cause==='violation'&&p.evidence.length===0)fail();if(p.cause!=='violation'&&['inquiry','review','capitalReview','prison','exile','executed'].includes(p.status))fail();if(['review','capitalReview','prison','exile','executed'].includes(p.status)&&(!p.evidence.every(e=>e.documents&&e.witnesses)||p.week<6))fail();if(p.status==='executed'&&(!p.evidence.some(e=>a.incidents.find(i=>i.id===e.incident).code==='murder')||p.week<(p.appealed?13:11)))fail();if(FINALS.includes(p.status)&&(p.sentence!==p.status||p.finalizedAt!==p.week))fail();if(p.status==='cleared'&&(!p.stageResults.some(r=>r.stage==='retest'&&r.passed)||!stagePassed(p)||p.week<39||p.cause==='violation'))fail();for(const r of p.stageResults)if(!['remedy','retest','demotion'].includes(r.stage)||!int(r.week,13,p.week)||!Array.isArray(r.targets)||r.targets.length!==3||r.passed!==r.targets.every(t=>Number.isInteger(t.done)&&t.done>=t.required))fail();
- for(const l of [...p.ledger,...p.lastLedger])if(!int(l.turn,0,p.week)||typeof l.title!=='string'||['silver','grain','private'].some(k=>l[k]!==undefined&&!num(l[k],-1e9,1e9)))fail();for(const k of ['silver','grain','private'])if(Math.abs(round((k==='private'?p.initialPrivate:0)+p.ledger.reduce((n,l)=>n+(l[k]||0),0))-p[k])>.01)fail();if(p.logs.some(l=>!int(l.id,1,p.nextLog-1)||!int(l.week,0,p.week)||typeof l.text!=='string'))fail();}
- for(const[role,q]of Object.entries(a.qualifications)){if(!OFFICES[role]||!q||!phases.some(p=>p.role===role&&p.status==='cleared'&&p.week===q.week))fail();}if(a.current&&a.current.role!==currentOffice(s))fail();
+const TOPICS = {
+  county: [
+    ["life", "民生与灾后善后"],
+    ["justice", "积案与执行复查"],
+    ["finance", "钱粮与工程清查"],
+  ],
+  prefecture: [
+    ["life", "属县粮食接济"],
+    ["finance", "府仓修护与清账"],
+    ["justice", "调粮交付核验"],
+  ],
+  tongzhi: [
+    ["finance", "河工质量与修护"],
+    ["life", "安置居民回访"],
+    ["justice", "赈册与拨款复核"],
+  ],
+  zhifu: [
+    ["life", "属县民生督办"],
+    ["finance", "预算与属官报告核验"],
+    ["justice", "跨县案卷执行复查"],
+  ],
+};
+function targets(role, n) {
+  return TOPICS[role].map(([id, name]) => ({ id, name, done: 0, required: n }));
+}
+export function ensureReview(s) {
+  const a = s.accountability,
+    role = currentOffice(s),
+    q = officeState(s, role);
+  if (!q.finished || a.current || qualified(s, role)) return;
+  const bad = q.outcome?.misconduct || q.misconduct;
+  if (!bad && q.outcome?.rating === "称职") return;
+  if (bad && !a.incidents.some((i) => i.role === role))
+    record(
+      s,
+      role,
+      "legacy-review",
+      "旧卷仅保留违规标记，具体罪情未完整记录",
+      1,
+      0,
+      true,
+    );
+  const evidence = disasterEvidence(s, role),
+    incidents = a.incidents.filter((i) => i.role === role);
+  a.current = {
+    role,
+    status: incidents.length ? "inquiry" : "notice",
+    cause: incidents.length
+      ? "violation"
+      : evidence.eligible
+        ? "disaster"
+        : "ability",
+    week: 0,
+    stageStart: 0,
+    deadline: null,
+    ap: 2,
+    silver: 0,
+    grain: 0,
+    private: q.private,
+    initialPrivate: q.private,
+    stage: "",
+    targets: [],
+    pending: [],
+    logs: [],
+    nextLog: 1,
+    ledger: [],
+    lastLedger: [],
+    discipline: 0,
+    reliefClaimed: false,
+    reliefDue: null,
+    reliefGranted: false,
+    initialScore: q.outcome.score,
+    disaster: evidence,
+    checkpoints: [],
+    remedyPassed: null,
+    demoted: false,
+    restored: false,
+    retestAfterDemotion: false,
+    sourceDisplaced:
+      role === "county"
+        ? q.displaced
+        : Object.values(q.counties).reduce((n, c) => n + (c.displaced || 0), 0),
+    remainingDisplaced:
+      role === "county"
+        ? q.displaced
+        : Object.values(q.counties).reduce((n, c) => n + (c.displaced || 0), 0),
+    settled: 0,
+    sourceShortage: q.shortage || 0,
+    evidence: incidents.map((i) => ({
+      incident: i.id,
+      documents: false,
+      witnesses: false,
+      entered: 0,
+    })),
+    reply: null,
+    repaid: 0,
+    liability: incidents.reduce((n, i) => n + i.amount, 0),
+    proposed: null,
+    appealed: false,
+    sentence: null,
+    finalizedAt: null,
+    criminalChoice: null,
+    stageResults: [],
+    caseReviews:
+      role === "county"
+        ? Object.fromEntries(
+            (q.outcome.duties || []).map((id) => [
+              id,
+              { clues: [], status: "open", due: null },
+            ]),
+          )
+        : {},
+  };
+  const p = a.current;
+  pushLog(
+    p,
+    incidents.length
+      ? "本任停职立案，原任公账与履历封存；先查证、再申辩、后复核。旧卷分数不能代替罪证。"
+      : `原考语${q.outcome.rating}，${q.outcome.score}分。进入限期整改程序；原考满记录保留，新增工作另列考课附卷。`,
+  );
+}
+export function migrateAccountability(s) {
+  s.accountability = blankAccountability();
+  for (const role of Object.keys(OFFICES)) {
+    const q = role === "county" ? s : s[role];
+    if (q) s.accountability.legacyRoles.push(role);
+  }
+}
+function beginStage(s, status) {
+  const p = s.accountability.current;
+  p.status = status;
+  p.stage = status;
+  p.stageStart = p.week;
+  p.deadline = p.week + (status === "remedy" ? 13 : 26);
+  p.ap = 2;
+  p.targets = targets(p.role, status === "remedy" ? 2 : 3);
+  p.pending = [];
+  attachExtension(p);
+  if (status === "retest" && p.remedyPassed === false && !p.retestAfterDemotion)
+    for (const t of p.targets) t.required = 4;
+  if (status === "demotion") {
+    p.demoted = true;
+    p.discipline++;
+  }
+  const silver = status === "demotion" ? 110 : status === "remedy" ? 140 : 180,
+    grain = status === "demotion" ? 60 : 90;
+  cash(p, `${STATUS[status]}专款核拨`, { silver, grain });
+  pushLog(
+    p,
+    `${STATUS[status]}开始，${p.deadline - p.week}周，每周2点精力；已核拨${silver}两、${grain}石。${status === "demotion" ? `现任降为${LOWER[p.role]}，俸余减半；通过后仍须在原职留任复考。` : ""}旧任公帑不挪用，所有差事两周后核验。`,
+  );
+}
+export const stagePassed = (p) =>
+  p.targets.length === 3 &&
+  p.targets.every((t) => t.done >= t.required) &&
+  Object.values(p.caseReviews || {}).every((c) => c.status === "done");
+export const inspectionLoad = (p) =>
+  p.pending.length +
+  Object.values(p.caseReviews || {}).filter((c) => c.status === "checking")
+    .length;
+function concludeStage(s) {
+  const a = s.accountability,
+    p = a.current,
+    passed = stagePassed(p);
+  p.stageResults.push({
+    stage: p.status,
+    week: p.week,
+    passed,
+    casesPassed: Object.values(p.caseReviews || {}).every(
+      (c) => c.status === "done",
+    ),
+    targets: structuredClone(p.targets),
+  });
+  pushLog(
+    p,
+    `${STATUS[p.status]}到期：${passed ? "三项要求均已核验完成" : "仍有要求未达成"}。`,
+  );
+  if (p.status === "remedy") {
+    p.remedyPassed = passed;
+    beginStage(s, "retest");
+    return;
+  }
+  if (p.status === "demotion") {
+    if (passed) {
+      p.retestAfterDemotion = true;
+      p.restored = true;
+      beginStage(s, "retest");
+      pushLog(p, "降调试用通过，获准回原职复考；未直接获得晋升资格。");
+    } else finish(s, "dismissed", "降调试用仍未完成基本职务要求，罢官归籍。");
+    return;
+  }
+  if (passed) {
+    p.status = "cleared";
+    p.ap = 0;
+    p.deadline = null;
+    p.finalizedAt = p.week;
+    a.qualifications[p.role] = {
+      week: p.week,
+      demoted: p.demoted,
+      score: p.initialScore,
+    };
+    pushLog(
+      p,
+      "留任复考通过，另附合格记录，恢复候选资格；原任低分及降调处分不删除。",
+    );
+  } else if (p.demoted || p.role === "county")
+    finish(
+      s,
+      "dismissed",
+      "整改与留任复考仍未达标，罢官归籍；无刑事罪证，不附加监禁、流放或死刑。",
+    );
+  else {
+    p.status = "demotionNotice";
+    p.ap = 0;
+    p.deadline = null;
+    pushLog(
+      p,
+      `留任复考仍未达标，降调为${LOWER[p.role]}。接受26周试用可争取回原职复考；未完成交接前不恢复任职。`,
+    );
+  }
+}
+function finish(s, status, reason) {
+  const p = s.accountability.current;
+  p.status = status;
+  p.sentence = status;
+  p.finalizedAt = p.week;
+  p.ap = 0;
+  p.deadline = null;
+  p.proposed = status;
+  pushLog(p, reason);
+}
+export function proposedSentence(s) {
+  const p = s.accountability.current,
+    a = s.accountability;
+  const confirmed = p.evidence
+    .filter((e) => e.documents && e.witnesses)
+    .map((e) => a.incidents.find((i) => i.id === e.incident));
+  if (!confirmed.length) return "dismissed";
+  if (confirmed.some((i) => i.code === "murder")) return "executed";
+  let grade = Math.max(...confirmed.map((i) => i.severity));
+  if (confirmed.filter((i) => i.severity >= 2 && !i.legacy).length >= 3)
+    grade = Math.max(grade, 3);
+  if (
+    grade === 3 &&
+    p.reply === "truth" &&
+    p.liability > 0 &&
+    p.repaid >= p.liability &&
+    !confirmed.some((i) => i.code === "destroy" || i.code === "case-destroy")
+  )
+    grade = 2;
+  return grade >= 3 ? "exile" : grade === 2 ? "prison" : "dismissed";
+}
+export function accountabilityCommand(s, c) {
+  const a = s.accountability,
+    p = a.current;
+  if (!p) throw Error("当前没有考课或处分事项。");
+  p.lastLedger = [];
+  if (FINALS.includes(p.status) || p.status === "cleared")
+    throw Error("本附卷已经结案。");
+  if (c.type === "ac_begin") {
+    if (p.status === "notice") beginStage(s, "remedy");
+    else if (p.status === "demotionNotice") beginStage(s, "demotion");
+    else throw Error("当前不能开始该任用阶段。");
+    return;
+  }
+  if (c.type === "ac_disaster") {
+    if (
+      !["notice", "remedy", "retest"].includes(p.status) ||
+      p.reliefClaimed ||
+      p.cause === "violation"
+    )
+      throw Error("当前不能重复申请灾情复核。");
+    p.reliefClaimed = true;
+    p.reliefDue = p.week + 2;
+    pushLog(p, "已申请灾情与履职责任复核，2周后答复；申请本身不算免责。");
+    return;
+  }
+  if (c.type === "ac_work") {
+    if (!["remedy", "retest", "demotion"].includes(p.status))
+      throw Error("当前不是整改或试用阶段。");
+    const t = p.targets.find((t) => t.id === c.topic);
+    if (!t) throw Error("督办事项无效。");
+    if (p.week + 2 > p.deadline)
+      throw Error("剩余时间不足两周，无法按期核验。");
+    if (inspectionLoad(p) >= 2) throw Error("两组查验人手均已外派。");
+    if (t.done + p.pending.filter((x) => x.topic === t.id).length >= t.required)
+      throw Error("此项已有足够的核验或在办安排。");
+    const cost = { silver: 8, grain: t.id === "life" ? 4 : 0, ap: 1 };
+    pay(p, cost, t.name + "督办");
+    p.pending.push({ topic: t.id, due: p.week + 2 });
+    pushLog(
+      p,
+      `${t.name}已派员，实付8两${cost.grain ? "、4石" : ""}，2周后核验；在办不算完成。`,
+    );
+    return;
+  }
+  if (c.type === "ac_case_clue" || c.type === "ac_case_handover") {
+    const file = p.caseReviews?.[c.case],
+      def = countyCase(s, c.case);
+    if (
+      !file ||
+      !["remedy", "retest"].includes(p.status) ||
+      file.status !== "open"
+    )
+      throw Error("此案当前不能补查或重报移交。");
+    if (c.type === "ac_case_clue") {
+      const clue = def.clues.find((x) => x.id === c.clue);
+      if (!clue || file.clues.includes(c.clue))
+        throw Error("补查线索无效或已核实。");
+      pay(p, { ap: 1 }, "附卷补查");
+      file.clues.push(c.clue);
+      pushLog(p, `${def.name} · ${clue.name}：${clue.text}`);
+    } else {
+      if (file.clues.length !== def.clues.length || p.week + 2 > p.deadline)
+        throw Error("须查齐独立证据，并留足两周核准移交。");
+      if (inspectionLoad(p) >= 2) throw Error("两组查验人手均已外派。");
+      pay(p, { silver: 8, ap: 1 }, `${def.name}补查移交`);
+      file.status = "checking";
+      file.due = p.week + 2;
+      pushLog(
+        p,
+        `${def.name}：据查证结果拟按“${def.good}”办理，由上级核准后随合格附卷正式移交；原任未竟记录保留。`,
+      );
+    }
+    return;
+  }
+  if (c.type === "ac_reply") {
+    if (
+      p.status !== "inquiry" ||
+      p.reply ||
+      !["truth", "deny", "disaster"].includes(c.reply)
+    )
+      throw Error("当前不能递交此申辩。");
+    p.reply = c.reply;
+    pushLog(
+      p,
+      `${{ truth: "如实陈述并配合核查", deny: "对指控提出异议，要求核对独立证据", disaster: "请求区分灾害因素与主观行为" }[c.reply]}。申辩不构成新罪；既有事实不因表态消失。`,
+    );
+    return;
+  }
+  if (c.type === "ac_repay") {
+    if (
+      !["inquiry", "review"].includes(p.status) ||
+      p.repaid >= p.liability ||
+      p.private <= 0
+    )
+      throw Error("当前没有可退赔金额。");
+    const amount = Math.min(p.private, p.liability - p.repaid);
+    cash(p, "以私产退赔，交有司收讫", { private: -amount });
+    p.repaid = round(p.repaid + amount);
+    pushLog(
+      p,
+      `实际退赔${amount}两，累计${p.repaid}/${p.liability}两；未退部分保留，退赔不抵销罪证。`,
+    );
+    return;
+  }
+  if (c.type === "ac_crime") {
+    if (
+      p.status !== "inquiry" ||
+      p.criminalChoice ||
+      !["destroy", "murder"].includes(c.kind)
+    )
+      throw Error("当前无法办理该项。");
+    if (c.confirmed !== true) throw Error("须确认不可逆的新增罪责。");
+    p.criminalChoice = c.kind;
+    record(
+      s,
+      p.role,
+      c.kind === "murder" ? "murder" : "case-destroy",
+      c.kind === "murder"
+        ? "查案期间指使杀害关键证人"
+        : "查案期间指使销毁留存账证",
+      c.kind === "murder" ? 4 : 3,
+      0,
+      false,
+    );
+    const i = a.incidents.at(-1);
+    p.evidence.push({
+      incident: i.id,
+      documents: false,
+      witnesses: false,
+      entered: p.week,
+    });
+    pushLog(
+      p,
+      c.kind === "murder"
+        ? "已执行指使灭口的选择，新增故意杀人案；原有副本、往来书信及独立证言继续留存，可能判斩。"
+        : "已执行毁证选择，形成新的妨害查核罪责；独立留存副本仍可核验。",
+    );
+    return;
+  }
+  if (c.type === "ac_appeal") {
+    if (p.status !== "review" || p.appealed) throw Error("当前不能重复上诉。");
+    p.appealed = true;
+    p.deadline += 2;
+    pushLog(
+      p,
+      "申诉受理，复核延长2周，再核罪名、证据与退赔。提出申诉不加重处分。",
+    );
+    return;
+  }
+  if (c.type !== "ac_advance") throw Error("考课操作无效。");
+  if (["notice", "demotionNotice"].includes(p.status) && p.reliefDue === null)
+    throw Error("请先接受整改或降调安排。");
+  advance(s);
+}
+function advance(s) {
+  const a = s.accountability,
+    p = a.current;
+  if (["remedy", "retest", "demotion"].includes(p.status)) {
+    const privateIncome = p.status === "demotion" ? 0.5 : 1;
+    cash(p, "考课期间俸入与家计净余", { private: privateIncome });
+  }
+  p.week++;
+  a.totalWeeks++;
+  if (p.reliefDue !== null && p.week >= p.reliefDue) {
+    p.reliefDue = null;
+    if (p.disaster.eligible) {
+      p.reliefGranted = true;
+      p.cause = "disaster";
+      if (p.deadline !== null) p.deadline += 13;
+      else p.checkpoints.push("disaster-extension");
+      cash(p, "灾后恢复专项协济实到", { silver: 80, grain: 80 });
+      pushLog(
+        p,
+        "灾情与履职记录核实，获准延长当前整改/复考13周，补拨80两、80石；仍须完成实际改善，不免除主动违法。",
+      );
+    } else
+      pushLog(
+        p,
+        "未能核实足以延长考限的灾情与履职记录，维持原期限；未因申辩加罪。",
+      );
+  }
+  for (const x of p.pending.filter((x) => x.due <= p.week)) {
+    const t = p.targets.find((t) => t.id === x.topic);
+    t.done++;
+    if (t.id === "life") {
+      const n = Math.min(12, p.remainingDisplaced);
+      p.remainingDisplaced -= n;
+      p.settled += n;
+      pushLog(
+        p,
+        `${t.name}核验完成1项${n ? `，实际落实${n}名旧册居民安置` : "，回访与救助清册已查实"}。`,
+      );
+    } else pushLog(p, `${t.name}核验完成1项，已附新记录，不改写原任事实。`);
+  }
+  p.pending = p.pending.filter((x) => x.due > p.week);
+  for (const [id, file] of Object.entries(p.caseReviews || {}))
+    if (file.status === "checking" && file.due <= p.week) {
+      file.status = "done";
+      file.due = null;
+      pushLog(
+        p,
+        `${countyCase(s, id).name}：补查与移交依据获核准，正式交下一任办理；不倒填本任结案数或旧判决。`,
+      );
+    }
+  if (p.status === "inquiry") {
+    for (const e of p.evidence) {
+      if (p.week >= e.entered + 2) e.documents = true;
+      if (p.week >= e.entered + 4) e.witnesses = true;
+    }
+    if (p.week === 2)
+      pushLog(
+        p,
+        "原始账证、留存副本已核；涉及较重指控者收押待审，尚未作最终定罪。",
+      );
+    if (p.week === 4)
+      pushLog(
+        p,
+        "独立证言与凭据交叉核对完成。拒绝认罪或提出申辩不会单独成为定罪依据。",
+      );
+    if (p.week >= 6 && p.evidence.every((e) => e.documents && e.witnesses)) {
+      p.proposed = proposedSentence(s);
+      p.status = "review";
+      p.deadline = p.week + 3;
+      pushLog(
+        p,
+        `审拟结果：${STATUS[p.proposed]}。进入3周复核；现在仍非最终处分，可提出申诉。`,
+      );
+    }
+  } else if (p.status === "review" && p.week >= p.deadline) {
+    p.proposed = proposedSentence(s);
+    if (p.proposed === "executed") {
+      p.status = "capitalReview";
+      p.deadline = p.week + 2;
+      pushLog(
+        p,
+        "独立证据证实故意杀人，死刑审拟仍须再经2周覆核与最终核准；未核准前不执行。",
+      );
+    } else
+      finish(
+        s,
+        p.proposed,
+        `${p.appealed ? "申诉复核" : "复核"}完毕，${STATUS[p.proposed]}处分生效。${p.proposed === "prison" ? "革职后下狱服刑，本线终结。" : p.proposed === "exile" ? "革职并押送流放，本线终结。" : "解除官职，归籍，本线终结。"}尚欠退赔${round(p.liability - p.repaid)}两随案记录。`,
+      );
+  } else if (p.status === "capitalReview" && p.week >= p.deadline) {
+    if (
+      proposedSentence(s) !== "executed" ||
+      !p.evidence.some(
+        (e) =>
+          e.documents &&
+          e.witnesses &&
+          a.incidents.find((i) => i.id === e.incident)?.code === "murder",
+      )
+    )
+      throw Error("不具备死刑核准条件。");
+    finish(
+      s,
+      "executed",
+      "故意杀人案经审拟、复核及最终核准，斩首执行。此生履历终结；不展示血腥场面。",
+    );
+  } else if (
+    ["remedy", "retest", "demotion"].includes(p.status) &&
+    p.week >= p.deadline
+  )
+    concludeStage(s);
+  if (["remedy", "retest", "demotion"].includes(p.status)) p.ap = 2;
+}
+export function attachExtension(p) {
+  if (p.checkpoints.includes("disaster-extension")) {
+    p.deadline += 13;
+    p.checkpoints = p.checkpoints.filter((x) => x !== "disaster-extension");
+  }
+}
+export function accountabilityReceipt(before, after, c) {
+  const p = after.accountability.current,
+    b = before.accountability.current,
+    changes = [];
+  for (const [k, name] of Object.entries({
+    silver: "考课专项银",
+    grain: "考课专项粮",
+    private: "私产",
+    settled: "附卷实际安置",
+    repaid: "实际退赔",
+    remainingDisplaced: "待安置居民",
+    ap: "精力",
+  }))
+    if (p[k] !== b[k])
+      changes.push({
+        name,
+        before: b[k],
+        after: p[k],
+        delta: round(p[k] - b[k]),
+      });
+  return {
+    id: c.id,
+    chapter: "考课",
+    turn: b.week,
+    title: c.type === "ac_advance" ? "考课本周结算" : "考课与处分回执",
+    changes,
+    notes: p.logs
+      .filter((x) => x.id >= b.nextLog)
+      .reverse()
+      .map((x) => x.text),
+    ledger: p.lastLedger,
+    policies: [],
+  };
+}
+export function validateAccountability(s) {
+  const a = s.accountability,
+    fail = () => {
+      throw Error("考课或处分附卷结构异常。");
+    },
+    num = (x, min = 0, max = 1e9) => Number.isFinite(x) && x >= min && x <= max,
+    int = (x, min = 0, max = 1e9) => Number.isInteger(x) && num(x, min, max);
+  if (
+    !a ||
+    !Array.isArray(a.incidents) ||
+    !Array.isArray(a.history) ||
+    !Array.isArray(a.legacyRoles) ||
+    !a.qualifications ||
+    !int(a.nextIncident, 1) ||
+    !int(a.totalWeeks) ||
+    a.incidents.length > 100 ||
+    a.history.length > 8
+  )
+    fail();
+  const ids = new Set();
+  for (const i of a.incidents) {
+    if (
+      !OFFICES[i.role] ||
+      !int(i.id, 1, a.nextIncident - 1) ||
+      ids.has(i.id) ||
+      !int(i.week, 0, 156) ||
+      !int(i.severity, 1, 4) ||
+      !num(i.amount) ||
+      typeof i.title !== "string" ||
+      typeof i.code !== "string" ||
+      typeof i.legacy !== "boolean" ||
+      (i.legacy && i.severity > 1) ||
+      (i.severity === 4 && i.code !== "murder")
+    )
+      fail();
+    ids.add(i.id);
+  }
+  if (a.nextIncident !== a.incidents.length + 1) fail();
+  for (const role of a.legacyRoles) if (!OFFICES[role]) fail();
+  const phases = [...a.history, ...(a.current ? [a.current] : [])];
+  for (const p of phases) {
+    if (
+      !p ||
+      !OFFICES[p.role] ||
+      !STATUS[p.status] ||
+      !["ability", "disaster", "violation"].includes(p.cause) ||
+      !int(p.week, 0, 300) ||
+      !int(p.ap, 0, 2) ||
+      !int(p.nextLog, 1) ||
+      !num(p.initialScore, 0, 100) ||
+      !p.disaster ||
+      typeof p.disaster.eligible !== "boolean" ||
+      !Array.isArray(p.targets) ||
+      !Array.isArray(p.pending) ||
+      !Array.isArray(p.logs) ||
+      !Array.isArray(p.ledger) ||
+      !Array.isArray(p.lastLedger) ||
+      !Array.isArray(p.evidence) ||
+      !Array.isArray(p.stageResults) ||
+      !Array.isArray(p.checkpoints)
+    )
+      fail();
+    for (const k of [
+      "silver",
+      "grain",
+      "private",
+      "initialPrivate",
+      "settled",
+      "remainingDisplaced",
+      "sourceDisplaced",
+      "repaid",
+      "liability",
+    ])
+      if (!num(p[k])) fail();
+    if (
+      p.sourceDisplaced !== p.settled + p.remainingDisplaced ||
+      p.repaid > p.liability ||
+      p.initialPrivate !== officeState(s, p.role)?.private
+    )
+      fail();
+    for (const k of [
+      "reliefClaimed",
+      "reliefGranted",
+      "demoted",
+      "restored",
+      "retestAfterDemotion",
+      "appealed",
+    ])
+      if (typeof p[k] !== "boolean") fail();
+    if (p.reliefDue !== null && !int(p.reliefDue, p.week + 1, 300)) fail();
+    if (
+      ![null, "truth", "deny", "disaster"].includes(p.reply) ||
+      ![null, "destroy", "murder"].includes(p.criminalChoice)
+    )
+      fail();
+    if (
+      ["remedy", "retest", "demotion", "review", "capitalReview"].includes(
+        p.status,
+      )
+        ? !int(p.deadline, p.week + 1, 300)
+        : p.deadline !== null
+    )
+      fail();
+    if (
+      p.targets.length &&
+      !(
+        [2, 3, 4].includes(p.targets[0].required) &&
+        p.targets.length === 3 &&
+        new Set(p.targets.map((t) => t.id)).size === 3
+      )
+    )
+      fail();
+    for (const t of p.targets)
+      if (
+        !TOPICS[p.role].some(([id]) => id === t.id) ||
+        !int(t.done, 0, t.required) ||
+        !int(t.required, 2, 4)
+      )
+        fail();
+    if (p.pending.length > 2) fail();
+    for (const x of p.pending)
+      if (
+        !p.targets.some((t) => t.id === x.topic) ||
+        !int(x.due, p.week + 1, 300) ||
+        x.due > p.deadline
+      )
+        fail();
+    for (const t of p.targets)
+      if (
+        t.done + p.pending.filter((x) => x.topic === t.id).length >
+        t.required
+      )
+        fail();
+    const evidenceIds = new Set();
+    for (const e of p.evidence) {
+      const i = a.incidents.find((i) => i.id === e.incident);
+      if (
+        !i ||
+        i.role !== p.role ||
+        evidenceIds.has(e.incident) ||
+        typeof e.documents !== "boolean" ||
+        typeof e.witnesses !== "boolean" ||
+        !int(e.entered, 0, p.week) ||
+        (e.documents && p.week < e.entered + 2) ||
+        (e.witnesses && p.week < e.entered + 4)
+      )
+        fail();
+      evidenceIds.add(e.incident);
+    }
+    if (p.cause === "violation" && p.evidence.length === 0) fail();
+    if (
+      p.cause !== "violation" &&
+      [
+        "inquiry",
+        "review",
+        "capitalReview",
+        "prison",
+        "exile",
+        "executed",
+      ].includes(p.status)
+    )
+      fail();
+    if (
+      ["review", "capitalReview", "prison", "exile", "executed"].includes(
+        p.status,
+      ) &&
+      (!p.evidence.every((e) => e.documents && e.witnesses) || p.week < 6)
+    )
+      fail();
+    if (
+      p.status === "executed" &&
+      (!p.evidence.some(
+        (e) => a.incidents.find((i) => i.id === e.incident).code === "murder",
+      ) ||
+        p.week < (p.appealed ? 13 : 11))
+    )
+      fail();
+    if (
+      FINALS.includes(p.status) &&
+      (p.sentence !== p.status || p.finalizedAt !== p.week)
+    )
+      fail();
+    if (
+      p.status === "cleared" &&
+      (!p.stageResults.some((r) => r.stage === "retest" && r.passed) ||
+        !stagePassed(p) ||
+        p.week < 39 ||
+        p.cause === "violation")
+    )
+      fail();
+    for (const r of p.stageResults)
+      if (
+        !["remedy", "retest", "demotion"].includes(r.stage) ||
+        !int(r.week, 13, p.week) ||
+        !Array.isArray(r.targets) ||
+        r.targets.length !== 3 ||
+        r.passed !==
+          ((r.casesPassed ?? true) &&
+            r.targets.every(
+              (t) => Number.isInteger(t.done) && t.done >= t.required,
+            ))
+      )
+        fail();
+    for (const l of [...p.ledger, ...p.lastLedger])
+      if (
+        !int(l.turn, 0, p.week) ||
+        typeof l.title !== "string" ||
+        ["silver", "grain", "private"].some(
+          (k) => l[k] !== undefined && !num(l[k], -1e9, 1e9),
+        )
+      )
+        fail();
+    for (const k of ["silver", "grain", "private"])
+      if (
+        Math.abs(
+          round(
+            (k === "private" ? p.initialPrivate : 0) +
+              p.ledger.reduce((n, l) => n + (l[k] || 0), 0),
+          ) - p[k],
+        ) > 0.01
+      )
+        fail();
+    if (
+      p.logs.some(
+        (l) =>
+          !int(l.id, 1, p.nextLog - 1) ||
+          !int(l.week, 0, p.week) ||
+          typeof l.text !== "string",
+      )
+    )
+      fail();
+  }
+  for (const p of phases) {
+    if (
+      !p.caseReviews ||
+      typeof p.caseReviews !== "object" ||
+      Array.isArray(p.caseReviews)
+    )
+      fail();
+    if (
+      p.role === "county" &&
+      s.countyPacing === "current" &&
+      s.outcome?.duties &&
+      (Object.keys(p.caseReviews).length !== s.outcome.duties.length ||
+        s.outcome.duties.some((id) => !p.caseReviews[id]))
+    )
+      fail();
+    if (inspectionLoad(p) > 2) fail();
+    for (const [id, file] of Object.entries(p.caseReviews)) {
+      const def = countyCase(s, id);
+      if (
+        p.role !== "county" ||
+        !def ||
+        !s.cases[id] ||
+        !Array.isArray(file.clues) ||
+        new Set(file.clues).size !== file.clues.length ||
+        file.clues.some((c) => !def.clues.some((d) => d.id === c)) ||
+        !["open", "checking", "done"].includes(file.status) ||
+        (file.status !== "open" && file.clues.length !== def.clues.length) ||
+        (file.status === "checking"
+          ? !int(file.due, p.week + 1, p.deadline)
+          : file.due !== null)
+      )
+        fail();
+    }
+  }
+  for (const [role, q] of Object.entries(a.qualifications)) {
+    if (
+      !OFFICES[role] ||
+      !q ||
+      !phases.some(
+        (p) => p.role === role && p.status === "cleared" && p.week === q.week,
+      )
+    )
+      fail();
+  }
+  if (a.current && a.current.role !== currentOffice(s)) fail();
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "p0-20261011-1",
+  "version": "v0.8-20261012",
   "assets": {
     "scene_county_gate": {
       "id": "scene_county_gate",
@@ -2852,6 +2852,558 @@
       "visualState": "neutral",
       "notes": "原创SVG路径，currentColor，统一笔画；禁用Emoji、图标字体、栅格嵌图和外部引用。",
       "reference": "art/source/icons/icon_personnel.svg"
+    },
+    "scene_prefecture_hall": {
+      "id": "scene_prefecture_hall",
+      "type": "scene",
+      "phase": "v0.8",
+      "label": "永平府议事堂",
+      "status": "integrated",
+      "characterId": null,
+      "sourcePath": "art/source/audit-v0.8/scene_prefecture_hall.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_prefecture_hall_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "bytes": 243054,
+          "sha256": "66379009f8385d06e22b1e3c790f6983a72e05882084752deade6c93c1499bdc",
+          "targetMaxBytes": 460800
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_prefecture_hall_sm.webp",
+          "width": 720,
+          "height": 480,
+          "bytes": 91564,
+          "sha256": "8ea09416c3b5167485d29374bbf76887fe207a821042c168e278fbdc864099ac",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "art/source/audit-v0.8/scene_prefecture_hall.png",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "scene_embankment_calm": {
+      "id": "scene_embankment_calm",
+      "type": "scene",
+      "phase": "v0.8",
+      "label": "东堤平水",
+      "status": "integrated",
+      "characterId": null,
+      "sourcePath": "art/source/audit-v0.8/scene_embankment_calm.png",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "runtimeVariants": [
+        {
+          "name": "lg",
+          "path": "assets/art/scenes/scene_embankment_calm_lg.webp",
+          "width": 1200,
+          "height": 800,
+          "bytes": 270994,
+          "sha256": "ae124d3a2b253220b37e0d19b46cf7d4bff85b853d4bef74be59a502f2488f98",
+          "targetMaxBytes": 460800
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/scenes/scene_embankment_calm_sm.webp",
+          "width": 720,
+          "height": 480,
+          "bytes": 100386,
+          "sha256": "0e41b5987a85cdeb73ed57b910a7bf2caef95768315ae394e941c58d8c6e7b53",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "scene_stage",
+        "event_visual"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "art/source/audit-v0.8/scene_embankment_calm.png",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "avatar_official_qinghe": {
+      "id": "avatar_official_qinghe",
+      "type": "avatar",
+      "phase": "v0.8",
+      "label": "许明远",
+      "status": "integrated",
+      "characterId": "official_qinghe",
+      "sourcePath": "art/source/audit-v0.8/avatar_official_qinghe.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_official_qinghe_md.webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 7904,
+          "sha256": "95318d0b0983fbad1560d0df720fb73e4f6aa486fea036149aa9f9957bfdcafd",
+          "targetMaxBytes": 204800
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_official_qinghe_sm.webp",
+          "width": 96,
+          "height": 96,
+          "bytes": 1888,
+          "sha256": "11ccdfb36b844dbef17f88aea601a97d83b7fab0f6ee104f4d213c8d8950be47",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "art/source/audit-v0.8/avatar_official_qinghe.png",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "avatar_official_linhe": {
+      "id": "avatar_official_linhe",
+      "type": "avatar",
+      "phase": "v0.8",
+      "label": "韩成",
+      "status": "integrated",
+      "characterId": "official_linhe",
+      "sourcePath": "art/source/audit-v0.8/avatar_official_linhe.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_official_linhe_md.webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 10492,
+          "sha256": "4e36166f3b529c993f324edf3f695ba89d2056ec216aace7075a1ea2308baf7c",
+          "targetMaxBytes": 204800
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_official_linhe_sm.webp",
+          "width": 96,
+          "height": 96,
+          "bytes": 2218,
+          "sha256": "2658c10403e6b5b2d0026586bda6381cbec3474d05e5f9bd2b567525f1c29812",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "art/source/audit-v0.8/avatar_official_linhe.png",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "avatar_official_yongning": {
+      "id": "avatar_official_yongning",
+      "type": "avatar",
+      "phase": "v0.8",
+      "label": "顾允中",
+      "status": "integrated",
+      "characterId": "official_yongning",
+      "sourcePath": "art/source/audit-v0.8/avatar_official_yongning.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "runtimeVariants": [
+        {
+          "name": "md",
+          "path": "assets/art/avatars/avatar_official_yongning_md.webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 7808,
+          "sha256": "8fc28dad484cf873941d2f7c7ae2c9c274d28ee9fa6aab4e169d0700266e0b6c",
+          "targetMaxBytes": 204800
+        },
+        {
+          "name": "sm",
+          "path": "assets/art/avatars/avatar_official_yongning_sm.webp",
+          "width": 96,
+          "height": 96,
+          "bytes": 1918,
+          "sha256": "9c9d697b9446a8b1e457a2b934daeeef1d8d7fba7e3490606e0823aa7f0eda29",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "avatar_inline"
+      ],
+      "transparency": "opaque",
+      "fit": "cover",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "art/source/audit-v0.8/avatar_official_yongning.png",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "portrait_player_a_prefecture": {
+      "id": "portrait_player_a_prefecture",
+      "type": "portrait",
+      "phase": "v0.8",
+      "label": "沉静形象 通判常服",
+      "status": "integrated",
+      "characterId": "player_a",
+      "sourcePath": "art/source/audit-v0.8/portrait_player_a_prefecture.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_a_prefecture_main.webp",
+          "width": 640,
+          "height": 960,
+          "bytes": 67082,
+          "sha256": "f98a63b9b3874a788bc4fe0cb2e8830b8a698d7e01a4a48e3ccc5aed8e32a1c3",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "/Users/ruis/Claude/Projects/古代官员升职记/assets/art/portraits/portrait_player_a_main.webp",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "portrait_player_a_tongzhi": {
+      "id": "portrait_player_a_tongzhi",
+      "type": "portrait",
+      "phase": "v0.8",
+      "label": "沉静形象 同知常服",
+      "status": "integrated",
+      "characterId": "player_a",
+      "sourcePath": "art/source/audit-v0.8/portrait_player_a_tongzhi.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_a_tongzhi_main.webp",
+          "width": 640,
+          "height": 960,
+          "bytes": 68252,
+          "sha256": "c31406f8bf22c8abd8e39ea38108d9a31905bd014830991ceee3951bef06fb6a",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "/Users/ruis/Claude/Projects/古代官员升职记/assets/art/portraits/portrait_player_a_main.webp",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "portrait_player_a_zhifu": {
+      "id": "portrait_player_a_zhifu",
+      "type": "portrait",
+      "phase": "v0.8",
+      "label": "沉静形象 知府常服",
+      "status": "integrated",
+      "characterId": "player_a",
+      "sourcePath": "art/source/audit-v0.8/portrait_player_a_zhifu.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_a_zhifu_main.webp",
+          "width": 640,
+          "height": 960,
+          "bytes": 69824,
+          "sha256": "18cfa96416a4613039e2eb08734562fc21dcdd34024c92ed92a644c255c3a194",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "/Users/ruis/Claude/Projects/古代官员升职记/assets/art/portraits/portrait_player_a_main.webp",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "portrait_player_b_prefecture": {
+      "id": "portrait_player_b_prefecture",
+      "type": "portrait",
+      "phase": "v0.8",
+      "label": "明朗形象 通判常服",
+      "status": "integrated",
+      "characterId": "player_b",
+      "sourcePath": "art/source/audit-v0.8/portrait_player_b_prefecture.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_b_prefecture_main.webp",
+          "width": 640,
+          "height": 960,
+          "bytes": 69656,
+          "sha256": "15836111500beec2504d71f649e95889d733241f6ae4063aeebe5eb455aba8bf",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "/Users/ruis/Claude/Projects/古代官员升职记/assets/art/portraits/portrait_player_b_main.webp",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "portrait_player_b_tongzhi": {
+      "id": "portrait_player_b_tongzhi",
+      "type": "portrait",
+      "phase": "v0.8",
+      "label": "明朗形象 同知常服",
+      "status": "integrated",
+      "characterId": "player_b",
+      "sourcePath": "art/source/audit-v0.8/portrait_player_b_tongzhi.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_b_tongzhi_main.webp",
+          "width": 640,
+          "height": 960,
+          "bytes": 84080,
+          "sha256": "9714a18a8fbf372c8800383747e873d5eef4613b2e870fc92fbf18e72ea78175",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "/Users/ruis/Claude/Projects/古代官员升职记/assets/art/portraits/portrait_player_b_main.webp",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "portrait_player_b_zhifu": {
+      "id": "portrait_player_b_zhifu",
+      "type": "portrait",
+      "phase": "v0.8",
+      "label": "明朗形象 知府常服",
+      "status": "integrated",
+      "characterId": "player_b",
+      "sourcePath": "art/source/audit-v0.8/portrait_player_b_zhifu.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_b_zhifu_main.webp",
+          "width": 640,
+          "height": 960,
+          "bytes": 66042,
+          "sha256": "2375d6120e17b598aca7d98f92dbfa3dd56d322b542dc0bd041c9ed030fd88e2",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "/Users/ruis/Claude/Projects/古代官员升职记/assets/art/portraits/portrait_player_b_main.webp",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "portrait_player_c_prefecture": {
+      "id": "portrait_player_c_prefecture",
+      "type": "portrait",
+      "phase": "v0.8",
+      "label": "专注形象 通判常服",
+      "status": "integrated",
+      "characterId": "player_c",
+      "sourcePath": "art/source/audit-v0.8/portrait_player_c_prefecture.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_c_prefecture_main.webp",
+          "width": 640,
+          "height": 960,
+          "bytes": 69426,
+          "sha256": "1f94b4427ab7b088fb9df1419beda1cb9c0cb59737f9df8e9e5c6a16edc6f920",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "/Users/ruis/Claude/Projects/古代官员升职记/assets/art/portraits/portrait_player_c_main.webp",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "portrait_player_c_tongzhi": {
+      "id": "portrait_player_c_tongzhi",
+      "type": "portrait",
+      "phase": "v0.8",
+      "label": "专注形象 同知常服",
+      "status": "integrated",
+      "characterId": "player_c",
+      "sourcePath": "art/source/audit-v0.8/portrait_player_c_tongzhi.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_c_tongzhi_main.webp",
+          "width": 640,
+          "height": 960,
+          "bytes": 77250,
+          "sha256": "317718e2ab9416bd5c3d57fef4726ca8478a676a714560f45d52fe83df89cd8e",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "/Users/ruis/Claude/Projects/古代官员升职记/assets/art/portraits/portrait_player_c_main.webp",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
+    },
+    "portrait_player_c_zhifu": {
+      "id": "portrait_player_c_zhifu",
+      "type": "portrait",
+      "phase": "v0.8",
+      "label": "专注形象 知府常服",
+      "status": "integrated",
+      "characterId": "player_c",
+      "sourcePath": "art/source/audit-v0.8/portrait_player_c_zhifu.png",
+      "sourceSize": [
+        1024,
+        1536
+      ],
+      "runtimeVariants": [
+        {
+          "name": "main",
+          "path": "assets/art/portraits/portrait_player_c_zhifu_main.webp",
+          "width": 640,
+          "height": 960,
+          "bytes": 75070,
+          "sha256": "ffdbcb48186a6a63c53a73945a554ccb53f12d8ffa32618e1a3739b3d93b7cf1",
+          "targetMaxBytes": 204800
+        }
+      ],
+      "slotIds": [
+        "character_standing"
+      ],
+      "transparency": "alpha",
+      "fit": "contain",
+      "focalPoint": [
+        0.5,
+        0.5
+      ],
+      "visualState": "neutral",
+      "reference": "/Users/ruis/Claude/Projects/古代官员升职记/assets/art/portraits/portrait_player_c_main.webp",
+      "visualReview": "identity, full figure, distinct officials, alpha on paper background checked 2026-10-13"
     }
-  }
+  },
+  "updatedAt": "2026-10-12"
 }
