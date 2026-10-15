@@ -1,3 +1,4 @@
+import { ZF_EVENTS, ZF_CASES, ZF_TASKS, activeTask, inspectorCount } from "../../src/zhifu.js";
 import {
   TZ_EVENTS,
   TZ_PROJECTS,
@@ -8,7 +9,7 @@ import { dispatch, validateSave } from "../../src/engine.js";
 import { PREF_EVENTS } from "../../src/prefecture.js";
 let id = 0;
 export const act = (s, type, args = {}) =>
-  dispatch(s, { id: `career-helper-${id++}`, type, ...args });
+  dispatch(s, { id: `career-helper-${s.revision}-${id++}`, type, ...args });
 export function completedPrefecture() {
   let s = validateSave(
     JSON.parse(
@@ -107,4 +108,79 @@ export function completedTongzhi() {
     s = act(s, "tz_advance");
   }
   return validateSave(s);
+}
+
+export function completedZhifu(s = act(completedTongzhi(), "zf_appoint")) {
+  const resolve = (state) => state.zhifu.event ? act(state, "zf_event", { choice: ZF_EVENTS.find((e) => e.id === state.zhifu.event).options[0].id }) : state;
+  const next = (state) => act(resolve(state), "zf_advance");
+  const seen = new Set();
+  while (!s.zhifu.finished) {
+    if (s.zhifu.event) seen.add(s.zhifu.event);
+    s = resolve(s);
+    let q = s.zhifu;
+    const call = (type, args) => {
+      s = act(s, type, args);
+      q = s.zhifu;
+    };
+    for (const d of Object.values(q.counties)) {
+      const o = d.official;
+      if (q.ap && q.turn < 140 && !o.replaced && !o.exonerated && inspectorCount(q) < 2) {
+        if (!o.evidence && o.status === "serving") call("zf_official", { county: d.id, action: "investigate" });
+        else if (o.evidence && o.status === "serving") call("zf_official", { county: d.id, action: "replace" });
+      }
+    }
+    for (const d of ZF_CASES) {
+      const a = q.cases[d.id];
+      if (!a || !q.ap) continue;
+      if (a.status === "open") {
+        const clue = d.clues.find((c) => !a.clues.includes(c.id));
+        call(
+          "zf_case",
+          clue
+            ? { case: d.id, action: "clue", clue: clue.id }
+            : { case: d.id, action: "review" },
+        );
+      } else if (a.status === "approved")
+        call("zf_case", { case: d.id, action: "execute" });
+    }
+    if (q.ap && q.grain < 100 && q.turn - q.lastBuy >= 4 && q.turn <= 154)
+      call("zf_supply", {});
+    for (const c of Object.values(q.counties)) {
+      if (!q.ap) break;
+      if (
+        q.turn < 149 &&
+        !activeTask(q, c.id) &&
+        q.turn - c.lastTask >= 4 &&
+        c.official.status !== "replacing"
+      ) {
+        const goal = q.goal;
+        const kind = c.displaced
+          ? "relief"
+          : goal.county === c.id && c[goal.metric] < goal.target + 2
+            ? goal.metric
+            : c.order < 60
+              ? "order"
+              : c.economy < 65
+                ? "economy"
+                : null;
+        if (kind && q.silver >= ZF_TASKS[kind].cost && q.grain > 8)
+          call("zf_task", { county: c.id, kind });
+      }
+    }
+    for (const t of q.tasks.filter((t) => t.status === "reported"))
+      if (q.ap && q.silver >= 12 && q.turn <= 154 && inspectorCount(q) < 2)
+        call("zf_audit", { idTask: t.id });
+    for (const [id, p] of Object.entries(q.projects)) {
+      if (!q.ap || q.turn >= 145) break;
+      const j = q.projectJobs[id];
+      if (!j && p.condition < 65)
+        call("zf_project", { project: id, action: "propose" });
+      else if (j?.status === "approved" && q.silver >= j.cost)
+        call("zf_project", { project: id, action: "start" });
+      else if (j?.status === "ready" && q.silver >= 10)
+        call("zf_project", { project: id, action: "accept" });
+    }
+    s = validateSave(next(s));
+  }
+  return s;
 }

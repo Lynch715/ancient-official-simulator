@@ -1,3 +1,6 @@
+import { xunfuPrevious, xfNext } from "./helpers/xunfu.js";
+import { buzhengPrevious, bzNext } from "./helpers/buzheng.js";
+import { canzhengPrevious, czNext } from "./helpers/canzheng.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -13,6 +16,7 @@ import {
   qualified,
 } from "../src/accountability.js";
 import {
+  completedZhifu,
   completedPrefecture,
   completedTongzhi,
   act,
@@ -69,6 +73,17 @@ function finishedZhifu() {
   return s;
 }
 const zFull = finishedZhifu();
+let iFull = act(completedZhifu(), "in_appoint");
+while (!iFull.inspector.finished) {
+  if (iFull.inspector.event) iFull = act(iFull, "in_event", { choice: "refer" });
+  iFull = act(iFull, "in_advance");
+}
+let cFull = act(canzhengPrevious(), "cz_appoint");
+while (!cFull.canzheng.finished) cFull = czNext(cFull, "refer");
+let bFull = act(buzhengPrevious(), "bz_appoint");
+while (!bFull.buzheng.finished) bFull = bzNext(bFull, "refer");
+let xFull = act(xunfuPrevious(), "xf_appoint");
+while (!xFull.xunfu.finished) xFull = xfNext(xFull, "refer");
 function failed(role) {
   let s = structuredClone(
       role === "county"
@@ -77,7 +92,7 @@ function failed(role) {
           ? pFull
           : role === "tongzhi"
             ? tFull
-            : zFull,
+            : role === "xunfu" ? xFull : role === "buzheng" ? bFull : role === "canzheng" ? cFull : role === "inspector" ? iFull : zFull,
     ),
     q = officeState(s, role);
   s.accountability.current = null;
@@ -140,7 +155,7 @@ function exileCase() {
 }
 const criminal = prisonCase(),
   embezzle = exileCase();
-test("四任低分均进入非刑事整改，原任冻结且不能绕过升任", () => {
+test("五任低分均进入非刑事整改，原任冻结且不能绕过升任", () => {
   for (const role of Object.keys(OFFICES)) {
     const s = failed(role),
       q = officeState(s);
@@ -180,7 +195,7 @@ test("整改差事先扣款，两周核验、两组上限、命令幂等和失�
   assert.equal(s.accountability.current.targets[0].done, 1);
   assert.deepEqual(validateSave(s), s);
 });
-test("四任整改13周后留任复考26周，合格不改旧考语且恢复资格", () => {
+test("五任整改13周后留任复考26周，合格不改旧考语且恢复资格", () => {
   for (const role of Object.keys(OFFICES)) {
     let s = act(failed(role), "ac_begin"),
       old = structuredClone(officeState(s).outcome);
@@ -254,11 +269,15 @@ test("没有尽责证据的灾情申诉不获自动免责，也不加罪", () =>
   assert.equal(s.accountability.incidents.length, 0);
   assert.equal(s.accountability.current.status, "remedy");
 });
-test("前三级复考通过可真正接任下一职务，私产附卷净额准确承接", () => {
+test("前七级复考通过可真正接任下一职务，私产附卷净额准确承接", () => {
   for (const [role, type, next] of [
     ["county", "appointment", "prefecture"],
     ["prefecture", "tz_appoint", "tongzhi"],
     ["tongzhi", "zf_appoint", "zhifu"],
+    ["zhifu", "in_appoint", "inspector"],
+    ["inspector", "cz_appoint", "canzheng"],
+    ["canzheng", "bz_appoint", "buzheng"],
+    ["buzheng", "xf_appoint", "xunfu"],
   ]) {
     let s = failed(role);
     if (role === "tongzhi") s.accountability.current.disaster.eligible = false;
@@ -446,4 +465,15 @@ test("自然低绩效县任带有未定义可选标记时，失败附卷仍可�
   assert.equal(s.outcome.rating, "不称职");
   assert.equal(s.accountability.current.disaster.eligible, false);
   assert.deepEqual(validateSave(s), s);
+});
+
+test('巡抚复考合格后可登记尾声，原任考语与附卷保留',()=>{
+ let s=successfulStage(successfulStage(act(failed('xunfu'),'ac_begin')));
+ assert.equal(s.accountability.current.status,'cleared');
+ const original=structuredClone(s.xunfu.outcome),review=structuredClone(s.accountability.current);
+ s=act(s,'xf_ending',{choice:'retain'});
+ assert.equal(s.xunfu.ending.choice,'retain');
+ assert.deepEqual(s.xunfu.outcome,original);
+ assert.deepEqual(s.accountability.current,review);
+ assert.doesNotThrow(()=>validateSave(s));
 });

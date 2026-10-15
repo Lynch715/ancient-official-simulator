@@ -13,6 +13,26 @@ export function handleOfficeAction(action, button, context) {
     id = b.dataset.id,
     modal = getModal();
   switch (action) {
+    case "xf-appointment": showModal({ type: "xf-appointment" }); break;
+    case "xf-appoint": run("xf_appoint"); break;
+    case "xf-event": run("xf_event", { choice: b.dataset.choice }); break;
+    case "xf-mission": run("xf_mission", { mission: id, action: b.dataset.action, agency: b.dataset.agency, plan: b.dataset.plan }); break;
+    case "xf-ending": run("xf_ending", { choice: b.dataset.choice }); break;
+    case "xf-next": showModal({ type: "xf-next" }); break;
+    case "xf-confirm-next": run("xf_advance"); break;
+    case "bz-appointment": showModal({ type: "bz-appointment" }); break;
+    case "bz-appoint": run("bz_appoint"); break;
+    case "bz-event": run("bz_event", { choice: b.dataset.choice }); break;
+    case "bz-promise": run("bz_promise", { promise: id, action: b.dataset.action }); break;
+    case "bz-adjust": run("bz_adjust", { fund: id }); break;
+    case "bz-next": showModal({ type: "bz-next" }); break;
+    case "bz-confirm-next": run("bz_advance"); break;
+    case "cz-appointment": showModal({ type: "cz-appointment" }); break;
+    case "cz-appoint": run("cz_appoint"); break;
+    case "cz-event": run("cz_event", { choice: b.dataset.choice }); break;
+    case "cz-project": run("cz_project", { project: id, action: b.dataset.action, plan: b.dataset.plan }); break;
+    case "cz-next": showModal({ type: "cz-next" }); break;
+    case "cz-confirm-next": run("cz_advance"); break;
     case "office-story":
       run("office_story", { event: id, choice: b.dataset.choice });
       break;
@@ -54,6 +74,24 @@ export function handleOfficeAction(action, button, context) {
       break;
     case "ac-confirm-next":
       run("ac_advance");
+      break;
+    case "in-appointment":
+      showModal({ type: "in-appointment" });
+      break;
+    case "in-appoint":
+      run("in_appoint");
+      break;
+    case "in-event":
+      run("in_event", { choice: b.dataset.choice });
+      break;
+    case "in-docket":
+      run("in_docket", { docket: id, action: b.dataset.action, clue: b.dataset.clue, route: b.dataset.route });
+      break;
+    case "in-next":
+      showModal({ type: "in-next" });
+      break;
+    case "in-confirm-next":
+      run("in_advance");
       break;
     case "zf-appointment":
       showModal({ type: "zf-appointment" });

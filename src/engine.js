@@ -1,3 +1,7 @@
+import { appointXunfu, xunfuCommand, xunfuReceipt, validateXunfu, finalizeXunfu } from "./xunfu.js";
+import { appointBuzheng, buzhengCommand, buzhengReceipt, validateBuzheng, finalizeBuzheng } from "./buzheng.js";
+import { appointCanzheng, canzhengCommand, canzhengReceipt, validateCanzheng, finalizeCanzheng } from "./canzheng.js";
+import { appointInspector, inspectorCommand, inspectorReceipt, validateInspector, finalizeInspector } from "./inspector.js";
 import { blankOfficeStories, migrateOfficeStories, syncOfficeStories, officeStoryCommand, officeStoryReceipt, validateOfficeStories } from "./office-stories.js";
 import {
   countyCase,
@@ -111,7 +115,7 @@ import {
   WEEKS_PER_YEAR,
   WEEKS_PER_SEASON,
 } from "./data.js";
-export const VERSION = 12;
+export const VERSION = 16;
 const clone = (x) => structuredClone(x),
   clamp = (x, min = 0, max = 100) => Math.max(min, Math.min(max, x));
 export const seasonIndex = (turn) =>
@@ -265,6 +269,10 @@ export function createGame({
     contentSeen: {},
     populationLedger: { opening: 0, arrived: 0, settled: 0, shortage: 0 },
     accountability: blankAccountability(),
+    inspector: null,
+    canzheng: null,
+    buzheng: null,
+    xunfu: null,
     zhifu: null,
     tongzhi: null,
     prefecture: null,
@@ -794,9 +802,13 @@ export function dispatch(state, command) {
     throw Error("当前须先办理考课或处分附卷，不能绕过程序升任。");
   const n = coreDispatch(state, command);
   syncOfficeStories(n, state, command);
+  finalizeInspector(n);
+  finalizeCanzheng(n);
+  finalizeBuzheng(n);
+  finalizeXunfu(n);
   // 到期的剧情回报也属于本次实际结算，重新收集回执。
-  if (["pref_advance", "tz_advance", "zf_advance"].includes(command.type)) {
-    const receipt = command.type === "pref_advance" ? prefectureReceipt(state, n, command) : command.type === "tz_advance" ? tongzhiReceipt(state, n, command) : zhifuReceipt(state, n, command);
+  if (["pref_advance", "tz_advance", "zf_advance", "in_advance", "cz_advance", "bz_advance", "xf_advance"].includes(command.type)) {
+    const receipt = command.type === "xf_advance" ? xunfuReceipt(state, n, command) : command.type === "bz_advance" ? buzhengReceipt(state, n, command) : command.type === "cz_advance" ? canzhengReceipt(state, n, command) : command.type === "pref_advance" ? prefectureReceipt(state, n, command) : command.type === "tz_advance" ? tongzhiReceipt(state, n, command) : command.type === "in_advance" ? inspectorReceipt(state, n, command) : zhifuReceipt(state, n, command);
     n.receipts[0] = receipt;
   }
   trackAccountability(state, n, command);
@@ -816,6 +828,54 @@ function coreDispatch(state, command) {
     n.completedCommands = n.completedCommands.slice(-1500);
     return n;
   }
+  if (command.type.startsWith("xf_")) {
+    const n = clone(state);
+    if (command.type === "xf_appoint") appointXunfu(n);
+    else xunfuCommand(n, command);
+    n.receipts.unshift(xunfuReceipt(state, n, command));
+    n.receipts = n.receipts.slice(0, 24);
+    n.revision++;
+    n.completedCommands.push(command.id);
+    n.completedCommands = n.completedCommands.slice(-1500);
+    return n;
+  }
+  if (state.xunfu) throw Error("布政使本任已交接，请办理巡抚敕差。");
+  if (command.type.startsWith("bz_")) {
+    const n = clone(state);
+    if (command.type === "bz_appoint") appointBuzheng(n);
+    else buzhengCommand(n, command);
+    n.receipts.unshift(buzhengReceipt(state, n, command));
+    n.receipts = n.receipts.slice(0, 24);
+    n.revision++;
+    n.completedCommands.push(command.id);
+    n.completedCommands = n.completedCommands.slice(-1500);
+    return n;
+  }
+  if (state.buzheng) throw Error("参政本任已交接，请办理布政使事务。");
+  if (command.type.startsWith("cz_")) {
+    const n = clone(state);
+    if (command.type === "cz_appoint") appointCanzheng(n);
+    else canzhengCommand(n, command);
+    n.receipts.unshift(canzhengReceipt(state, n, command));
+    n.receipts = n.receipts.slice(0, 24);
+    n.revision++;
+    n.completedCommands.push(command.id);
+    n.completedCommands = n.completedCommands.slice(-1500);
+    return n;
+  }
+  if (state.canzheng) throw Error("副使本任已交接，请办理参政事务。");
+  if (command.type.startsWith("in_")) {
+    const n = clone(state);
+    if (command.type === "in_appoint") appointInspector(n);
+    else inspectorCommand(n, command);
+    n.receipts.unshift(inspectorReceipt(state, n, command));
+    n.receipts = n.receipts.slice(0, 24);
+    n.revision++;
+    n.completedCommands.push(command.id);
+    n.completedCommands = n.completedCommands.slice(-1500);
+    return n;
+  }
+  if (state.inspector) throw Error("知府本任已交接，请办理分巡事务。");
   if (command.type.startsWith("zf_")) {
     const n = clone(state);
     if (command.type === "zf_appoint") appointZhifu(n);
@@ -1142,6 +1202,30 @@ export function validateSave(raw) {
     migrateOfficeStories(upgraded);
     return validateSave(upgraded);
   }
+  if (raw.version === 12) {
+    const upgraded = clone(raw);
+    upgraded.version = 13;
+    upgraded.inspector = null;
+    return validateSave(upgraded);
+  }
+  if (raw.version === 13) {
+    const upgraded = clone(raw);
+    upgraded.version = 14;
+    upgraded.canzheng = null;
+    return validateSave(upgraded);
+  }
+  if (raw.version === 14) {
+    const upgraded = clone(raw);
+    upgraded.version = 15;
+    upgraded.buzheng = null;
+    return validateSave(upgraded);
+  }
+  if (raw.version === 15) {
+    const upgraded = clone(raw);
+    upgraded.version = 16;
+    upgraded.xunfu = null;
+    return validateSave(upgraded);
+  }
   if (raw.version !== VERSION) throw Error("存档版本不兼容。");
   const base = createGame();
   for (const k of Object.keys(base))
@@ -1426,6 +1510,10 @@ export function validateSave(raw) {
   validateTongzhi(clean);
   validateZhifu(clean);
   validateOfficeStories(clean);
+  validateInspector(clean);
+  validateCanzheng(clean);
+  validateBuzheng(clean);
+  validateXunfu(clean);
   ensureReview(clean);
   validateAccountability(clean);
   return clean;

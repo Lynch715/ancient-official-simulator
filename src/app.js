@@ -1,3 +1,9 @@
+import { xfLabel, XF_EDICT } from "./xunfu.js";
+import { xunfuView } from "./xunfu-view.js";
+import { bzLabel } from "./buzheng.js";
+import { buzhengView } from "./buzheng-view.js";
+import { czLabel } from "./canzheng.js";
+import { canzhengView } from "./canzheng-view.js";
 import { countyCase } from "./case-content.js";
 import { routineStop, routineBoundary } from "./county-pacing.js";
 import { AFFAIRS } from "./county-affairs.js";
@@ -29,6 +35,8 @@ import { handleOfficeAction } from "./office-actions.js";
 import { persistState, restoreMessage } from "./storage.js";
 import { decisionRisk } from "./accountability.js";
 import { accountabilityView } from "./accountability-view.js";
+import { inLabel } from "./inspector.js";
+import { inspectorView } from "./inspector-view.js";
 import { zhifuView } from "./zhifu-view.js";
 import { zfLabel } from "./zhifu.js";
 import { tongzhiView } from "./tongzhi-view.js";
@@ -194,6 +202,14 @@ function run(type, params = {}, quiet = false) {
       type === "pref_advance" ||
       type === "tz_appoint" ||
       type === "tz_advance" ||
+      type === "xf_appoint" ||
+      type === "xf_advance" ||
+      type === "bz_appoint" ||
+      type === "bz_advance" ||
+      type === "cz_appoint" ||
+      type === "cz_advance" ||
+      type === "in_appoint" ||
+      type === "in_advance" ||
       type === "zf_appoint" ||
       type === "zf_advance" ||
       type === "ac_begin" ||
@@ -202,7 +218,11 @@ function run(type, params = {}, quiet = false) {
       resetChapterPage(
         s.accountability?.current
           ? "accountability"
-          : s.zhifu
+          : s.xunfu ? "xunfu" : s.buzheng ? "buzheng" : s.canzheng
+            ? "canzheng"
+            : s.inspector
+            ? "inspector"
+            : s.zhifu
             ? "zhifu"
             : s.tongzhi
               ? "tongzhi"
@@ -320,7 +340,7 @@ function startView() {
         ([id, name, desc]) =>
           `<button data-act="difficulty" data-id="${id}" class="family ${onboarding.difficulty === id ? "selected" : ""}" aria-pressed="${onboarding.difficulty === id}"><b>${name}</b><span>${desc}</span></button>`,
       )
-      .join("")}</div>${btn("接印赴任 " + icon("chevron_right"), "start", "", "button primary large")}<div class="onboarding-note">难度在接印时选定，整段仕途沿用；知县、通判、同知、知府四任各156周，可随时存档。<br>考核失利可整改复考，主动违法另案查核。<br>历史制度为参照，人物与地方为虚构。</div>${btn("办事指南", "help", "", "text-button")}${btn("导入已有履历", "import", "", "text-button")}${storageError ? `<p class="warning-text">${storageError}</p>` : ""}</section></main>`;
+      .join("")}</div>${btn("接印赴任 " + icon("chevron_right"), "start", "", "button primary large")}<div class="onboarding-note">难度在接印时选定，整段仕途沿用；知县、通判、同知、知府、按察司副使、布政司参政、布政使、奉命巡抚八任，本局各按156周安排，可随时存档。<br>考核失利可整改复考，主动违法另案查核。<br>历史制度为参照，人物与地方为虚构。</div>${btn("办事指南", "help", "", "text-button")}${btn("导入已有履历", "import", "", "text-button")}${storageError ? `<p class="warning-text">${storageError}</p>` : ""}</section></main>`;
 }
 function metrics() {
   const items = [
@@ -590,15 +610,19 @@ function career() {
             )
             .join(
               "",
-            )}</div></div></section><div class="ending-routes">${out.routes.map((r) => `<button class="ending-route ${out.choice === r.id ? "selected" : ""}" data-act="ending" data-id="${r.id}"><h3>${r.name} ${out.choice === r.id ? icon("confirm") : icon("chevron_right")}</h3><p>${r.desc}</p></button>`).join("")}</div><div class="notice"><p>知县任满履历已归卷。称职且无待查责任者，可按本局官缺获授分管粮运的通判；通判考满后可继续同知任期，按察副使及以上仍为后续篇章。</p>${out.rating === "称职" && !out.misconduct ? btn("办理府通判任命", "appointment-open", "", "button primary") : ""}${btn("导出本任履历", "export", "", "button outline")}</div>`
+            )}</div></div></section><div class="ending-routes">${out.routes.map((r) => `<button class="ending-route ${out.choice === r.id ? "selected" : ""}" data-act="ending" data-id="${r.id}"><h3>${r.name} ${out.choice === r.id ? icon("confirm") : icon("chevron_right")}</h3><p>${r.desc}</p></button>`).join("")}</div><div class="notice"><p>知县任满履历已归卷。称职且无待查责任者，可按本局官缺获授分管粮运的通判；通判考满后可继续同知任期，可再续知府、按察司副使、布政司参政、布政使及奉命巡抚篇。</p>${out.rating === "称职" && !out.misconduct ? btn("办理府通判任命", "appointment-open", "", "button primary") : ""}${btn("导出本任履历", "export", "", "button outline")}</div>`
         : `<section class="panel"><div class="section-head"><h2>任职进程</h2><span>${s.turn}/${TERM_WEEKS}周</span></div><div class="career-progress"><i style="width:${(s.turn / TERM_WEEKS) * 100}%"></i></div><div class="achievement-grid"><div><b>${s.projectsCompleted}</b><span>工程验收</span></div><div><b>${s.wellJudged}</b><span>复核结案</span></div><div><b>${Math.round(s.trust)}</b><span>上级信任</span></div><div><b>${Math.round(s.integrity)}</b><span>吏治表现</span></div></div><p class="muted">三年任满后形成考语与任用建议。已达成阶段要务${s.governance.mandatesMet}项，未达${s.governance.mandatesMissed}项。${isHard(s) ? `严苛考评：民生、财计、吏治按全任平均与期末各半计算，任何一项都不会提前封顶；春旱、汛情、摊派的处置方式计入民生；上解实缴率计入财计；案卷逾限、证据不全被退回都扣司法分。称职须75分且四案办结。当前已上解${Math.round(s.hard.remitDue ? (s.hard.remitPaid / s.hard.remitDue) * 100 : 100)}%，逾限案卷${s.hard.overdue}宗。` : "达成要务每项增加2点专项使命分（最多12点），未达每项扣1点（最多6点）；已复核但未执行的案卷每宗扣4点司法分。"}</p></section>`
-    }<section class="panel"><div class="section-head"><h2>仕途展望</h2><span>后续篇章</span></div><div class="career-route">${["知县", "通判", "同知", "知府", "按察副使", "布政参政", "布政使", "巡抚"].map((x, i) => `<span class="${i === 0 ? "current" : ""}">${x}</span>`).join("")}</div><p class="muted">本局已开放知县、通判、同知、知府。更高职务及完整留任任期尚未开放。</p></section>`
+    }<section class="panel"><div class="section-head"><h2>仕途展望</h2><span>后续篇章</span></div><div class="career-route">${["知县", "通判", "同知", "知府", "按察副使", "布政参政", "布政使", "巡抚"].map((x, i) => `<span class="${i === 0 ? "current" : ""}">${x}</span>`).join("")}</div><p class="muted">本局已开放至奉命巡抚，共八任。巡抚复命可登记去留尾声；京官篇与完整留任重开尚未开放。</p></section>`
   );
 }
 function render() {
   document.title = s?.accountability?.current
     ? "古代官员升职记 · 考课与处分"
-    : s?.zhifu
+    : s?.xunfu ? "古代官员升职记 · 一纸敕，万家灯" : s?.buzheng ? "古代官员升职记 · 一省秋秤" : s?.canzheng
+      ? "古代官员升职记 · 三府一秤"
+      : s?.inspector
+      ? "古代官员升职记 · 山河有卷"
+      : s?.zhifu
       ? "古代官员升职记 · 一府之治"
       : s?.tongzhi
         ? "古代官员升职记 · 河工赈济"
@@ -609,7 +633,11 @@ function render() {
     ? startView()
     : s.accountability?.current
       ? accountabilityView(s, { esc, num, scene, avatar, portrait, btn, icon })
-      : s.zhifu
+      : s.xunfu ? xunfuView(s, { esc, num, scene, avatar, portrait, btn, icon }) : s.buzheng ? buzhengView(s, { esc, num, scene, avatar, portrait, btn, icon }) : s.canzheng
+        ? canzhengView(s, { esc, num, scene, avatar, portrait, btn, icon })
+        : s.inspector
+        ? inspectorView(s, { esc, num, scene, avatar, portrait, btn, icon })
+        : s.zhifu
         ? zhifuView(s, { esc, num, scene, avatar, portrait, btn, icon })
         : s.tongzhi
           ? tongzhiView(s, { esc, num, scene, avatar, portrait, btn, icon })
@@ -653,7 +681,11 @@ function render() {
     $("#app"),
     s?.accountability?.current
       ? "accountability"
-      : s?.zhifu
+      : s?.xunfu ? "xunfu" : s?.buzheng ? "buzheng" : s?.canzheng
+        ? "canzheng"
+        : s?.inspector
+        ? "inspector"
+        : s?.zhifu
         ? "zhifu"
         : s?.tongzhi
           ? "tongzhi"
@@ -698,6 +730,22 @@ function renderModal() {
       m.kind === "murder" ? "确认指使灭口？" : "确认指使毁证？",
       `<div class="dialog-content"><p class="warning-text">${m.kind === "murder" ? "这会实际指使杀害关键证人，新增故意杀人罪。独立证据仍在，可能经复核判处斩首，角色永久死亡。" : "这会实际新增毁证行为。原始留存副本仍在，可能导致流放等更重处分。"}</p><p>此操作不是申辩，不会使原罪证消失。</p>${btn("放弃险招，依法申辩", "close", "", "button outline")}${btn(m.kind === "murder" ? "仍指使灭口，承担后果" : "仍指使毁证，承担后果", "ac-confirm-risk", "", "button danger")}</div>`,
     );
+  if (m.type === "xf-appointment")
+    html = dialog("领受巡抚敕差", `<div class="dialog-content"><p>${XF_EDICT.text}</p><p>巡抚是奉敕差遣，品级依所加官衔，不按固定品级晋升。本局以156周检验本次使命。旧任公账及专款承诺留交接，新拨敕差专项银${s.buzheng.hard?450:700}两、粮${s.buzheng.hard?220:350}石；私产与四府民生协作承接。</p>${btn("依敕领差，赴巡抚行署", "xf-appoint", "", "button primary large")}</div>`);
+  if (m.type === "xf-next")
+    html = dialog("结算巡抚本周", `<div class="dialog-content"><p>推进一周：结算请旨批复、两方回文、会办回报和善后回访。尚余${s.xunfu.ap}点精力不结转；回报须核验，回访到达须手动结卷。</p>${btn("确认推进一周", "xf-confirm-next", "", "button primary large")}</div>`);
+  if (m.type === "bz-appointment")
+    html = dialog("升任布政使", `<div class="dialog-content"><p>从二品布政使，统筹澄江四府钱粮，新任三年156周。原任公账封存，私产与原三府民生协作承接；新增东浦府。</p><p>日常公账与赈济、河工、公用供给三项专款分开。核需、呈准后登记全额承诺，分两批拨运并逐批核收，交清才计成绩。</p>${btn("领省署印，赴任布政使", "bz-appoint", "", "button primary large")}</div>`);
+  if (m.type === "bz-next")
+    html = dialog("结算布政使本周", `<div class="dialog-content"><p>推进一周：结算计划批复、调剂入账、钱粮实到与剧情案卷。尚余${s.buzheng.ap}点精力不结转；每批实到后须手动核收。</p>${btn("确认推进一周", "bz-confirm-next", "", "button primary large")}</div>`);
+  if (m.type === "cz-appointment")
+    html = dialog("升任布政司参政", `<div class="dialog-content"><p>从三品参政，奉命分守北陵、南泽、西原三府，统筹获准的钱粮民政事项，新任三年156周。</p><p>原任公账留交接，三府民生协作和私产承接；新拨专项银${s.difficulty === "hard" && s.inspector.hard ? 350 : 600}两、粮${s.difficulty === "hard" && s.inspector.hard ? 160 : 320}石。勘核后择案呈准，拨出、实到、落实和验收分开。</p>${btn("领分守札，赴任参政", "cz-appoint", "", "button primary large")}</div>`);
+  if (m.type === "cz-next")
+    html = dialog("结算参政本周", `<div class="dialog-content"><p>推进一周：结算方案批复、钱粮实到、地方落实与剧情案卷。尚余${s.canzheng.ap}点精力不结转；收到回报仍须手动验收。</p>${btn("确认推进一周", "cz-confirm-next", "", "button primary large")}</div>`);
+  if (m.type === "in-appointment")
+    html = dialog("转任按察司副使", `<div class="dialog-content"><p>正四品分巡副使，与知府同品，奉命巡察北陵、南泽、西原三府，新任三年156周。</p><p>旧府公账留交接；新拨分巡差费${s.difficulty === "hard" && s.zhifu.hard ? 320 : 480}两，私产延续。两组巡察人手，须到场查证、呈请复核、督催落实并核验回报。</p>${btn("领分巡札，赴任副使", "in-appoint", "", "button primary large")}</div>`);
+  if (m.type === "in-next")
+    html = dialog("结算分巡本周", `<div class="dialog-content"><p>推进一周：结算出巡到场、复核批复、整改回报与剧情案卷。尚余${s.inspector.ap}点精力不结转；落实回报仍须手动验收。</p>${btn("确认推进一周", "in-confirm-next", "", "button primary large")}</div>`);
   if (m.type === "zf-appointment")
     html = dialog(
       "获授永平府知府",
@@ -842,7 +890,7 @@ function renderModal() {
   if (m.type === "settings")
     html = dialog(
       "存档与设置",
-      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("查看美术图鉴", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府四任 · v0.16 · 履历保存在当前浏览器</small></div>`,
+      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("查看美术图鉴", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府督抚八任 · v0.20 · 履历保存在当前浏览器</small></div>`,
     );
   if (m.type === "save-text")
     html = dialog(
@@ -862,7 +910,7 @@ async function exportSave() {
     url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `官员履历_${s.name}_${s.accountability?.current ? "考课附卷" : s.zhifu ? "知府" : s.tongzhi ? "同知" : s.prefecture ? "通判" : "知县"}${Math.min((s.accountability?.current?.week ?? s.zhifu?.turn ?? s.tongzhi?.turn ?? s.prefecture?.turn ?? s.turn) + 1, TERM_WEEKS)}周.json`;
+  a.download = `官员履历_${s.name}_${s.accountability?.current ? "考课附卷" : s.xunfu ? "奉命巡抚" : s.buzheng ? "布政使" : s.canzheng ? "布政司参政" : s.inspector ? "按察司副使" : s.zhifu ? "知府" : s.tongzhi ? "同知" : s.prefecture ? "通判" : "知县"}${Math.min((s.accountability?.current?.week ?? s.xunfu?.turn ?? s.buzheng?.turn ?? s.canzheng?.turn ?? s.inspector?.turn ?? s.zhifu?.turn ?? s.tongzhi?.turn ?? s.prefecture?.turn ?? s.turn) + 1, TERM_WEEKS)}周.json`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
   toast("履历已导出，请保管好文件。");
@@ -1349,7 +1397,7 @@ function receiptView(r) {
     major = r.changes.filter((x) => always.includes(x.name) || Math.abs(x.delta) >= 0.5),
     minor = r.changes.filter((x) => !major.includes(x));
   r = { ...r, changes: major, minor };
-  return `<div class="dialog-content"><p class="muted">${r.chapter === "考课" ? `考课附卷第${r.turn + 1}周` : r.chapter === "知府" ? zfLabel({ turn: r.turn }) : r.chapter === "同知" ? tzLabel({ turn: r.turn }) : r.chapter ? prefLabel({ turn: r.turn }) : weekLabel(r.turn)} · 本次收支与前后变化如下。</p>${r.changes.length ? `<div class="receipt-grid">${r.changes.map((x) => `<div class="receipt-change"><span>${esc(x.name)}</span><strong class="${x.delta > 0 !== (["疲劳", "待安置居民", "累计缺供粮", "移出未安置"].includes(x.name) || x.name.includes("待安置")) ? "positive" : "negative"}">${x.delta > 0 ? "+" : ""}${num(x.delta)}</strong><small>${num(x.before)} → ${num(x.after)}</small></div>`).join("")}</div>` : r.minor.length ? "" : '<div class="notice"><p>本次事项已记入卷宗，钱粮及治理数值未变。</p></div>'}${r.minor.length ? `<details class="receipt-minor"><summary>细微变化${r.minor.length}项（每周回落、养护损耗等）</summary><p>${r.minor.map((x) => `${esc(x.name)} ${x.delta > 0 ? "+" : ""}${num(Math.round(x.delta * 100) / 100 || 0)}`).join("；")}</p></details>` : ""}${r.policies?.length ? `<div class="receipt-notes">${r.policies.map((x) => `<p>${esc(x)}</p>`).join("")}</div>` : ""}${
+  return `<div class="dialog-content"><p class="muted">${r.chapter === "考课" ? `考课附卷第${r.turn + 1}周` : r.chapter === "奉命巡抚" ? xfLabel({ turn: r.turn }) : r.chapter === "布政使" ? bzLabel({ turn: r.turn }) : r.chapter === "布政司参政" ? czLabel({ turn: r.turn }) : r.chapter === "按察司副使" ? inLabel({ turn: r.turn }) : r.chapter === "知府" ? zfLabel({ turn: r.turn }) : r.chapter === "同知" ? tzLabel({ turn: r.turn }) : r.chapter ? prefLabel({ turn: r.turn }) : weekLabel(r.turn)} · 本次收支与前后变化如下。</p>${r.changes.length ? `<div class="receipt-grid">${r.changes.map((x) => `<div class="receipt-change"><span>${esc(x.name)}</span><strong class="${x.delta > 0 !== (["疲劳", "待安置居民", "累计缺供粮", "移出未安置"].includes(x.name) || x.name.includes("待安置") || x.name.includes("地方负担")) ? "positive" : "negative"}">${x.delta > 0 ? "+" : ""}${num(x.delta)}</strong><small>${num(x.before)} → ${num(x.after)}</small></div>`).join("")}</div>` : r.minor.length ? "" : '<div class="notice"><p>本次事项已记入卷宗，钱粮及治理数值未变。</p></div>'}${r.minor.length ? `<details class="receipt-minor"><summary>细微变化${r.minor.length}项（每周回落、养护损耗等）</summary><p>${r.minor.map((x) => `${esc(x.name)} ${x.delta > 0 ? "+" : ""}${num(Math.round(x.delta * 100) / 100 || 0)}`).join("；")}</p></details>` : ""}${r.policies?.length ? `<div class="receipt-notes">${r.policies.map((x) => `<p>${esc(x)}</p>`).join("")}</div>` : ""}${
     r.ledger.length
       ? `<details class="receipt-ledger"><summary>查看本次公私账目（${r.ledger.length}笔）</summary>${r.ledger
           .map(

@@ -1,19 +1,35 @@
+import { XF_STORIES } from "./xunfu-stories.js";
+import { XF_SOURCE_CASES } from "./xunfu-cases.js";
+import { BZ_STORIES } from "./buzheng-stories.js";
+import { BZ_SOURCE_CASES } from "./buzheng-cases.js";
+import { CZ_STORIES } from "./canzheng-stories.js";
+import { CZ_SOURCE_CASES } from "./canzheng-cases.js";
+import { IN_STORIES } from "./inspector-stories.js";
+import { IN_SOURCE_CASES } from "./inspector-cases.js";
 import { PREF_STORIES } from "./prefecture-stories.js";
 import { TZ_STORIES } from "./tongzhi-stories.js";
 import { ZF_STORIES } from "./zhifu-stories.js";
 import { PREF_SOURCE_CASES, TZ_SOURCE_CASES, ZF_SOURCE_CASES } from "./office-case-data.js";
 
 export const OFFICE_CONTENT = {
+  xunfu: { label: "奉命巡抚", title: "一纸敕，万家灯", events: XF_STORIES, cases: XF_SOURCE_CASES },
+  buzheng: { label: "布政使", title: "一省秋秤", events: BZ_STORIES, cases: BZ_SOURCE_CASES },
+  canzheng: { label: "布政司参政", title: "三府一秤", events: CZ_STORIES, cases: CZ_SOURCE_CASES },
+  inspector: { label: "按察司副使", title: "山河有卷", events: IN_STORIES, cases: IN_SOURCE_CASES },
   prefecture: { label: "通判", title: "一舟粮，几家命", events: PREF_STORIES, cases: PREF_SOURCE_CASES },
   tongzhi: { label: "同知", title: "水来之前", events: TZ_STORIES, cases: TZ_SOURCE_CASES },
   zhifu: { label: "知府", title: "堂前灯，堂外人", events: ZF_STORIES, cases: ZF_SOURCE_CASES },
 };
 export const blankOfficeStories = () => ({ version: 1, offices: {}, counts: {}, sources: {} });
-export const activeOffice = (s) => s.zhifu ? "zhifu" : s.tongzhi ? "tongzhi" : s.prefecture ? "prefecture" : null;
+export const activeOffice = (s) => s.xunfu ? "xunfu" : s.buzheng ? "buzheng" : s.canzheng ? "canzheng" : s.inspector ? "inspector" : s.zhifu ? "zhifu" : s.tongzhi ? "tongzhi" : s.prefecture ? "prefecture" : null;
 const int = (n, min = 0, max = 156) => Number.isInteger(n) && n >= min && n <= max;
 const clamp = (n) => Math.max(0, Math.min(100, Math.round(n * 100) / 100));
 const own = (o, key) => Object.hasOwn(o, key);
 const CASE_ASSISTS = {
+  XC01: ["XF02", "e1"], XC02: ["XF05", "e1"], XC03: ["XF08", "e1"], XC04: ["XF12", "e1"],
+  BC01: ["BZ02", "e1"], BC02: ["BZ05", "e1"], BC03: ["BZ08", "e1"], BC04: ["BZ12", "e1"],
+  CC01: ["CZ02", "e1"], CC02: ["CZ05", "e2"], CC03: ["CZ08", "e1"], CC04: ["CZ12", "e1"],
+  IC01: ["IN02", "e2"], IC02: ["IN04", "e3"], IC03: ["IN07", "e2"], IC04: ["IN11", "e1"],
   PC01: ["TP01", "e2"], PC02: ["TP03", "e2"], PC03: ["TP08", "e2"], PC04: ["TP12", "e3"],
   TC01: ["TZ02", "e3"], TC02: ["TZ05", "e2"], TC03: ["TZ08", "e1"], TC04: ["TZ12", "e1"],
   FC01: ["ZF02", "e3"], FC02: ["ZF04", "e2"], FC03: ["ZF07", "e2"], FC04: ["ZF12", "e2"],
@@ -94,7 +110,7 @@ export function syncOfficeStories(s, before = null, command = null) {
   if (!key) return;
   const q = s[key], defs = OFFICE_CONTENT[key];
   const b = s.officeStories.offices[key] || initialize(s, key);
-  if (command && before?.[key]?.event && ["pref_event", "tz_event", "zf_event"].includes(command.type)) {
+  if (command && before?.[key]?.event && ["pref_event", "tz_event", "zf_event", "in_event", "cz_event", "bz_event", "xf_event"].includes(command.type)) {
     const id = before[key].event;
     if (own(b.main, id)) throw Error("这份主线公文已经办过。");
     b.main[id] = { turn: before[key].turn, choice: command.choice };
@@ -139,7 +155,7 @@ export function syncOfficeStories(s, before = null, command = null) {
       } else if (file.status === "executing") {
         file.status = "closed"; file.closed = q.turn;
         gain(q, d, { cooperation: 2, trust: 1 });
-        note(q, `${d.name}：交还、纠正或正式移送回报已核验，案卷归档；属县协作+2，上级信任+1。`);
+        note(q, `${d.name}：交还、纠正或正式移送回报已核验，案卷归档；地方协作+2，上级信任+1。`);
       }
       file.due = null;
     }
@@ -151,7 +167,7 @@ export function storyResult(d, o) {
   return `${o.label}的回报已到：相关凭据和当事人签认分列，疑点保留待查，不代替${d.title}的最终处理。`;
 }
 export function gainText(g) {
-  const names = { cooperation: "属县协作", people: "属县民生", integrity: "吏治", trust: "上级信任" };
+  const names = { cooperation: "地方协作", people: "地方民生", integrity: "吏治", trust: "上级信任" };
   return Object.keys(g).length ? "（" + Object.entries(g).map(([k, v]) => `${names[k]}+${v}`).join("、") + "，以实际上限结算。）" : "";
 }
 export function officeStoryCommand(s, c) {
@@ -254,7 +270,7 @@ export function validateOfficeStories(s) {
       if (f.status === "handover" && !q.finished) fail();
       if (q.finished && !["handover", "closed"].includes(f.status)) fail();
     }
-    for (const [id, r] of Object.entries(b.main)) if (!/^[TDF]0[1-8]$/.test(id) || !int(r.turn, 0, q.turn) || typeof r.choice !== "string") fail();
+    for (const [id, r] of Object.entries(b.main)) if (!/^[TDFACBU]0[1-8]$/.test(id) || !int(r.turn, 0, q.turn) || typeof r.choice !== "string") fail();
   }
   if (Object.keys(all.counts).length !== Object.keys(expectedCounts).length || Object.entries(all.counts).some(([id, n]) => n !== expectedCounts[id] || n > 2)) fail();
   if (Object.keys(all.sources).length !== Object.keys(expectedSources).length || Object.entries(all.sources).some(([id, n]) => n !== expectedSources[id])) fail();

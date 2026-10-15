@@ -4275,3 +4275,7 @@ body {
     font-size: 16px;
   }
 }
+
+/* 省计账户常驻展开，四府详情沿用县情折叠。 */
+.bz-funds { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 16px; }
+.bz-funds .district-card { min-width: 0; }

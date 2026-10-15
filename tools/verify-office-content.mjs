@@ -75,7 +75,9 @@ for (const key of Object.keys(commands)) {
   while (s[key].turn < 12) s = act(main(s, key), commands[key][2]);
   fs.writeFileSync(`${dir}/${key}-case-start.json`, JSON.stringify(validateSave(s)));
 }
-const events = Object.values(OFFICE_CONTENT).flatMap((d) => d.events), cases = Object.values(OFFICE_CONTENT).flatMap((d) => d.cases);
+// 此脚本固定复查 v0.16 三任；副使专项见 tests/inspector.test.js。
+const legacyContent = Object.keys(commands).map((key) => OFFICE_CONTENT[key]);
+const events = legacyContent.flatMap((d) => d.events), cases = legacyContent.flatMap((d) => d.cases);
 assert.equal(new Set(events.map((d) => d.id)).size, 54);
 assert.equal(new Set(events.map((d) => d.text)).size, 54);
 assert.equal(new Set(events.map((d) => d.title)).size, 54);

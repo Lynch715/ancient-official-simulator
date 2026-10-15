@@ -3,9 +3,9 @@ export const CASE_SOURCE = Object.freeze({
   sha256: "e96760df4ecc6908f5f4e965df386e3a024318ffbe5707faf5dfdd2e48298e33",
   url: "https://github.com/dooshu/shu/blob/9fba7671d7ecb5a4b5e81ab6cefaa10073520a8c/cn/1325.txt",
 });
-export function sourceCase(id, week, name, county, chapter, lines, summary, clues, hypotheses, good, bad, finding) {
+export function sourceCase(id, week, name, county, chapter, lines, summary, clues, hypotheses, good, bad, finding, source = CASE_SOURCE) {
   return { id, week, name, county, summary, hypotheses, finding,
-    source: { ...CASE_SOURCE, chapter, lines, key: `${CASE_SOURCE.repo}:${CASE_SOURCE.file}:${chapter}` },
+    source: { ...source, chapter, lines, key: `${source.repo}:${source.file}:${chapter}` },
     clues: clues.map(([name, text], i) => ({ id: `e${i + 1}`, name, text })),
     options: [{ id: "evidence", label: good }, { id: "hasty", label: bad }, { id: "recheck", label: "保留疑点，继续查证" }],
   };

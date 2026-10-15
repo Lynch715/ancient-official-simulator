@@ -1,16 +1,24 @@
-// 四任共用的考课附卷。处分档位及期限为虚构玩法，不是明律量刑表。
+// 八任共用的考课附卷。处分档位及期限为虚构玩法，不是明律量刑表。
 import { countyCase } from "./case-content.js";
 export const OFFICES = {
   county: "知县",
   prefecture: "通判",
   tongzhi: "同知",
   zhifu: "知府",
+  inspector: "按察司副使",
+  canzheng: "布政司参政",
+  buzheng: "布政使",
+  xunfu: "奉命巡抚",
 };
 export const LOWER = {
   county: "县丞",
   prefecture: "知县",
   tongzhi: "通判",
   zhifu: "同知",
+  inspector: "按察佥事",
+  canzheng: "布政司参议",
+  buzheng: "布政司参政",
+  xunfu: "布政使",
 };
 export const STATUS = {
   notice: "考课复议",
@@ -30,7 +38,11 @@ export const STATUS = {
 const FINALS = ["dismissed", "prison", "exile", "executed"];
 const round = (n) => Math.round(n * 100) / 100;
 export const currentOffice = (s) =>
-  s.zhifu
+  s.xunfu ? "xunfu" : s.buzheng ? "buzheng" : s.canzheng
+    ? "canzheng"
+    : s.inspector
+    ? "inspector"
+    : s.zhifu
     ? "zhifu"
     : s.tongzhi
       ? "tongzhi"
@@ -97,6 +109,38 @@ function record(s, role, code, title, severity, amount = 0, legacy = false) {
 }
 // Only explicit committed decisions become criminal evidence. Low metrics never do.
 const DECISIONS = {
+  "xunfu:U01:shortcut": ["abuse", "越过原指挥链擅令军伍", 2, 0],
+  "xunfu:U02:shortcut": ["destroy", "撕毁会办异议回文", 3, 0],
+  "xunfu:U03:shortcut": ["abuse", "授旧识免验报销特权", 2, 0],
+  "xunfu:U04:shortcut": ["abuse", "不分行为将全体灾户列作叛乱", 2, 0],
+  "xunfu:U05:shortcut": ["abuse", "无授权越境搜捕封村", 2, 0],
+  "xunfu:U06:shortcut": ["false-report", "逼属署虚填未达节点", 1, 0],
+  "xunfu:U07:shortcut": ["cover", "以要务名义扣留旧部罪证", 2, 0],
+  "xunfu:U08:shortcut": ["destroy", "毁未竟清单虚报敕差告成", 3, 0],
+  "buzheng:B01:shortcut": ["false-report", "以平均数虚报全省足用", 1, 0],
+  "buzheng:B02:shortcut": ["abuse", "伪填朝廷蠲免文号", 2, 0],
+  "buzheng:B03:shortcut": ["abuse", "签批越权挪用赈款", 2, 0],
+  "buzheng:B04:shortcut": ["cover", "补银掩盖亏空和经手记录", 2, 0],
+  "buzheng:B05:shortcut": ["abuse", "伪称批准动用底储", 2, 0],
+  "buzheng:B06:shortcut": ["abuse", "假托任命擅授府印", 2, 0],
+  "buzheng:B07:shortcut": ["bribe", "私收馈赠签出独家官运权", 2, 0],
+  "buzheng:B08:shortcut": ["false-report", "虚报未到款粮已收讫", 1, 0],
+  "canzheng:C01:shortcut": ["false-report", "未拨未运虚报足额实收", 1, 0],
+  "canzheng:C02:shortcut": ["abuse", "抹去旧册擅自摊征", 2, 0],
+  "canzheng:C03:shortcut": ["false-report", "未核地形代填验收", 1, 0],
+  "canzheng:C04:shortcut": ["abuse", "把私运列作急差摊派", 2, 0],
+  "canzheng:C05:shortcut": ["cover", "隐瞒挪粮与邻县缺口", 2, 0],
+  "canzheng:C06:shortcut": ["false-report", "将未到订单记成实粮", 1, 0],
+  "canzheng:C07:shortcut": ["destroy", "销毁加码派役文书", 3, 0],
+  "canzheng:C08:shortcut": ["abuse", "未经批准擅扩试行范围", 2, 0],
+  "inspector:A01:shortcut": ["false-report", "未巡先报沿途无弊", 1, 0],
+  "inspector:A02:shortcut": ["abuse", "越权擅改原判并命施行", 2, 0],
+  "inspector:A03:shortcut": ["false-report", "改写久押日期掩盖迟延", 1, 0],
+  "inspector:A04:shortcut": ["cover", "删去灾情证据代写无灾", 2, 0],
+  "inspector:A05:shortcut": ["destroy", "销毁原始证言", 3, 0],
+  "inspector:A06:shortcut": ["destroy", "为旧交抽去不利账页", 3, 0],
+  "inspector:A07:shortcut": ["destroy", "接受补造并销毁核对副本", 3, 0],
+  "inspector:A08:shortcut": ["abuse", "迎合请托将未核人员定作首恶", 2, 0],
   "county:X03:conceal": ["false-report", "沿用明知不实的仓账", 1, 0],
   "county:X15:accept": ["bribe", "私收礼物并许诺照顾", 2, 80],
   "county:G07:destroy": ["destroy", "删除不利原始记录", 3, 0],
@@ -176,7 +220,7 @@ export function trackAccountability(before, s, c) {
           ? before.tongzhi?.event
           : c.type === "zf_event"
             ? before.zhifu?.event
-            : null;
+            : c.type === "xf_event" ? before.xunfu?.event : c.type === "bz_event" ? before.buzheng?.event : c.type === "cz_event" ? before.canzheng?.event : c.type === "in_event" ? before.inspector?.event : null;
   const d = DECISIONS[`${role}:${e}:${c.choice}`];
   if (d) record(s, role, ...d);
   // County flags are also durable facts in this version; legacy migration is deliberately milder.
@@ -230,6 +274,10 @@ export function disasterEvidence(s, role = currentOffice(s)) {
   };
 }
 const TOPICS = {
+  xunfu: [["life", "会办成效与善后回访"], ["finance", "敕差权限与专项核对"], ["justice", "来源案卷与未竟移交"]],
+  buzheng: [["life", "四府承诺与实收回访"], ["finance", "专款占用与调剂核对"], ["justice", "来源案卷与未竟移交"]],
+  canzheng: [["life", "三府负担与实效回访"], ["finance", "专项钱粮与实收核对"], ["justice", "来源案卷与未竟移交"]],
+  inspector: [["life", "久押与处境回访"], ["finance", "分巡差费与封存清查"], ["justice", "巡案整改与呈核移交"]],
   county: [
     ["life", "民生与灾后善后"],
     ["justice", "积案与执行复查"],
