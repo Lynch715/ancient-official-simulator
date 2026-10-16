@@ -9,6 +9,7 @@ import {
   prefHard,
   prefRequest,
   eventAt,
+  officeEvent,
   eventWeek,
   officeDrift,
   blendLife,
@@ -667,7 +668,7 @@ export function prefectureCommand(s, c) {
     return;
   }
   if (c.type === "pref_event") {
-    const e = PREF_EVENTS.find((e) => e.id === p.event),
+    const e = officeEvent(p, PREF_EVENTS.find((e) => e.id === p.event)),
       o = e?.options.find((o) => o.id === c.choice);
     if (!o) throw Error("当前公文或处置无效。");
     pay(p, o.cost, e.title);

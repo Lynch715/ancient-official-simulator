@@ -13,6 +13,7 @@ import {
   tzPressure,
   tzNextFlood,
   eventAt,
+  officeEvent,
   eventWeek,
   officeDrift,
   blendLife,
@@ -402,7 +403,7 @@ export function tongzhiCommand(s, c) {
     return;
   }
   if (c.type === "tz_event") {
-    const e = TZ_EVENTS.find((e) => e.id === q.event),
+    const e = officeEvent(q, TZ_EVENTS.find((e) => e.id === q.event)),
       o = e?.options.find((x) => x.id === c.choice);
     if (!o) throw Error("当前公文或处置无效。");
     pay(q, o.cost, e.title);

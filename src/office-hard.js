@@ -40,10 +40,20 @@ export const transitLoss = (p, x) =>
   p.hard && x.route === "normal" ? Math.round(x.amount * roll(p.hard.seed, `loss:${x.id}`) * 0.12) : 0;
 export const eventWeek = (q, e) => (q.hard?.weeks?.[e.id] ?? e.week);
 export const eventAt = (q, list) => list.find((e) => eventWeek(q, e) === q.turn);
+const RESOURCE_FALLBACKS = {
+  T03: {label: "保全旧卷，呈报差费缺口", desc: "不另耗钱粮与精力，上级信任减2；保留原始凭据呈请续查，不提前追缴粮食。"},
+  D03: {label: "暂留安置册，呈请接济", desc: "不另耗钱粮与精力，上级信任减2；保留48人及病弱者原册，后续供粮、安置仍须实际办理。"},
+  D04: {label: "暂缓雇工，照册续济", desc: "不另耗钱粮与精力，上级信任减2；不增加施工进度，仍按全部登记人口结算口粮。"},
+};
 export function officeEvent(q, e) {
   if (!q?.hard || !e) return e;
   const seed = q.hard.seed;
-  let out = { ...e, options: [...e.options].sort((a, b) => roll(seed, `${e.id}:${a.id}`) - roll(seed, `${e.id}:${b.id}`)) };
+  const options = [...e.options];
+  // New-profile lifeline: lack of resources must not force a criminal choice.
+  // No payout, score reward, completed work, or change to the legacy profile.
+  if (q.challenge?.version === 1 && RESOURCE_FALLBACKS[e.id])
+    options.push({id: "defer", ...RESOURCE_FALLBACKS[e.id], cost: {}, effect: {trust: -2}});
+  let out = { ...e, options: options.sort((a, b) => roll(seed, `${e.id}:${a.id}`) - roll(seed, `${e.id}:${b.id}`)) };
   if (e.id === "F02" && q.hard.corrupt) {
     const d = q.counties[q.hard.corrupt[0]];
     const name = d.name.replace("县", "");

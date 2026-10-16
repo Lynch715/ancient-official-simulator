@@ -18,7 +18,8 @@ function pick(q, list, mode, eventId) {
   const ok = def.options.filter((o) => can(q, o.cost) && !bad(o));
   if (mode === "idle") return (ok.filter((o) => !Object.keys(o.cost).length).at(-1) || ok.at(-1)).id;
   const order = e.options.map((o) => o.id);
-  return [...ok].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))[0].id;
+  const rank = o => order.includes(o.id) ? order.indexOf(o.id) : order.length;
+  return [...ok].sort((a, b) => rank(a) - rank(b))[0].id;
 }
 
 export function runPref(s, mode) {
