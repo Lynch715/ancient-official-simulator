@@ -1,3 +1,4 @@
+import { initChallenge, challenged, weeklyAP, CHALLENGE, lateAssessment } from "./career-difficulty.js";
 import { BZ_REGIONS, BZ_EVENTS, BZ_PROMISES, BZ_FUNDS, BZ_INITIAL, BZ_WEEKLY } from "./buzheng-data.js";
 import { qualified } from "./accountability.js";
 import { canzhengAssessment } from "./canzheng.js";
@@ -38,13 +39,15 @@ export function appointBuzheng(s) {
  const p=s.canzheng;if(s.buzheng)throw Error("布政使任命已办理。");
  if(!p?.finished||(!canzhengAssessment(s).candidate&&!qualified(s,"canzheng")))throw Error("须参政称职，或复考恢复资格，才可升任布政使。");
  const q=s.buzheng={turn:0,finished:false,ap:3,silver:0,grain:0,private:p.private,integrity:p.integrity,trust:p.trust,misconduct:false,event:null,nextLog:1,logs:[],ledger:[],lastLedger:[],promises:{},funds:Object.fromEntries(Object.keys(BZ_FUNDS).map(k=>[k,{silver:0,grain:0}])),adjustments:{},outcome:null,record:{silver:p.silver,grain:p.grain,private:p.private,score:p.outcome.score},counties:Object.fromEntries(BZ_REGIONS.map(d=>[d.id,{id:d.id,name:d.name,people:p.counties[d.id]?.people??65,cooperation:p.counties[d.id]?.cooperation??55,receivedSilver:0,receivedGrain:0}])),hard:s.difficulty==="hard"&&p.hard?buzhengHard(s.seed):null};
- money(q,"省署日常公账核拨",{silver:q.hard?100:150,grain:q.hard?40:80});
- for(const [id,d]of Object.entries(BZ_INITIAL[q.hard?"hard":"standard"]))money(q,BZ_FUNDS[id]+"开任核拨",d,id);
+ initChallenge(s,q,"buzheng");
+ money(q,"省署日常公账核拨",{silver:challenged(q)?CHALLENGE.buzheng.silver:q.hard?100:150,grain:q.hard?40:80});
+ for(const [id,d]of Object.entries(BZ_INITIAL[q.hard?"hard":"standard"]))money(q,BZ_FUNDS[id]+"开任核拨",challenged(q)?Object.fromEntries(Object.entries(d).map(([k,v])=>[k,Math.round(v*.85)])):d,id);
  open(q);log(q,"领从二品布政使印，统筹四府钱粮。前六任公账封存，私产与原三府民生协作承接。三项专款独立，可用额须扣已登记未拨承诺；两批均经核收才记一项实绩。依法办理财赋，重大更制须呈准，刑案移交承审。 ");
 }
 export function buzhengAssessment(s) {
  const q=s.buzheng,closed=Object.values(q.promises).filter(r=>r.status==="closed"),timely=closed.filter(r=>r.closed<=r.opened+36).length;
  const perFund=Object.fromEntries(Object.keys(BZ_FUNDS).map(f=>[f,closed.filter(r=>BZ_PROMISES.find(d=>d.id===r.id).fund===f).length]));
+ if(challenged(q))return lateAssessment(q,closed,()=>1,blendIntegrity(q),Object.values(perFund).every(n=>n>=2));
  const cases=Object.values(s.officeStories.offices.buzheng?.cases||{}).filter(r=>r.status==="closed").length;
  const score=Math.round(closed.length/12*50+timely/12*10+cases/4*25+blendIntegrity(q)*.15);
  const candidate=!q.misconduct&&closed.length>=8&&Object.values(perFund).every(n=>n>=2)&&score>=(q.hard?75:70);
@@ -82,11 +85,11 @@ export function buzhengCommand(s,c) {
   }else throw Error("承诺办理无效。");return;
  }
  if(c.type!=="bz_advance")throw Error("布政使操作无效。");if(q.event)throw Error("请先处置本周省署公文。");
- money(q,"省署日常每周核拨",{silver:q.hard?2:3,grain:1});for(const [f,d]of Object.entries(BZ_WEEKLY))money(q,BZ_FUNDS[f]+"每周核拨",d,f);money(q,"布政使俸入与家计净额",{private:2.5+familyAllowance(s)});q.turn++;
+ money(q,"省署日常每周核拨",{silver:challenged(q)?CHALLENGE.buzheng.weeklySilver:q.hard?2:3,grain:1});for(const [f,d]of Object.entries(BZ_WEEKLY))money(q,BZ_FUNDS[f]+"每周核拨",challenged(q)?Object.fromEntries(Object.entries(d).map(([k,v])=>[k,v*.8])):d,f);money(q,"布政使俸入与家计净额",{private:2.5+familyAllowance(s)});q.turn++;
  for(const [f,r]of Object.entries(q.adjustments))if(r.approved===null&&r.requested+2===q.turn){r.approved=q.turn;money(q,BZ_FUNDS[f]+"调剂获准入账",{silver:60,grain:40},f);log(q,`${BZ_FUNDS[f]}调剂获准，暂存银60两、粮40石正式入专款，可登记承诺。`);}
  for(const d of BZ_PROMISES){const r=q.promises[d.id];if(!r)continue;if(r.status==="review"&&r.requested+2===q.turn){r.approved=q.turn;r.status="approved";log(q,`${d.title}获准，须登记承诺才能拨运。`);}const b=r.shipments.at(-1);if(r.status==="transit"&&b.sent+bzTravel(q,d)===q.turn){b.arrived=q.turn;r.status="received";for(const k of ["silver","grain"])q.counties[d.region][k==="silver"?"receivedSilver":"receivedGrain"]+=b.amount[k];log(q,`${d.title}第${b.index+1}批实到，等手动核收，仍占一组运验人手。`);}}
  if(q.hard)officeDrift(q,Object.values(q.counties),{people:[55,.006],integrity:[60,.006]});
- if(q.turn===156){q.finished=true;q.ap=0;for(const r of Object.values(q.promises))if(r.status!=="closed"){r.handoverFrom=r.status;r.status="handover";}log(q,"布政使三年任满。专款余额、尚占用的承诺、已拨未核收各有明细，未竟不提前销号；来源案本周到期回报并入考满。");}else{q.ap=3;open(q);}
+ if(q.turn===156){q.finished=true;q.ap=0;for(const r of Object.values(q.promises))if(r.status!=="closed"){r.handoverFrom=r.status;r.status="handover";}log(q,"布政使三年任满。专款余额、尚占用的承诺、已拨未核收各有明细，未竟不提前销号；来源案本周到期回报并入考满。");}else{q.ap=weeklyAP(q);open(q);}
 }
 export function buzhengReceipt(before,after,c) {
  const a=before.buzheng,b=after.buzheng,changes=[],add=(name,x,y)=>{if(x!==y)changes.push({name,before:x,after:y,delta:round(y-x)});};

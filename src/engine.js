@@ -1,3 +1,7 @@
+import { zfAssessment } from "./zhifu.js";
+import { tzAssessment } from "./tongzhi.js";
+import { prefAssessment } from "./prefecture.js";
+import { validateChallenge } from "./career-difficulty.js";
 import { appointXunfu, xunfuCommand, xunfuReceipt, validateXunfu, finalizeXunfu } from "./xunfu.js";
 import { appointBuzheng, buzhengCommand, buzhengReceipt, validateBuzheng, finalizeBuzheng } from "./buzheng.js";
 import { appointCanzheng, canzhengCommand, canzhengReceipt, validateCanzheng, finalizeCanzheng } from "./canzheng.js";
@@ -115,7 +119,7 @@ import {
   WEEKS_PER_YEAR,
   WEEKS_PER_SEASON,
 } from "./data.js";
-export const VERSION = 16;
+export const VERSION = 17;
 const clone = (x) => structuredClone(x),
   clamp = (x, min = 0, max = 100) => Math.max(min, Math.min(max, x));
 export const seasonIndex = (turn) =>
@@ -252,6 +256,7 @@ export function createGame({
   appearance = "player_a",
   seed = 314159,
   difficulty = "hard",
+  balanceVersion = 1,
 } = {}) {
   const hard = difficulty !== "standard";
   const f = Object.hasOwn(FAMILIES, family)
@@ -259,6 +264,7 @@ export function createGame({
     : FAMILIES.humble;
   const s = {
     version: VERSION,
+    balanceVersion: hard ? balanceVersion : 0,
     officeStories: blankOfficeStories(),
     difficulty: hard ? "hard" : "standard",
     hard: null,
@@ -802,6 +808,7 @@ export function dispatch(state, command) {
     throw Error("当前须先办理考课或处分附卷，不能绕过程序升任。");
   const n = coreDispatch(state, command);
   syncOfficeStories(n, state, command);
+  for (const [key, assess] of [["prefecture",prefAssessment],["tongzhi",tzAssessment],["zhifu",zfAssessment]]) if(n[key]?.finished&&n[key].challenge)n[key].outcome=assess(n[key]);
   finalizeInspector(n);
   finalizeCanzheng(n);
   finalizeBuzheng(n);
@@ -1226,6 +1233,10 @@ export function validateSave(raw) {
     upgraded.xunfu = null;
     return validateSave(upgraded);
   }
+  if (raw.version === 16) {
+    const upgraded = clone(raw); upgraded.version = 17; upgraded.balanceVersion = 0;
+    return validateSave(upgraded);
+  }
   if (raw.version !== VERSION) throw Error("存档版本不兼容。");
   const base = createGame();
   for (const k of Object.keys(base))
@@ -1510,6 +1521,7 @@ export function validateSave(raw) {
   validateTongzhi(clean);
   validateZhifu(clean);
   validateOfficeStories(clean);
+  validateChallenge(clean);
   validateInspector(clean);
   validateCanzheng(clean);
   validateBuzheng(clean);

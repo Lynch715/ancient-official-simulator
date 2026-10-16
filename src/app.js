@@ -1,3 +1,4 @@
+import {newCareer, CHALLENGE} from "./career-difficulty.js";
 import { xfLabel, XF_EDICT } from "./xunfu.js";
 import { xunfuView } from "./xunfu-view.js";
 import { bzLabel } from "./buzheng.js";
@@ -333,7 +334,7 @@ function startView() {
     .join(
       "",
     )}</div><div class="field-label">为官难度</div><div class="family-options difficulty-options">${[
-      ["hard", "严苛", "银粮微薄，季末实解府库；旱涝时间与轻重每局不同，考评不封顶。精打细算、未雨绸缪，才可能称职。"],
+      ["hard", "严苛", "八任均以75分称职。银粮吃紧，灾情多变；通判起须亲查剧情、归档来源案。后四任每周仅1点亲办精力，办结数量、成效与期限同时考核。"],
       ["standard", "常例", "钱粮宽裕，灾情按固定时节到来，适合初次上手、熟悉各项办事流程。"],
     ]
       .map(
@@ -731,7 +732,7 @@ function renderModal() {
       `<div class="dialog-content"><p class="warning-text">${m.kind === "murder" ? "这会实际指使杀害关键证人，新增故意杀人罪。独立证据仍在，可能经复核判处斩首，角色永久死亡。" : "这会实际新增毁证行为。原始留存副本仍在，可能导致流放等更重处分。"}</p><p>此操作不是申辩，不会使原罪证消失。</p>${btn("放弃险招，依法申辩", "close", "", "button outline")}${btn(m.kind === "murder" ? "仍指使灭口，承担后果" : "仍指使毁证，承担后果", "ac-confirm-risk", "", "button danger")}</div>`,
     );
   if (m.type === "xf-appointment")
-    html = dialog("领受巡抚敕差", `<div class="dialog-content"><p>${XF_EDICT.text}</p><p>巡抚是奉敕差遣，品级依所加官衔，不按固定品级晋升。本局以156周检验本次使命。旧任公账及专款承诺留交接，新拨敕差专项银${s.buzheng.hard?450:700}两、粮${s.buzheng.hard?220:350}石；私产与四府民生协作承接。</p>${btn("依敕领差，赴巡抚行署", "xf-appoint", "", "button primary large")}</div>`);
+    html = dialog("领受巡抚敕差", `<div class="dialog-content"><p>${XF_EDICT.text}</p><p>巡抚是奉敕差遣，品级依所加官衔，不按固定品级晋升。本局以156周检验本次使命。旧任公账及专款承诺留交接，新拨敕差专项银${newCareer(s)?CHALLENGE.xunfu.silver:s.buzheng.hard?450:700}两、粮${newCareer(s)?CHALLENGE.xunfu.grain:s.buzheng.hard?220:350}石；私产与四府民生协作承接。</p>${btn("依敕领差，赴巡抚行署", "xf-appoint", "", "button primary large")}</div>`);
   if (m.type === "xf-next")
     html = dialog("结算巡抚本周", `<div class="dialog-content"><p>推进一周：结算请旨批复、两方回文、会办回报和善后回访。尚余${s.xunfu.ap}点精力不结转；回报须核验，回访到达须手动结卷。</p>${btn("确认推进一周", "xf-confirm-next", "", "button primary large")}</div>`);
   if (m.type === "bz-appointment")
@@ -739,11 +740,11 @@ function renderModal() {
   if (m.type === "bz-next")
     html = dialog("结算布政使本周", `<div class="dialog-content"><p>推进一周：结算计划批复、调剂入账、钱粮实到与剧情案卷。尚余${s.buzheng.ap}点精力不结转；每批实到后须手动核收。</p>${btn("确认推进一周", "bz-confirm-next", "", "button primary large")}</div>`);
   if (m.type === "cz-appointment")
-    html = dialog("升任布政司参政", `<div class="dialog-content"><p>从三品参政，奉命分守北陵、南泽、西原三府，统筹获准的钱粮民政事项，新任三年156周。</p><p>原任公账留交接，三府民生协作和私产承接；新拨专项银${s.difficulty === "hard" && s.inspector.hard ? 350 : 600}两、粮${s.difficulty === "hard" && s.inspector.hard ? 160 : 320}石。勘核后择案呈准，拨出、实到、落实和验收分开。</p>${btn("领分守札，赴任参政", "cz-appoint", "", "button primary large")}</div>`);
+    html = dialog("升任布政司参政", `<div class="dialog-content"><p>从三品参政，奉命分守北陵、南泽、西原三府，统筹获准的钱粮民政事项，新任三年156周。</p><p>原任公账留交接，三府民生协作和私产承接；新拨专项银${newCareer(s)?CHALLENGE.canzheng.silver:s.difficulty === "hard" && s.inspector.hard ? 350 : 600}两、粮${newCareer(s)?CHALLENGE.canzheng.grain:s.difficulty === "hard" && s.inspector.hard ? 160 : 320}石。勘核后择案呈准，拨出、实到、落实和验收分开。</p>${btn("领分守札，赴任参政", "cz-appoint", "", "button primary large")}</div>`);
   if (m.type === "cz-next")
     html = dialog("结算参政本周", `<div class="dialog-content"><p>推进一周：结算方案批复、钱粮实到、地方落实与剧情案卷。尚余${s.canzheng.ap}点精力不结转；收到回报仍须手动验收。</p>${btn("确认推进一周", "cz-confirm-next", "", "button primary large")}</div>`);
   if (m.type === "in-appointment")
-    html = dialog("转任按察司副使", `<div class="dialog-content"><p>正四品分巡副使，与知府同品，奉命巡察北陵、南泽、西原三府，新任三年156周。</p><p>旧府公账留交接；新拨分巡差费${s.difficulty === "hard" && s.zhifu.hard ? 320 : 480}两，私产延续。两组巡察人手，须到场查证、呈请复核、督催落实并核验回报。</p>${btn("领分巡札，赴任副使", "in-appoint", "", "button primary large")}</div>`);
+    html = dialog("转任按察司副使", `<div class="dialog-content"><p>正四品分巡副使，与知府同品，奉命巡察北陵、南泽、西原三府，新任三年156周。</p><p>旧府公账留交接；新拨分巡差费${newCareer(s)?CHALLENGE.inspector.silver:s.difficulty === "hard" && s.zhifu.hard ? 320 : 480}两，私产延续。两组巡察人手，须到场查证、呈请复核、督催落实并核验回报。</p>${btn("领分巡札，赴任副使", "in-appoint", "", "button primary large")}</div>`);
   if (m.type === "in-next")
     html = dialog("结算分巡本周", `<div class="dialog-content"><p>推进一周：结算出巡到场、复核批复、整改回报与剧情案卷。尚余${s.inspector.ap}点精力不结转；落实回报仍须手动验收。</p>${btn("确认推进一周", "in-confirm-next", "", "button primary large")}</div>`);
   if (m.type === "zf-appointment")
@@ -890,7 +891,7 @@ function renderModal() {
   if (m.type === "settings")
     html = dialog(
       "存档与设置",
-      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("查看美术图鉴", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府督抚八任 · v0.20 · 履历保存在当前浏览器</small></div>`,
+      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("查看美术图鉴", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府督抚八任 · v0.21 · 履历保存在当前浏览器</small></div>`,
     );
   if (m.type === "save-text")
     html = dialog(

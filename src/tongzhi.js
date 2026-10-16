@@ -1,3 +1,4 @@
+import { contentAssessment } from "./career-difficulty.js";
 import { projectBenefit } from "./county-rules.js";
 import { adminCost } from "./rules.js";
 import { termLabel } from "./rules.js";
@@ -227,7 +228,7 @@ export function tzAssessment(q) {
       q.registry * 0.05 +
       prepared * 0.1,
   );
-  return {
+  return contentAssessment(q, {
     score,
     rating: q.misconduct
       ? "候查"
@@ -238,7 +239,7 @@ export function tzAssessment(q) {
           : "不称职",
     candidate: !q.misconduct && score >= passLine(q),
     summary: `验收设施${Object.values(q.projects).filter((p) => p.status === "complete").length}项；实际复耕安置${q.resettled}/${q.affected}人，移出未安置${q.excluded}人，累计缺供${q.shortage}石。`,
-  };
+  });
 }
 function county(q, id) {
   const c = q.counties[id];

@@ -1,3 +1,4 @@
+import { initChallenge, challenged, weeklyAP, CHALLENGE, lateAssessment } from "./career-difficulty.js";
 import { IN_REGIONS, IN_EVENTS, IN_DOCKETS } from "./inspector-data.js";
 import { qualified } from "./accountability.js";
 import { zfAssessment } from "./zhifu.js";
@@ -45,12 +46,14 @@ export function appointInspector(s) {
     counties: Object.fromEntries(IN_REGIONS.map((d) => [d.id, { id: d.id, name: d.name, people: 65, cooperation: 55 }])),
     hard: s.difficulty === "hard" && p.hard ? inspectorHard(s.seed) : null,
   };
-  money(q, "分巡专项差费正式核拨", { silver: q.hard ? 320 : 480 });
+  initChallenge(s,q,"inspector");
+  money(q, "分巡专项差费正式核拨", { silver: challenged(q) ? CHALLENGE.inspector.silver : q.hard ? 320 : 480 });
   open(q);
   log(q, "转任按察司副使，正四品，奉命分巡北陵、南泽、西原三府。与知府同品而职责不同；原府公账留交接，新任差费另拨，私产承接。巡察可查证、催办并呈请处置，不兼领兵备提学，不自行终审重案。");
 }
 export function inspectorAssessment(s) {
   const q = s.inspector, rows = Object.values(q.dockets), closed = rows.filter((r) => r.status === "closed"), timely = closed.filter((r) => r.closed <= r.opened + 26).length;
+  if(challenged(q))return lateAssessment(q,closed,()=>1,blendIntegrity(q));
   const cases = Object.values(s.officeStories.offices.inspector?.cases || {}).filter((r) => r.status === "closed").length;
   const score = Math.round(closed.length / 12 * 50 + cases / 4 * 25 + timely / 12 * 10 + blendIntegrity(q) * .15);
   const candidate = !q.misconduct && score >= (q.hard ? 75 : 70);
@@ -105,7 +108,7 @@ export function inspectorCommand(s, c) {
   }
   if (c.type !== "in_advance") throw Error("分巡操作无效。");
   if (q.event) throw Error("请先处置本周分巡公文。");
-  money(q, "分巡每周核拨与署务净额", { silver: q.hard ? 3 : 5 });
+  money(q, "分巡每周核拨与署务净额", { silver: challenged(q) ? CHALLENGE.inspector.weeklySilver : q.hard ? 3 : 5 });
   money(q, "副使俸入与家计净额", { private: 1.5 + familyAllowance(s) });
   q.turn++;
   for (const d of IN_DOCKETS) {
@@ -123,7 +126,7 @@ export function inspectorCommand(s, c) {
     q.finished = true; q.ap = 0;
     for (const r of Object.values(q.dockets)) if (r.status !== "closed") { r.handoverFrom = r.status; r.status = "handover"; r.due = null; }
     log(q, "分巡三年任满，已验与未竟分别归卷，来源案到期回报并入本次考评。");
-  } else { q.ap = 3; open(q); }
+  } else { q.ap = weeklyAP(q); open(q); }
 }
 export function inspectorReceipt(before, after, c) {
   const a = before.inspector, b = after.inspector, changes = [];

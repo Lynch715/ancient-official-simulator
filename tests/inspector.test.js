@@ -23,10 +23,10 @@ test("副使平级转任完整承接私产，旧任公账冻结且任命幂等",
 });
 test("v12升级仅增副使空字段；原三任书卷、钱粮与旧考语原样保留", () => {
   for (const original of [previous, hardPrevious, createGame()]) {
-    const old = structuredClone(original); old.version = 12; delete old.inspector;
+    const old = structuredClone(original); old.version = 12; delete old.inspector; delete old.balanceVersion;
     const copy = structuredClone(old), n = validateSave(old);
     assert.equal(n.version, VERSION); assert.equal(n.inspector, null);
-    const stripped = structuredClone(n); stripped.version = 12; delete stripped.inspector;
+    const stripped = structuredClone(n); stripped.version = 12; delete stripped.inspector; assert.equal(n.balanceVersion, 0); delete stripped.balanceVersion;
     assert.deepEqual(stripped, old); assert.deepEqual(old, copy);
     if (n.zhifu) roundtrip(act(n, "in_appoint"));
   }

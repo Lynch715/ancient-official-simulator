@@ -1,3 +1,4 @@
+import { contentAssessment } from "./career-difficulty.js";
 import { MAINLINE_TEXT } from "./office-mainline.js";
 import { adminCost } from "./rules.js";
 import { familyAllowance } from "./county-content.js";
@@ -577,7 +578,7 @@ export function prefAssessment(p) {
       ) *
         0.15,
       );
-  return {
+  return contentAssessment(p, {
     score,
     rating: p.misconduct
       ? "候查"
@@ -588,7 +589,7 @@ export function prefAssessment(p) {
           : "不称职",
     summary: `运输到货${p.delivered}石，有效接济${p.effectiveDelivered}石，完成调粮要务${p.met}项，未达${p.missed}项。`,
     candidate: !p.misconduct && score >= passLine(p),
-  };
+  });
 }
 export function prefectureCommand(s, c) {
   const p = s.prefecture;

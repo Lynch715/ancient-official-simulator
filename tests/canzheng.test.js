@@ -25,7 +25,7 @@ test("参政任命严格衔接副使，公账另拨、私产与府情承接，�
 test("真实v13副使开局、办理中与考满旧档原样升级，不回放或补发",()=>{
   for(const file of ["standard-start","standard-finished","hard-finished","browser-active"]) {
     const old=JSON.parse(gunzipSync(fs.readFileSync(new URL(`./fixtures/v13-inspector-${file}.json.gz`,import.meta.url))));assert.equal(old.version,13);const n=validateSave(old);assert.equal(n.canzheng,null);
-    const stripped=structuredClone(n);stripped.version=13;delete stripped.canzheng;delete stripped.buzheng;delete stripped.xunfu;assert.deepEqual(stripped,old);roundtrip(n);
+    const stripped=structuredClone(n);stripped.version=13;delete stripped.canzheng;delete stripped.buzheng;delete stripped.xunfu;assert.equal(n.balanceVersion,0);delete stripped.balanceVersion;assert.deepEqual(stripped,old);roundtrip(n);
     if(n.inspector.finished)roundtrip(act(n,"cz_appoint"));
   }
 });

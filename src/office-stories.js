@@ -1,3 +1,4 @@
+import { syncChallenge } from "./career-difficulty.js";
 import { XF_STORIES } from "./xunfu-stories.js";
 import { XF_SOURCE_CASES } from "./xunfu-cases.js";
 import { BZ_STORIES } from "./buzheng-stories.js";
@@ -161,6 +162,7 @@ export function syncOfficeStories(s, before = null, command = null) {
     }
     if (q.finished && file.status !== "closed") { file.status = "handover"; file.due = null; note(q, `${d.name}未竟事项原状交接，不计结案。`); }
   }
+  syncChallenge(s,key);
 }
 export function storyResult(d, o) {
   if (o.id !== "check") return o.result;

@@ -1,3 +1,4 @@
+import { initChallenge, challenged, weeklyAP, CHALLENGE, lateAssessment } from "./career-difficulty.js";
 import { CZ_REGIONS, CZ_EVENTS, CZ_PROJECTS, CZ_PLANS } from "./canzheng-data.js";
 import { qualified } from "./accountability.js";
 import { inspectorAssessment } from "./inspector.js";
@@ -43,12 +44,14 @@ export function appointCanzheng(s) {
     counties:Object.fromEntries(CZ_REGIONS.map(d => [d.id,{ id:d.id,name:d.name,people:p.counties[d.id].people,cooperation:p.counties[d.id].cooperation,burden:30,receivedSilver:0,receivedGrain:0 }])),
     hard:s.difficulty === "hard" && p.hard ? canzhengHard(s.seed) : null,
   };
-  money(q,"分守专项钱粮正式核拨",{ silver:q.hard ? 350 : 600, grain:q.hard ? 160 : 320 });
+  initChallenge(s,q,"canzheng");
+  money(q,"分守专项钱粮正式核拨",{ silver:challenged(q)?CHALLENGE.canzheng.silver:q.hard ? 350 : 600, grain:challenged(q)?CHALLENGE.canzheng.grain:q.hard ? 160 : 320 });
   open(q); log(q,"升任从三品布政司参政，奉命分守三府，统筹获准的钱粮民政事项。原任公账封存，新专项另拨，私产和三府民生协作承接；不自行更定全省赋制，不终审刑案。方案经批复后才能拨运，只有实到、落实并验收才计成效。");
 }
 export function canzhengAssessment(s) {
   const q = s.canzheng, closed = Object.values(q.projects).filter(r => r.status === "closed");
   const quality = round(closed.reduce((n,r) => n + CZ_PLANS[r.plan].quality,0)), timely = closed.filter(r => r.closed <= r.opened + 26).length;
+  if(challenged(q))return lateAssessment(q,closed,r=>CZ_PLANS[r.plan].quality,blendIntegrity(q));
   const cases = Object.values(s.officeStories.offices.canzheng?.cases || {}).filter(r => r.status === "closed").length;
   const score = Math.round(quality / 12 * 50 + timely / 12 * 10 + cases / 4 * 25 + blendIntegrity(q) * .15);
   const candidate = !q.misconduct && quality >= 8 && score >= (q.hard ? 75 : 70);
@@ -93,7 +96,7 @@ export function canzhengCommand(s,c) {
   }
   if (c.type !== "cz_advance") throw Error("参政操作无效。");
   if (q.event) throw Error("请先处置本周参政公文。");
-  money(q,"分守专项每周核拨",{silver:q.hard?5:8,grain:q.hard?3:4});
+  money(q,"分守专项每周核拨",{silver:challenged(q)?CHALLENGE.canzheng.weeklySilver:q.hard?5:8,grain:challenged(q)?CHALLENGE.canzheng.weeklyGrain:q.hard?3:4});
   money(q,"参政俸入与家计净额",{private:2+familyAllowance(s)});
   q.turn++;
   for (const d of CZ_PROJECTS) {
@@ -113,7 +116,7 @@ export function canzhengCommand(s,c) {
     q.finished=true; q.ap=0;
     for (const r of Object.values(q.projects)) if (r.status!=="closed") { r.handoverFrom=r.status; r.status="handover"; r.due=null; }
     log(q,"参政三年任满，按实收、实办和实效归卷。未竟差事据实交接，来源案到期回报并入考评。");
-  } else { q.ap=3; open(q); }
+  } else { q.ap=weeklyAP(q); open(q); }
 }
 export function canzhengReceipt(before,after,c) {
   const a=before.canzheng,b=after.canzheng,changes=[];

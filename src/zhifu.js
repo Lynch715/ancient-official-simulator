@@ -1,3 +1,4 @@
+import { contentAssessment } from "./career-difficulty.js";
 import { zhifuCase, chooseCaseVariant, CASE_VARIANTS } from "./case-content.js";
 import { adminCost, canFinish } from "./rules.js";
 import { termLabel } from "./rules.js";
@@ -207,7 +208,7 @@ export function zfAssessment(q) {
       (closed / 2) * 100 * 0.1 +
       facilities * 0.05,
   );
-  return {
+  return contentAssessment(q, {
     score,
     rating: q.misconduct
       ? "候查"
@@ -218,7 +219,7 @@ export function zfAssessment(q) {
           : "不称职",
     candidate: !q.misconduct && score >= passLine(q),
     summary: `核验差事${verified}/${reports}份，阶段要务${met}/${q.goals.length}项，执行归档${closed}/2案，实际安置${q.settled}/${q.affected}人；未完差事${q.tasks.filter((t) => t.status === "working").length}项。`,
-  };
+  });
 }
 export function projectPlan(q, id) {
   const p = q.projects[id],
