@@ -4279,3 +4279,12 @@ body {
 /* 省计账户常驻展开，四府详情沿用县情折叠。 */
 .bz-funds { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 16px; }
 .bz-funds .district-card { min-width: 0; }
+
+/* 复考结果可包含完整尾声，不能沿用短通知的横向排列。 */
+.ac-result { display: block; }
+.ac-result > h3 { margin-top: 0; }
+.ac-result > .panel { width: 100%; min-width: 0; margin: 20px 0; }
+.ac-result > button { max-width: 100%; white-space: normal; }
+@media (max-width: 360px) {
+  .county-tabs { margin-inline: -12px; padding-inline: 12px; }
+}

@@ -165,8 +165,7 @@ export function syncOfficeStories(s, before = null, command = null) {
   syncChallenge(s,key);
 }
 export function storyResult(d, o) {
-  if (o.id !== "check") return o.result;
-  return `${o.label}的回报已到：相关凭据和当事人签认分列，疑点保留待查，不代替${d.title}的最终处理。`;
+  return o.result;
 }
 export function gainText(g) {
   const names = { cooperation: "地方协作", people: "地方民生", integrity: "吏治", trust: "上级信任" };

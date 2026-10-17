@@ -1,5 +1,6 @@
 import {newCareer,LATE_ROLES,CHALLENGE} from "./career-difficulty.js";
 import {challengePanel} from "./career-difficulty-view.js";
+import {OFFICE_HARD} from "./office-hard.js";
 export function guideContent(s) {
   const office = s?.accountability?.current
     ? "考课"
@@ -70,6 +71,14 @@ export function guideContent(s) {
     ],
   };
   const role=["prefecture","tongzhi","zhifu",...LATE_ROLES].filter(k=>s?.[k]).at(-1);
+  if (s?.prefecture?.hard) {
+    const needs = OFFICE_HARD.pref.needs;
+    duties.通判[0] = `县情中查看三县实粮。每期申请${Math.min(...needs)}至${Math.max(...needs)}石、限7至12周；以当前调粮单的申请量和核定期限为准，须在期限内实到。`;
+    duties.通判[2] = "有效接济按当期申请县净调入量计，每期以本期申请量为上限。期限内再调出导致不足，会撤回对应功绩与信任奖励；补足后恢复。往返、超额和非申请县运输不增加接济考分。";
+  }
+  if (s?.tongzhi?.hard) {
+    duties.同知[2] = "三次汛期的周次与雨势每局不同，按县情中的汛期预报提前备防；督防间隔4周。安置2周后核验，核验前继续供粮。";
+  }
   if(newCareer(s||{})&&LATE_ROLES.includes(role)&&office!=="考课") {
     if(role==="xunfu")duties[office][4]="新严苛以本任考核面板的权重及数量条件考满。赈务、协防、越境三类职责各须办结2项。";
     if(role==="buzheng"){
