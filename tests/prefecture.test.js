@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { createGame, dispatch, validateSave, VERSION } from "../src/engine.js";
 import { PREF_EVENTS, transportTerms } from "../src/prefecture.js";
+import { grainProgress } from "../src/prefecture-view.js";
 let seq = 0;
 const go = (s, type, args = {}) =>
   dispatch(s, { id: "pref-test-" + seq++, type, ...args });
@@ -78,7 +79,9 @@ test("normal transport pays once, stays in transit three weeks and settles after
       amount: 60,
       route: "normal",
     };
+  assert.match(grainProgress(s.prefecture).title, /还差60石到仓/);
   s = dispatch(s, cmd);
+  assert.match(grainProgress(s.prefecture).detail, /3周后到。在途粮够数/);
   assert.equal(s.prefecture.grain, original.grain - 60);
   assert.equal(s.prefecture.silver, original.silver - 8);
   assert.equal(
@@ -95,6 +98,9 @@ test("normal transport pays once, stays in transit three weeks and settles after
   );
   assert.equal(s.prefecture.delivered, 60);
   assert.equal(s.prefecture.met, 1);
+  assert.equal(grainProgress(s.prefecture).title, "本期已达标，可以结束本周");
+  const recalled = go(s, "pref_transfer", {from: "linhe", to: "府仓", amount: 60, route: "normal"});
+  assert.match(grainProgress(recalled.prefecture).title, /还差60石到仓/);
   s = next(s);
   assert.equal(s.prefecture.delivered, 60);
   assert.equal(s.prefecture.met, 1);

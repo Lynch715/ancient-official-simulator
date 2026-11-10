@@ -91,6 +91,26 @@ export function configureChapter(root, key) {
     }
   });
   if (footer) {
+    // 周结被公文锁住时，所有页签都能直接回到需要处理的那一件。
+    const next = footer.querySelector('button[data-act$="-next"]:disabled');
+    const pending = next && main.querySelector(`[data-act="${next.dataset.act.replace(/-next$/, "-event")}"]`);
+    const panel = pending?.closest("section.panel");
+    if (panel) {
+      const jump = document.createElement("button");
+      jump.type = "button";
+      jump.className = next.className;
+      jump.textContent = "办理本周公文";
+      next.replaceWith(jump);
+      const hint = footer.querySelector("b");
+      if (hint && !hint.textContent.includes("已达标")) hint.textContent = "办完公文才能结周";
+      jump.addEventListener("click", () => {
+        select(panel.closest(".chapter-screen").dataset.screen);
+        const target = panel.querySelector("h2") || panel;
+        target.tabIndex = -1;
+        target.focus({preventScroll: true});
+        target.scrollIntoView({block: "center"});
+      });
+    }
     footer.classList.add("chapter-toolbar");
     root.classList.add("with-chapter-toolbar");
   }
