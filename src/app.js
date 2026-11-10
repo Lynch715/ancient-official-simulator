@@ -1,3 +1,4 @@
+import { recordText } from "./career-difficulty-view.js";
 import {newCareer, CHALLENGE} from "./career-difficulty.js";
 import { xfLabel, XF_EDICT } from "./xunfu.js";
 import { xunfuView } from "./xunfu-view.js";
@@ -65,6 +66,7 @@ import {
   createGame,
   dispatch,
   validateSave,
+  VERSION,
   label,
   affordability,
   weekLabel,
@@ -252,7 +254,7 @@ function run(type, params = {}, quiet = false) {
     requestAnimationFrame(() => $("#modal-root .dialog")?.focus());
     return { saved };
   } catch (e) {
-    toast(e.message);
+    toast(e instanceof Error && e.constructor === Error && !/[a-zA-Z]|操作编号|指令/.test(e.message) ? e.message : "这项操作暂时办不了。请查看本周待办后再试。");
     return null;
   }
 }
@@ -334,7 +336,7 @@ function startView() {
     .join(
       "",
     )}</div><div class="field-label">为官难度</div><div class="family-options difficulty-options">${[
-      ["hard", "严苛", "八任均以75分称职。银粮吃紧，灾情多变；通判起须亲查剧情、归档来源案。后四任每周仅1点亲办精力，办结数量、成效与期限同时考核。"],
+      ["hard", "严苛", "八任均以75分称职。银粮吃紧，灾情多变；通判起须亲办来信、查案归档。后四任每周仅1点亲办精力，办结数量、成效与期限同时考核。"],
       ["standard", "常例", "钱粮宽裕，灾情按固定时节到来，适合初次上手、熟悉各项办事流程。"],
     ]
       .map(
@@ -613,7 +615,7 @@ function career() {
               "",
             )}</div></div></section><div class="ending-routes">${out.routes.map((r) => `<button class="ending-route ${out.choice === r.id ? "selected" : ""}" data-act="ending" data-id="${r.id}"><h3>${r.name} ${out.choice === r.id ? icon("confirm") : icon("chevron_right")}</h3><p>${r.desc}</p></button>`).join("")}</div><div class="notice"><p>知县任满履历已归卷。称职且无待查责任者，可按本局官缺获授分管粮运的通判；通判考满后可继续同知任期，可再续知府、按察司副使、布政司参政、布政使及奉命巡抚篇。</p>${out.rating === "称职" && !out.misconduct ? btn("办理府通判任命", "appointment-open", "", "button primary") : ""}${btn("导出本任履历", "export", "", "button outline")}</div>`
         : `<section class="panel"><div class="section-head"><h2>任职进程</h2><span>${s.turn}/${TERM_WEEKS}周</span></div><div class="career-progress"><i style="width:${(s.turn / TERM_WEEKS) * 100}%"></i></div><div class="achievement-grid"><div><b>${s.projectsCompleted}</b><span>工程验收</span></div><div><b>${s.wellJudged}</b><span>复核结案</span></div><div><b>${Math.round(s.trust)}</b><span>上级信任</span></div><div><b>${Math.round(s.integrity)}</b><span>吏治表现</span></div></div><p class="muted">三年任满后形成考语与任用建议。已达成阶段要务${s.governance.mandatesMet}项，未达${s.governance.mandatesMissed}项。${isHard(s) ? `严苛考评：民生、财计、吏治按全任平均与期末各半计算，任何一项都不会提前封顶；春旱、汛情、摊派的处置方式计入民生；上解实缴率计入财计；案卷逾限、证据不全被退回都扣司法分。称职须75分且四案办结。当前已上解${Math.round(s.hard.remitDue ? (s.hard.remitPaid / s.hard.remitDue) * 100 : 100)}%，逾限案卷${s.hard.overdue}宗。` : "达成要务每项增加2点专项使命分（最多12点），未达每项扣1点（最多6点）；已复核但未执行的案卷每宗扣4点司法分。"}</p></section>`
-    }<section class="panel"><div class="section-head"><h2>仕途展望</h2><span>后续篇章</span></div><div class="career-route">${["知县", "通判", "同知", "知府", "按察副使", "布政参政", "布政使", "巡抚"].map((x, i) => `<span class="${i === 0 ? "current" : ""}">${x}</span>`).join("")}</div><p class="muted">本局已开放至奉命巡抚，共八任。巡抚复命可登记去留尾声；京官篇与完整留任重开尚未开放。</p></section>`
+    }<section class="panel"><div class="section-head"><h2>仕途展望</h2><span>后续篇章</span></div><div class="career-route">${["知县", "通判", "同知", "知府", "按察副使", "布政参政", "布政使", "巡抚"].map((x, i) => `<span class="${i === 0 ? "current" : ""}">${x}</span>`).join("")}</div><p class="muted">由知县起，历任八职。巡抚复命后，写下去留奏疏，这段仕途便告一段落。</p></section>`
   );
 }
 function render() {
@@ -855,7 +857,7 @@ function renderModal() {
   if (m.type === "scene") {
     html = dialog(
       m.title,
-      `<div class="scene-full">${scene(m.id, "", "地方风物")}<p>地方环境插画；查看案头记录可了解当前工程和灾情。</p></div>`,
+      `<div class="scene-full">${scene(m.id, "", "地方风物")}<p>本地工程与灾情可到公堂查看。</p></div>`,
       "wide-dialog",
     );
   }
@@ -863,7 +865,7 @@ function renderModal() {
     const imgs = Object.values(art.assets).filter((a) => a.type === "scene");
     html = dialog(
       "清河风物",
-      `<p class="gallery-note">插画鉴赏，不表示当前地方正在发生相应灾情。</p><div class="gallery-grid">${imgs.map((a) => `<button data-act="scene" data-id="${a.id}" data-title="${a.label}">${scene(a.id, "", a.label)}<span>${a.label}</span></button>`).join("")}</div>`,
+      `<p class="gallery-note">选一幅图，可放大细看。</p><div class="gallery-grid">${imgs.map((a) => `<button data-act="scene" data-id="${a.id}" data-title="${a.label}">${scene(a.id, "", a.label)}<span>${a.label}</span></button>`).join("")}</div>`,
       "wide-dialog",
     );
   }
@@ -891,12 +893,12 @@ function renderModal() {
   if (m.type === "settings")
     html = dialog(
       "存档与设置",
-      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("查看美术图鉴", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府督抚八任 · v0.21 · 履历保存在当前浏览器</small></div>`,
+      `<div class="dialog-content"><p>每次操作后自动存档。电脑和手机各自保存进度，不会自动同步；更换网址或设备前，请先导出履历。</p><p class="transfer-help">转移到手机：导出履历 → 将文件发到手机 → 打开游戏网址 → 设置中导入。文件下载不方便时，可使用文本备份。</p><div class="settings-actions">${btn(icon("save") + " 手动存档", "save", "", "button outline")}${btn("导出履历文件", "export", "", "button outline")}${btn("导入履历文件", "import", "", "button outline")}${btn("履历文本备份与恢复", "save-text", "", "button outline")}${btn("恢复上一次备份", "backup", "", "button outline")}${btn("清河风物图册", "gallery", "", "button outline")}${btn("重新开始一任", "restart", "", "button danger")}</div>${offlineCard()}<small class="muted">县府督抚八任 · v0.21 · 履历保存在当前浏览器</small></div>`,
     );
   if (m.type === "save-text")
     html = dialog(
       "履历文本备份",
-      `<div class="dialog-content"><p>可复制保存下方文本，或粘贴已有履历后恢复。文件下载不可用时也能转移进度。</p><label class="field">履历 JSON<textarea id="save-text" aria-label="履历 JSON" spellcheck="false">${esc(JSON.stringify(s))}</textarea></label>${btn("复制履历文本", "copy-save", "", "button outline")}${btn("从文本恢复履历", "restore-text", "", "button primary large")}</div>`,
+      `<div class="dialog-content"><p>点下方按钮复制当前履历，另存到备忘录。换设备后，把整段文本粘贴到下面即可恢复。</p>${btn("复制当前履历", "copy-save", "", "button outline")}<details id="manual-copy"><summary>手动复制当前履历</summary><label class="field">当前履历备份<textarea readonly spellcheck="false">${esc(JSON.stringify(s))}</textarea></label></details><label class="field">粘贴要恢复的履历文本<textarea id="save-text" spellcheck="false"></textarea></label>${btn("从文本恢复履历", "restore-text", "", "button primary large")}</div>`,
     );
   if (m.type === "restart")
     html = dialog(
@@ -916,6 +918,21 @@ async function exportSave() {
   setTimeout(() => URL.revokeObjectURL(url), 2000);
   toast("履历已导出，请保管好文件。");
 }
+function readBackup(text) {
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw Error("读不到完整履历。请选择游戏导出的文件，或重新复制整段备份文本。");
+  }
+  if (Number.isInteger(data?.version) && data.version > VERSION)
+    throw Error("这份履历由更新的游戏版本保存。请先检查游戏更新。");
+  try {
+    return validateSave(data);
+  } catch {
+    throw Error("履历缺少记录或账目不符。请换一份完整的备份再试。");
+  }
+}
 function importSave() {
   const input = document.createElement("input");
   input.type = "file";
@@ -927,8 +944,11 @@ function importSave() {
     try {
       const f = input.files[0];
       if (!f) return;
-      if (f.size > 2e6) throw Error("存档文件过大。");
-      const incoming = validateSave(JSON.parse(await f.text()));
+      if (f.size > 2e6) return toast("文件过大。请选择游戏导出的履历文件。");
+      let text;
+      try { text = await f.text(); }
+      catch { return toast("读不到这个文件。请重新选择履历文件。"); }
+      const incoming = readBackup(text);
       s = incoming;
       const saved = save();
       modal = null;
@@ -973,11 +993,18 @@ document.addEventListener("click", (e) => {
   switch (a) {
     case "copy-save":
       (navigator.clipboard
-        ? navigator.clipboard.writeText($("#save-text").value)
+        ? navigator.clipboard.writeText(JSON.stringify(s))
         : Promise.reject()
       ).then(
         () => toast("履历文本已复制。"),
-        () => toast("复制未完成，可长按文本全选复制。"),
+        () => {
+          const manual = $("#manual-copy");
+          if (manual) {
+            manual.open = true;
+            manual.querySelector("textarea").select();
+          }
+          toast("请复制选中的履历文本，另存到备忘录。");
+        },
       );
       break;
     case "family": {
@@ -1142,7 +1169,9 @@ document.addEventListener("click", (e) => {
       break;
     case "restore-text":
       try {
-        s = validateSave(JSON.parse($("#save-text").value));
+        const text = $("#save-text").value.trim();
+        if (!text) { toast("请先粘贴备份的履历文本。"); break; }
+        s = readBackup(text);
         const saved = save();
         modal = null;
         tab = s.finished ? "career" : "court";
@@ -1157,9 +1186,11 @@ document.addEventListener("click", (e) => {
       break;
     case "backup":
       try {
-        const backup = localStorage.getItem(BACKUP);
+        let backup;
+        try { backup = localStorage.getItem(BACKUP); }
+        catch { toast("浏览器读不到备份。可从履历文件或文本恢复。"); break; }
         if (!backup) throw Error("尚无备份。");
-        s = validateSave(JSON.parse(backup));
+        s = readBackup(backup);
         const saved = save();
         modal = null;
         render();
@@ -1232,7 +1263,7 @@ try {
   art = await response.json();
 } catch {
   art = { assets: {} };
-  artError = "美术资源暂未载入，已启用占位。";
+  artError = "插画暂时打不开。可以继续办事，联网后刷新即可重试。";
 }
 startMobile();
 load();
@@ -1398,7 +1429,7 @@ function receiptView(r) {
     major = r.changes.filter((x) => always.includes(x.name) || Math.abs(x.delta) >= 0.5),
     minor = r.changes.filter((x) => !major.includes(x));
   r = { ...r, changes: major, minor };
-  return `<div class="dialog-content"><p class="muted">${r.chapter === "考课" ? `考课附卷第${r.turn + 1}周` : r.chapter === "奉命巡抚" ? xfLabel({ turn: r.turn }) : r.chapter === "布政使" ? bzLabel({ turn: r.turn }) : r.chapter === "布政司参政" ? czLabel({ turn: r.turn }) : r.chapter === "按察司副使" ? inLabel({ turn: r.turn }) : r.chapter === "知府" ? zfLabel({ turn: r.turn }) : r.chapter === "同知" ? tzLabel({ turn: r.turn }) : r.chapter ? prefLabel({ turn: r.turn }) : weekLabel(r.turn)} · 本次收支与前后变化如下。</p>${r.changes.length ? `<div class="receipt-grid">${r.changes.map((x) => `<div class="receipt-change"><span>${esc(x.name)}</span><strong class="${x.delta > 0 !== (["疲劳", "待安置居民", "累计缺供粮", "移出未安置"].includes(x.name) || x.name.includes("待安置") || x.name.includes("地方负担")) ? "positive" : "negative"}">${x.delta > 0 ? "+" : ""}${num(x.delta)}</strong><small>${num(x.before)} → ${num(x.after)}</small></div>`).join("")}</div>` : r.minor.length ? "" : '<div class="notice"><p>本次事项已记入卷宗，钱粮及治理数值未变。</p></div>'}${r.minor.length ? `<details class="receipt-minor"><summary>细微变化${r.minor.length}项（每周回落、养护损耗等）</summary><p>${r.minor.map((x) => `${esc(x.name)} ${x.delta > 0 ? "+" : ""}${num(Math.round(x.delta * 100) / 100 || 0)}`).join("；")}</p></details>` : ""}${r.policies?.length ? `<div class="receipt-notes">${r.policies.map((x) => `<p>${esc(x)}</p>`).join("")}</div>` : ""}${
+  return `<div class="dialog-content"><p class="muted">${r.chapter === "考课" ? `考课附卷第${r.turn + 1}周` : r.chapter === "奉命巡抚" ? xfLabel({ turn: r.turn }) : r.chapter === "布政使" ? bzLabel({ turn: r.turn }) : r.chapter === "布政司参政" ? czLabel({ turn: r.turn }) : r.chapter === "按察司副使" ? inLabel({ turn: r.turn }) : r.chapter === "知府" ? zfLabel({ turn: r.turn }) : r.chapter === "同知" ? tzLabel({ turn: r.turn }) : r.chapter ? prefLabel({ turn: r.turn }) : weekLabel(r.turn)} · 本次收支与前后变化如下。</p>${r.changes.length ? `<div class="receipt-grid">${r.changes.map((x) => `<div class="receipt-change"><span>${esc(x.name)}</span><strong class="${x.delta > 0 !== (["疲劳", "待安置居民", "累计缺供粮", "移出未安置"].includes(x.name) || x.name.includes("待安置") || x.name.includes("地方负担")) ? "positive" : "negative"}">${x.delta > 0 ? "+" : ""}${num(x.delta)}</strong><small>${num(x.before)} → ${num(x.after)}</small></div>`).join("")}</div>` : r.minor.length ? "" : '<div class="notice"><p>本次事项已记入卷宗，钱粮、政绩照旧。</p></div>'}${r.minor.length ? `<details class="receipt-minor"><summary>细微变化${r.minor.length}项（每周回落、养护损耗等）</summary><p>${r.minor.map((x) => `${esc(x.name)} ${x.delta > 0 ? "+" : ""}${num(Math.round(x.delta * 100) / 100 || 0)}`).join("；")}</p></details>` : ""}${r.policies?.length ? `<div class="receipt-notes">${r.policies.map((x) => `<p>${esc(x)}</p>`).join("")}</div>` : ""}${
     r.ledger.length
       ? `<details class="receipt-ledger"><summary>查看本次公私账目（${r.ledger.length}笔）</summary>${r.ledger
           .map(
@@ -1413,7 +1444,7 @@ function receiptView(r) {
           )
           .join("")}</details>`
       : ""
-  }<div class="receipt-notes">${r.notes.map((t) => `<p>${esc(t)}</p>`).join("")}</div>${btn("收讫，继续理事", "close", "", "button primary large")}</div>`;
+  }<div class="receipt-notes">${r.notes.map((t) => `<p>${esc(recordText(t))}</p>`).join("")}</div>${btn("收讫，继续理事", "close", "", "button primary large")}</div>`;
 }
 
 function offlineCard() {

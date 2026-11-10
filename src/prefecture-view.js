@@ -1,4 +1,4 @@
-import { challengePanel, challengeRules, workDeadline } from "./career-difficulty-view.js";
+import { recordText, challengePanel, challengeRules, workDeadline } from "./career-difficulty-view.js";
 import { challenged, CHALLENGE } from "./career-difficulty.js";
 import { mainlineContext } from "./office-mainline.js";
 import { officeEvent, transitLoss } from "./office-hard.js";
@@ -55,7 +55,7 @@ export function prefectureView(s, h) {
   return `<div class="pref-shell">${top}<main id="main-content" class="pref-main"><div class="page-heading"><div><div class="eyebrow">永平府 · ${p.finished ? "三年任满" : prefLabel(p)}</div><h1>府署粮运</h1><p>${esc(s.name)} · 正六品通判 · 奉命分管粮储与运输</p></div><div class="ap-badge">${icon("action")}<b>${p.ap}</b><span>可用精力</span></div></div><nav class="pref-nav" aria-label="府署页内导航"><a href="#pref-stories">剧情与案牍 · ${storyBadge(s, "prefecture")}</a><a href="#pref-counties">三县余缺</a><a href="#pref-transport">调粮运次</a><a href="#pref-record">任职履历</a>${btn("最近回执", "receipt", "", "text-button")}</nav>${challengePanel(s,"prefecture")}<section class="pref-hero">${scene("scene_granary", "hero-scene", "府仓环境示意")}<div class="hero-wash"></div><div class="hero-caption"><span>府仓 · 分司钱粮</span><h2>一府粮运<br>三县冷暖</h2><p>账上有数，更须仓中有粮。</p></div>${portrait(s.appearance, "player-figure")}</section><div class="metrics">${names.map(([k, n, u]) => `<div class="metric"><div class="metric-label">${n}</div><div class="metric-value">${num(k === "currentRelief" ? r.received : k === "inTransit" ? p.shipments.filter((x) => x.status === "transit").reduce((n, x) => n + x.amount, 0) : k === "weeksLeft" ? Math.max(0, r.due - p.turn) : p[k])}<small>${u}</small></div></div>`).join("")}</div>
  ${
    p.finished
-     ? `<section class="assessment"><div class="assessment-score"><span>通判考语</span><h2>${p.outcome.rating}</h2><strong>${p.outcome.score}<small>/100</small></strong></div><div><h2>${p.outcome.candidate ? "粮运有绩，列入同知候选" : "本任成败，归卷备查"}</h2><p>${p.outcome.summary}</p><p>${p.misconduct ? "本任有虚报、包庇或重复征收记录，须先查明责任。" : `${challenged(p)?"本职分（占总评90%）":"总评"}按属县民生30%、吏治30%、调粮要务25%、有效接济15%汇总。${p.hard ? "严苛难度：民生与吏治按全任平均与期末各半计，有效接济按各期实际申请总量折算，75分方可列入候选。" : ""}`}</p><p class="muted">称职且无待查责任，可接任分管水利赈济的同知。旧府账完整留作交接。</p>${p.outcome.candidate ? btn("办理同知任命", "tz-appointment", "", "button primary") : ""}${btn("导出两任履历", "export", "", "button outline")}</div></section>`
+     ? `<section class="assessment"><div class="assessment-score"><span>通判考语</span><h2>${p.outcome.rating}</h2><strong>${p.outcome.score}<small>/100</small></strong></div><div><h2>${p.outcome.candidate ? "粮运有绩，列入同知候选" : "本任成败，归卷备查"}</h2><p>${esc(recordText(p.outcome.summary))}</p><p>${p.misconduct ? "本任有虚报、包庇或重复征收记录，须先查明责任。" : `${challenged(p)?"本职分（占总评90%）":"总评"}按属县民生30%、吏治30%、调粮要务25%、有效接济15%汇总。${p.hard ? "严苛难度：民生与吏治按全任平均与期末各半计，有效接济按各期实际申请总量折算，75分方可列入候选。" : ""}`}</p><p class="muted">称职且无待查责任，可接任分管水利赈济的同知。旧府账完整留作交接。</p>${p.outcome.candidate ? btn("办理同知任命", "tz-appointment", "", "button primary") : ""}${btn("导出两任履历", "export", "", "button outline")}</div></section>`
      : `<section class="mandate-panel"><div>${icon("report")}</div><div><span class="eyebrow">本阶段调粮 · ${Math.max(0, r.due - p.turn)}周后核定</span><h3>${esc(supply.title)}</h3><p>${esc(supply.detail)}</p></div></section>${
          event
            ? `<section class="panel"><div class="section-head"><h2>本周府署公文</h2><span>须先处置</span></div><div class="speaker">${avatar("prefect")}<div><b>知府移文</b><span>通判分司办理，重大改额另行呈批</span></div></div><h3>${event.title}</h3><p>${event.text}</p><div class="choice-list">${event.options
@@ -101,7 +101,7 @@ export function prefectureView(s, h) {
    .slice(0, 20)
    .map(
      (l) =>
-       `<p><small>第${Math.min(l.turn + 1, 156)}周</small> ${esc(l.text)}</p>`,
+       `<p><small>第${Math.min(l.turn + 1, 156)}周</small> ${esc(recordText(l.text))}</p>`,
    )
    .join(
      "",

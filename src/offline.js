@@ -10,7 +10,7 @@ const info = {
   installable: false,
   text: built
     ? "正在准备离线资源…"
-    : "开发预览；安装与离线功能在发布包中开启。",
+    : "此页需联网游玩。",
 };
 export const offlineInfo = () => ({ ...info });
 const update = (x) => {
@@ -38,7 +38,7 @@ async function status() {
       ready: result.ready,
       waiting: !!registration.waiting,
       text: result.ready
-        ? `离线资源已备齐，可离线打开本网址续玩。版本 ${result.build}`
+        ? "已可离线续玩。下次用这个浏览器打开游戏即可。"
         : "离线资源不完整，请联网后检查更新。",
     });
 }

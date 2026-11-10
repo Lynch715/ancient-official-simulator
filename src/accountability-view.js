@@ -1,3 +1,4 @@
+import { recordText } from "./career-difficulty-view.js";
 import { xunfuEndingView } from "./xunfu-view.js";
 import { OFFICES, LOWER, STATUS, inspectionLoad } from "./accountability.js";
 import { countyCase } from "./case-content.js";
@@ -54,14 +55,14 @@ export function accountabilityView(s, h) {
      : ""
  }
  <section class="panel" id="ac-process"><div class="section-head"><h2>${STATUS[p.status]}</h2><span>${p.deadline !== null ? `还剩${p.deadline - p.week}周` : "依程序办理"}</span></div>
- ${p.status === "notice" ? `<p>本任未获称职。先进入13周限期整改，再进行26周留任复考；整改未完成，会增加复考要求。期限中可以安排差事、等待两周核验，不能用重复签字刷成绩。</p><p>${p.role === "county" ? "知县复考仍失败将罢官，不附加刑罚。" : "留任复考仍失败会降调试用；试用再失败则罢官。降调试用通过后，仍须回原职复考，才能恢复候选资格。"}</p>${btn("接受13周限期整改", "ac-begin", "", "button primary")}` : ""}
+ ${p.status === "notice" ? `<p>本任未获称职。先进入13周限期整改，再进行26周留任复考；整改未完成，会增加复考要求。每批差事办妥后，等两周核验，凭回报记入考课。</p><p>${p.role === "county" ? "知县复考仍失败将罢官，不附加刑罚。" : "留任复考仍失败会降调试用；试用再失败则罢官。降调试用通过后，仍须回原职复考，才能恢复候选资格。"}</p>${btn("接受13周限期整改", "ac-begin", "", "button primary")}` : ""}
  ${
    active
      ? `<p>${p.status === "remedy" ? "本期每项须完成两批核验。" : p.status === "demotion" ? `现降任${LOWER[p.role]}，试用26周，每周私人俸余减为0.5两。通过后申请回原职复考；失败则罢官。` : `留任复考26周，每项须核验${p.targets[0].required}批。达标恢复候选资格，原任低分仍会保留。`}每周两点精力、最多两项在办；每批8两，民生事项另需4石，两周后记实绩。</p><div class="ac-targets">${p.targets
          .map((t) => {
            const waiting = p.pending.filter((x) => x.topic === t.id),
              done = t.done >= t.required;
-           return `<article><span class="eyebrow">${done ? "已达成" : "待核验"} · ${t.done}/${t.required}</span><h3>${t.name}</h3><div class="meter"><i style="width:${(t.done / t.required) * 100}%"></i></div><p>${t.id === "life" ? `按旧册回访；每批最多落实12名待安置居民。当前仍待安置${p.remainingDisplaced}人；无待安置者则核实现有救助和民生回访。` : "原始账卷、交付凭据与现场结果逐批核对，形成可核验的改进记录。"}</p>${waiting.map((x) => `<p class="muted">一批已派员，${x.due - p.week}周后核验。</p>`).join("")}${btn("安排一批 · 8两" + (t.id === "life" ? " / 4石" : ""), "ac-work", `data-topic="${t.id}"`, "button outline", block({ silver: 8, grain: t.id === "life" ? 4 : 0, ap: 1 }) || inspectionLoad(p) >= 2 || t.done + waiting.length >= t.required || p.week + 2 > p.deadline)}</article>`;
+           return `<article><span class="eyebrow">${done ? "已达成" : "待核验"} · ${t.done}/${t.required}</span><h3>${esc(recordText(t.name))}</h3><div class="meter"><i style="width:${(t.done / t.required) * 100}%"></i></div><p>${t.id === "life" ? `按旧册回访；每批最多落实12名待安置居民。当前仍待安置${p.remainingDisplaced}人；无待安置者则核实现有救助和民生回访。` : "原始账卷、交付凭据与现场结果逐批核对，形成可核验的改进记录。"}</p>${waiting.map((x) => `<p class="muted">一批已派员，${x.due - p.week}周后核验。</p>`).join("")}${btn("安排一批 · 8两" + (t.id === "life" ? " / 4石" : ""), "ac-work", `data-topic="${t.id}"`, "button outline", block({ silver: 8, grain: t.id === "life" ? 4 : 0, ap: 1 }) || inspectionLoad(p) >= 2 || t.done + waiting.length >= t.required || p.week + 2 > p.deadline)}</article>`;
          })
          .join(
            "",
@@ -114,13 +115,13 @@ export function accountabilityView(s, h) {
      : `<div class="ac-evidence">${p.evidence
          .map((e) => {
            const i = a.incidents.find((i) => i.id === e.incident);
-           return `<article><h3>${esc(i.title)}</h3><p>${OFFICES[i.role]}原任已过${i.week}周 · ${i.legacy ? "旧版有限记录：最多按行政去职处理，不推定为刑事重罪" : "记录来自已执行的明确选择"}</p><span>账证 ${e.documents ? "已核" : "待核"} · 独立证言 ${e.witnesses ? "已核" : "待核"}</span></article>`;
+           return `<article><h3>${esc(i.title)}</h3><p>${OFFICES[i.role]}原任已过${i.week}周 · ${i.legacy ? "旧卷记载有限，最多按行政去职处理，不推定为刑事重罪" : "记录来自已执行的明确选择"}</p><span>账证 ${e.documents ? "已核" : "待核"} · 独立证言 ${e.witnesses ? "已核" : "待核"}</span></article>`;
          })
          .join("")}</div>`
  }</section>
  <section class="panel" id="ac-history"><div class="section-head"><h2>考课与处分履历</h2><span>全生涯附卷累计${a.totalWeeks}周</span></div><p>已核安置${p.settled}人，旧册仍待落实${p.remainingDisplaced}人；过去的原任记录保持原样。整改差事、复考和降调试用是专门督办任期，并非重新发放原任三年全部资源。</p>${p.stageResults.map((r) => `<p>${STATUS[r.stage]} · 附卷第${r.week}周 · ${r.passed ? "通过" : "未通过"}（${r.targets.map((t) => `${t.name}${t.done}/${t.required}`).join("；")}）</p>`).join("")}<details open><summary>最近核办记录</summary>${p.logs
    .slice(0, 16)
-   .map((l) => `<p><small>附卷第${l.week}周</small> ${esc(l.text)}</p>`)
+   .map((l) => `<p><small>附卷第${l.week}周</small> ${esc(recordText(l.text))}</p>`)
    .join("")}</details><details><summary>专项和私产账目</summary>${p.ledger
    .slice(-20)
    .reverse()

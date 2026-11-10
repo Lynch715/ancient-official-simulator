@@ -75,6 +75,6 @@ test('存档拒绝伪造查验数量、难度标记和越额精力',()=>{
  for(const [role]of late)for(const change of [s=>delete s[role].challenge,s=>s[role].challenge.cases++,s=>s[role].challenge.role='county',s=>s[role].ap=3,s=>s.balanceVersion=0]){const n=structuredClone(starts[role]);change(n);assert.throws(()=>validateSave(n));}
 });
 test('七任考核面板、指南显示实际新规则，旧档没有新增门槛文案',()=>{
- for(const role of Object.keys(OFFICE_CONTENT)){const s=finished[role],html=challengePanel(s,role),guide=guideContent(s);assert.match(html,/75分/);assert.match(html,/3\/4/);assert.match(html,/12\/18/);assert(!html.includes('undefined'));assert.match(guide,/新严苛考评/);if(CHALLENGE[role]){assert.match(html,/每周1点亲办精力/);assert.match(challengeRules(s[role]),new RegExp(CHALLENGE[role].workLimit+'周内'));}}
- for(const r of golden.filter(r=>r.role!=='county'))assert.match(challengePanel(validateSave(r.initial),r.role),/沿用原有/);
+ for(const role of Object.keys(OFFICE_CONTENT)){const s=finished[role],html=challengePanel(s,role),guide=guideContent(s);assert.match(html,/75分/);assert.match(html,/3\/4/);assert.match(html,/12\/18/);assert(!html.includes('undefined'));assert.match(guide,/严苛考评/);assert.doesNotMatch(guide,/新严苛|来源案|固定版本原篇/);if(CHALLENGE[role]){assert.match(html,/每周1点亲办精力/);assert.match(challengeRules(s[role]),new RegExp(CHALLENGE[role].workLimit+'周内'));}}
+ for(const r of golden.filter(r=>r.role!=='county')){const panel=challengePanel(validateSave(r.initial),r.role);assert.match(panel,/本周可用|本任考语已归卷/);assert.doesNotMatch(panel,/案卷已归档|来信已查验/);}
 });

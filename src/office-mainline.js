@@ -32,13 +32,13 @@ export function mainlineContext(s, key, event) {
   if (["D01", "F01"].includes(event.id) && previous) {
     const closed = Object.values(previous.cases).filter((f) => f.status === "closed").length;
     const done = Object.values(previous.events).filter((r) => r.status === "done").length;
-    tail = `前任留档：${done}件剧情事务已查验，${closed}件来源案已取得执行回报；未竟事项仍留原卷。`;
+    tail = `前任留档：${done}件剧情事务已查验，${closed}件案卷已取得执行回报；未竟事项仍留原卷。`;
   }
   if (event.id === "T08" && b?.main.T03) tail = b.main.T03.choice === "allow" ? "前次运损卷里有容许扩报的记录，眼下如实交接也不能使原责任消失。" : "前次运损已留下所选处置的凭据，交接时须一并核对后续实际到账。";
   if (event.id === "D08" && b?.main.D02) tail = b.main.D02.choice === "cover" ? "前次删去填料疑点的记录仍在责任卷中，不能用如今的堤面平整代替追查。" : "前次填料疑点已留档，交接仍以实际深验、返工与交付为准。";
   if (event.id === "F08") {
     const closed = Object.values(b?.cases || {}).filter((f) => f.status === "closed").length;
-    tail = `本任来源案已实际归档${closed}件，其他卷宗继续列入未竟目录。`;
+    tail = `本任案卷已实际归档${closed}件，其他卷宗继续列入未竟目录。`;
   }
   return tail ? { ...event, text: event.text + "\n\n" + tail } : event;
 }
